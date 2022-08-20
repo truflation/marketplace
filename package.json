@@ -24,5 +24,8 @@
   },
   "dependencies": {
     "@chainlink/contracts": "^0.4.2"
+  },
+  "scripts": {
+    "build": "hardhat compile"
   }
 }

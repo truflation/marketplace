@@ -14,7 +14,7 @@ import {ENSResolver as ENSResolver_Chainlink} from "@chainlink/contracts/src/v0.
  * @notice Contract writers can inherit this contract in order to create requests for the
  * Chainlink network
  */
-abstract contract ChainlinkClient {
+abstract contract TfiClient {
   using Chainlink for Chainlink.Request;
 
   uint256 internal constant LINK_DIVISIBILITY = 10**18;

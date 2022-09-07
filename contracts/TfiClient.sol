@@ -10,7 +10,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/PointerInterface.sol";
 import {ENSResolver as ENSResolver_Chainlink} from "@chainlink/contracts/src/v0.8/vendor/ENSResolver.sol";
 
 /**
- * @title The ChainlinkClient contract
+ * @title The TfiClient contract
  * @notice Contract writers can inherit this contract in order to create requests for the
  * Chainlink network
  */

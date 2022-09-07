@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
-import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+import "./TfiClient.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-contract ApiClient is ChainlinkClient, ConfirmedOwner {
+contract ApiClient is TfiClient, ConfirmedOwner {
     using Chainlink for Chainlink.Request;
     bytes public result;
     mapping(bytes32 => bytes) public results;

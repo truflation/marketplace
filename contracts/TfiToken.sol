@@ -1,18 +1,15 @@
 pragma solidity ^0.4.11;
-
-
-import "./ERC677Token.sol";
+import "./vendor/ERC677Token.sol";
 import { StandardToken as linkStandardToken } from "./vendor/StandardToken.sol";
 
-
-contract LinkToken is linkStandardToken, ERC677Token {
+contract TfiToken is linkStandardToken, ERC677Token {
 
   uint public constant totalSupply = 10**27;
-  string public constant name = "ChainLink Token";
+  string public constant name = "Tfi Token (test)";
   uint8 public constant decimals = 18;
-  string public constant symbol = "LINK";
+  string public constant symbol = "TFITST";
 
-  function LinkToken()
+  function TfiToken()
     public
   {
     balances[msg.sender] = totalSupply;

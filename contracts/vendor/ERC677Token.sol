@@ -1,9 +1,7 @@
 pragma solidity ^0.4.11;
 
-
-import "./interfaces/ERC677.sol";
-import "./interfaces/ERC677Receiver.sol";
-
+import "../interfaces/ERC677.sol";
+import "../interfaces/ERC677Receiver.sol";
 
 contract ERC677Token is ERC677 {
 

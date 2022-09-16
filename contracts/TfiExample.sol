@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 import "./TfiClient.sol";
-import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
+import "./vendor/ConfirmedOwnerUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract TfiExample is TfiClient, ConfirmedOwner {
+
+contract TfiExample is Initializable, TfiClient, ConfirmedOwnerUpgradeable {
     using Chainlink for Chainlink.Request;
     bytes public result;
     mapping(bytes32 => bytes) public results;
@@ -11,8 +13,9 @@ contract TfiExample is TfiClient, ConfirmedOwner {
     string public jobId;
     uint256 public fee;
 
-    constructor(address oracleId_, string memory jobId_,
-                uint256 fee_) ConfirmedOwner(msg.sender) {
+    function initialize(address oracleId_, string memory jobId_,
+                uint256 fee_) public initializer {
+        ConfirmedOwnerUpgradeable.initialize(msg.sender, address(0));
         // this call may fail in some chains
         setPublicChainlinkToken();
         // use this for BSC mainnet (chain: 56)

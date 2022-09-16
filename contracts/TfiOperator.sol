@@ -3,19 +3,23 @@ pragma solidity ^0.7.0;
 
 import "@chainlink/contracts/src/v0.7/AuthorizedReceiver.sol";
 import "@chainlink/contracts/src/v0.7/LinkTokenReceiver.sol";
-import "@chainlink/contracts/src/v0.7/ConfirmedOwner.sol";
+import "./vendor/ConfirmedOwnerUpgradeable.sol";
 import "@chainlink/contracts/src/v0.7/interfaces/LinkTokenInterface.sol";
 import "@chainlink/contracts/src/v0.7/interfaces/OperatorInterface.sol";
-import "@chainlink/contracts/src/v0.7/interfaces/OwnableInterface.sol";
+import "./interfaces/OwnableInterface.sol";
 import "@chainlink/contracts/src/v0.7/interfaces/WithdrawalInterface.sol";
 import "@chainlink/contracts/src/v0.7/vendor/Address.sol";
 import "@chainlink/contracts/src/v0.7/vendor/SafeMathChainlink.sol";
+
+/** Truflation changes
+/** use internal initializer as the contract uses 0.7.0 */
+/** linkToken no longer immutable */
 
 /**
  * @title The Chainlink Operator contract
  * @notice Node operators can deploy this contract to fulfill requests sent to them
  */
-contract TfiOperator is AuthorizedReceiver, ConfirmedOwner, LinkTokenReceiver, OperatorInterface, WithdrawalInterface {
+contract TfiOperator is AuthorizedReceiver, ConfirmedOwnerUpgradeable, LinkTokenReceiver, OperatorInterface, WithdrawalInterface {
   using Address for address;
   using SafeMathChainlink for uint256;
 
@@ -24,6 +28,7 @@ contract TfiOperator is AuthorizedReceiver, ConfirmedOwner, LinkTokenReceiver, O
     uint8 dataVersion;
   }
 
+  bool private initialized;
   uint256 public constant getExpiryTime = 5 minutes;
   uint256 private constant MAXIMUM_DATA_VERSION = 256;
   uint256 private constant MINIMUM_CONSUMER_GAS_LIMIT = 400000;
@@ -38,7 +43,7 @@ contract TfiOperator is AuthorizedReceiver, ConfirmedOwner, LinkTokenReceiver, O
   // operatorRequest is intended for version 2, enabling multi-word responses
   bytes4 private constant OPERATOR_REQUEST_SELECTOR = this.operatorRequest.selector;
 
-  LinkTokenInterface internal immutable linkToken;
+  LinkTokenInterface internal linkToken;
   mapping(bytes32 => Commitment) private s_commitments;
   mapping(address => bool) private s_owned;
   // Tokens sent for requests that have not been fulfilled yet
@@ -70,7 +75,8 @@ contract TfiOperator is AuthorizedReceiver, ConfirmedOwner, LinkTokenReceiver, O
    * @param link The address of the LINK token
    * @param owner The address of the owner
    */
-  constructor(address link, address owner) ConfirmedOwner(owner) {
+  function initialize(address link, address owner) public override {
+    ConfirmedOwnerUpgradeable.initialize(owner, address(0));
     linkToken = LinkTokenInterface(link); // external but already deployed and unalterable
   }
 

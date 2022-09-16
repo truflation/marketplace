@@ -1,0 +1,49 @@
+version: "3.3"
+
+services: 
+  postgres:
+    image: postgres:14-alpine
+    env_file: 
+      - config.env
+    volumes: 
+      - db-data:/var/lib/postgresql/data
+  api-adapter:
+    build: https://github.com/truflation/api-adapter.git#develop
+    restart: always
+    env_file:
+      - config.env
+  fee-server:
+    build: https://github.com/truflationdev/tfi-fee-server.git#develop
+    restart: always
+    env_file:
+      - config.env
+  chainlink:
+    build:
+       context: ./chainnode
+    env_file:
+      - config.env
+    command: node start -p /chainlink/.password -a /chainlink/.api
+    restart: on-failure
+    ports: 
+      - 6688:6688
+    links:
+      - postgres
+    depends_on: 
+      - postgres
+      - api-adapter
+      - fee-server
+    volumes:
+      - chainlink_data:/chainlink
+  frontend:
+     build:
+       context: https://github.com/truflation/sample-frontend.git#develop
+       args:
+         inflationAddress: "0x79053120810FdDf61ceFB781fc898D1cf52A44a0"
+         apiAddress: "0x35324ad3A36f3EB1816FB4C218Cc308Fc93476c6"
+     ports:
+       - 9011:9011
+     depends_on:
+       - chainlink
+volumes: 
+  db-data:
+  chainlink_data:

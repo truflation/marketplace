@@ -39,7 +39,6 @@ const config: HardhatUserConfig = {
       goerli: ETHERSCAN_API_KEY!
     }
   }
-
 };
 
 export default config;

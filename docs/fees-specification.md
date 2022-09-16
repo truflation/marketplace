@@ -19,17 +19,27 @@ feeTimeout: The fee can be refunded and the transaction will be
 
 The request will also send to the server;
 
-sender: This is the contract or wallet that initiated the request
+sender: This is the contract or wallet that sent the request - see msg.sender
+origin; This is the wallet that originated the request - see tx.origin
 
 1) The client sends to the oracle operator the fee to be transfered
-2) the adapter will based on the data provided return the data and the fee to
-   be returned.  If the fee is insufficient to conduct the transaction the
-   fee will be canceled.
-3) If the cost of the transaction is below the fee sent, the oracle will
-   refund the fee to the refund address
-4) If the number of blocks exceeds the timeout then the user can force
-   a refund of the total fees to refund address.  Once a refund has been
-   processed the system will ignore any responses from the adapter.
+2) The operator issues an event that is seen by the node server
+3) The node server will call a fee server that will return a json structure
+   containing:
+     - fee paid
+     - fee charged
+     - fee refunded
+     - address to refund
+     - bridge to call
+4) The node will return the transaction the oracle which will then transfer the
+   coins to the refund address
+
+Security issues
+---------------
+
+need to be careful that the refund address is not spoofed to force a
+refund.  There are possible timing issues that can be used to drain
+wallets.
 
 note that there is a security consideration in that the adapter data
 calculations are performed off chain, so the coins should be in the

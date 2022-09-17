@@ -1,11 +1,12 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
 import "./interfaces/ISubscriptionPayment.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "hardhat/console.sol";
 
-contract Authentication is Ownable {
-
+contract Authentication is Initializable, Ownable {
     mapping(address=>uint256) clientAddrList;//client address => expiry date
     mapping(address=>address) addressOfSubscriber;//Right now one subscriber can only have one client addresses for access
 
@@ -13,7 +14,7 @@ contract Authentication is Ownable {
     uint256 SECONDS_IN_A_DAY = 86400;
 
 
-    constructor() {
+    function initialize() initializer public {
     }
 
     function setSubscriptionPayment(address _subscriptionPayment) public onlyOwner {

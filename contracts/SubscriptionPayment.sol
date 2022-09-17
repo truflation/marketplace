@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
 import "./Authentication.sol";
@@ -7,8 +8,9 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 //import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 //import "@openzeppelin/contracts/utils/math/Math.sol";
 import "hardhat/console.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract SubscriptionPayment is Ownable {
+contract SubscriptionPayment is Initializable, Ownable {
     using SafeERC20 for IERC20;
 
     uint256 SECONDS_IN_A_DAY = 86400;
@@ -21,7 +23,8 @@ contract SubscriptionPayment is Ownable {
     uint256 public fee; //fee for 30DAY
 
 
-    constructor(address _authorize, address _currency, uint256 _fee) {
+    function initialize(address _authorize, address _currency, uint256 _fee)
+       public initializer{
         authorize = Authentication(_authorize);
         currency = IERC20(_currency);
         fee = _fee;

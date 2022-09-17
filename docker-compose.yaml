@@ -17,6 +17,11 @@ services:
     restart: always
     env_file:
       - config.env
+  fail-server:
+    build: https://github.com/truflationdev/tfi-fail-server.git#develop
+    restart: always
+    env_file:
+      - config.env
   chainlink:
     build:
        context: ./chainnode

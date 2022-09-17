@@ -8,12 +8,13 @@ import "@chainlink/contracts/src/v0.7/interfaces/LinkTokenInterface.sol";
 import "@chainlink/contracts/src/v0.7/interfaces/OperatorInterface.sol";
 import "./interfaces/OwnableInterface.sol";
 import "@chainlink/contracts/src/v0.7/interfaces/WithdrawalInterface.sol";
-import "@chainlink/contracts/src/v0.7/vendor/Address.sol";
+import "./vendor/AddressUpgradeable.sol";
 import "@chainlink/contracts/src/v0.7/vendor/SafeMathChainlink.sol";
 
 /** Truflation changes
 /** use internal initializer as the contract uses 0.7.0 */
 /** linkToken no longer immutable */
+/** use AddressUpgradeable to remove delegateCall */
 
 /**
  * @title The Chainlink Operator contract
@@ -22,7 +23,7 @@ import "@chainlink/contracts/src/v0.7/vendor/SafeMathChainlink.sol";
 contract TfiOperator is AuthorizedReceiver,
 ConfirmedOwnerUpgradeable, LinkTokenReceiver,
 OperatorInterface, WithdrawalInterface {
-  using Address for address;
+  using AddressUpgradeable for address;
   using SafeMathChainlink for uint256;
 
   struct Commitment {
@@ -49,7 +50,7 @@ OperatorInterface, WithdrawalInterface {
   mapping(bytes32 => Commitment) private s_commitments;
   mapping(address => bool) private s_owned;
   // Tokens sent for requests that have not been fulfilled yet
-  uint256 private s_tokensInEscrow = ONE_FOR_CONSISTENT_GAS_COST;
+  uint256 private s_tokensInEscrow;
 
   event OracleRequest(
     bytes32 indexed specId,
@@ -80,6 +81,7 @@ OperatorInterface, WithdrawalInterface {
   function initialize(address link, address owner) public override {
     ConfirmedOwnerUpgradeable.initialize(owner, address(0));
     linkToken = LinkTokenInterface(link); // external but already deployed and unalterable
+    s_tokensInEscrow = ONE_FOR_CONSISTENT_GAS_COST;
   }
 
   /**

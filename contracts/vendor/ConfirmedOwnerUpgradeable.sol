@@ -3,28 +3,25 @@ pragma solidity >= 0.7.0;
 
 import "../interfaces/OwnableInterface.sol";
 
-/** use internal initializer because to allow use with 0.7.0 solidity
- * change name s_owner -> owner, s_pendingOwner -> pendingOwner
- * make variables public
-*/
+/** use internal initializer because to allow use with 0.7.0 solidity */
 
 /**
  * @title The ConfirmedOwnerUpgradeable contract
  * @notice A contract with helpers for basic contract ownership.
  */
 contract ConfirmedOwnerUpgradeable is OwnableInterface {
-  bool public initialized;
-  address public owner;
-  address public pendingOwner;
+  bool private initialized;
+  address private myOwner;
+  address private pendingOwner;
 
   event OwnershipTransferRequested(address indexed from, address indexed to);
   event OwnershipTransferred(address indexed from, address indexed to);
 
   function initialize(address newOwner, address pendingOwner) public virtual {
-    require(!initialized, "Contract has already initialized");
+    require(!initialized, "Contract already initialized");
     require(newOwner != address(0), "Cannot set owner to zero");
     initialized = true;
-    owner = newOwner;
+    myOwner = newOwner;
     if (pendingOwner != address(0)) {
       _transferOwnership(pendingOwner);
     }
@@ -44,8 +41,8 @@ contract ConfirmedOwnerUpgradeable is OwnableInterface {
   function acceptOwnership() external override {
     require(msg.sender == pendingOwner, "Must be proposed owner");
 
-    address oldOwner = owner;
-    owner = msg.sender;
+    address oldOwner = myOwner;
+    myOwner = msg.sender;
     pendingOwner = address(0);
 
     emit OwnershipTransferred(oldOwner, msg.sender);
@@ -55,7 +52,7 @@ contract ConfirmedOwnerUpgradeable is OwnableInterface {
    * @notice Get the current owner
    */
   function owner() public view override returns (address) {
-    return owner;
+    return myOwner;
   }
 
   /**
@@ -66,14 +63,14 @@ contract ConfirmedOwnerUpgradeable is OwnableInterface {
 
     pendingOwner = to;
 
-    emit OwnershipTransferRequested(owner, to);
+    emit OwnershipTransferRequested(myOwner, to);
   }
 
   /**
    * @notice validate access
    */
   function _validateOwnership() internal view {
-    require(msg.sender == owner, "Only callable by owner");
+    require(msg.sender == myOwner, "Only callable by owner");
   }
 
   /**

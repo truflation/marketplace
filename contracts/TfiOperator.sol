@@ -2,7 +2,7 @@
 pragma solidity ^0.7.0;
 
 import "@chainlink/contracts/src/v0.7/AuthorizedReceiver.sol";
-import "@chainlink/contracts/src/v0.7/LinkTokenReceiver.sol";
+import "./vendor/LinkTokenReceiver.sol";
 import "./vendor/ConfirmedOwnerUpgradeable.sol";
 import "@chainlink/contracts/src/v0.7/interfaces/LinkTokenInterface.sol";
 import "@chainlink/contracts/src/v0.7/interfaces/OperatorInterface.sol";

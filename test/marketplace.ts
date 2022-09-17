@@ -11,8 +11,8 @@ describe("Token contract", function () {
     const tfiOperator =
       await upgrades.deployProxy(TfiOperator, [
 	tfiToken.address,
-	owner
-      ]);
+	owner.address
+      ], { unsafeAllow: ['delegatecall'] });
 
     await tfiOperator.deployed();
 

@@ -8,7 +8,8 @@ import "hardhat/console.sol";
 
 contract Authentication is Initializable, Ownable {
     mapping(address=>uint256) clientAddrList;//client address => expiry date
-    mapping(address=>address) addressOfSubscriber;//Right now one subscriber can only have one client addresses for access
+    mapping(address=>address) addressOfSubscriber;
+    //Right now one subscriber can only have one client addresses for access
 
     ISubscriptionPayment public subscriptionPayment;
     uint256 SECONDS_IN_A_DAY = 86400;
@@ -43,11 +44,15 @@ contract Authentication is Initializable, Ownable {
 
 
     function addClientAddressBySubscriber(address clientAddr) external {
-        require(subscriptionPayment.getSubscriptionExpiryDate(msg.sender) > block.timestamp, "this is not the request from current subscriber");
-        if (addressOfSubscriber[msg.sender]!=address(0)){//Update client address
+        require(subscriptionPayment.getSubscriptionExpiryDate(msg.sender)
+	> block.timestamp, "this is not the request from current subscriber");
+	//Update client address
+        if (addressOfSubscriber[msg.sender]!=address(0)){
             clientAddrList[addressOfSubscriber[msg.sender]] = 0;
             addressOfSubscriber[msg.sender]= clientAddr;
-            clientAddrList[clientAddr]=subscriptionPayment.getSubscriptionExpiryDate(msg.sender)+SECONDS_IN_A_DAY;//Add 1 DAY buffer for access renewal period
+            clientAddrList[clientAddr]=
+	    subscriptionPayment.getSubscriptionExpiryDate(msg.sender)+
+	    SECONDS_IN_A_DAY;//Add 1 DAY buffer for access renewal period
         } else {//First time to set client address
             addressOfSubscriber[msg.sender]= clientAddr;
             clientAddrList[clientAddr] = subscriptionPayment.getSubscriptionExpiryDate(msg.sender)+SECONDS_IN_A_DAY;

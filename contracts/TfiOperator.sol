@@ -19,7 +19,9 @@ import "@chainlink/contracts/src/v0.7/vendor/SafeMathChainlink.sol";
  * @title The Chainlink Operator contract
  * @notice Node operators can deploy this contract to fulfill requests sent to them
  */
-contract TfiOperator is AuthorizedReceiver, ConfirmedOwnerUpgradeable, LinkTokenReceiver, OperatorInterface, WithdrawalInterface {
+contract TfiOperator is AuthorizedReceiver,
+ConfirmedOwnerUpgradeable, LinkTokenReceiver,
+OperatorInterface, WithdrawalInterface {
   using Address for address;
   using SafeMathChainlink for uint256;
 
@@ -187,8 +189,12 @@ contract TfiOperator is AuthorizedReceiver, ConfirmedOwnerUpgradeable, LinkToken
     require(gasleft() >= MINIMUM_CONSUMER_GAS_LIMIT, "Must provide consumer enough gas");
     // All updates to the oracle's fulfillment should come before calling the
     // callback(addr+functionId) as it is untrusted.
+
+    // solhint-disable-next-line max-line-length
     // See: https://solidity.readthedocs.io/en/develop/security-considerations.html#use-the-checks-effects-interactions-pattern
-    (bool success, ) = callbackAddress.call(abi.encodeWithSelector(callbackFunctionId, requestId, data)); // solhint-disable-line avoid-low-level-calls
+    (bool success, ) = callbackAddress.call(
+    abi.encodeWithSelector(callbackFunctionId, requestId, data));
+    // solhint-disable-line avoid-low-level-calls
     return success;
   }
 
@@ -226,8 +232,12 @@ contract TfiOperator is AuthorizedReceiver, ConfirmedOwnerUpgradeable, LinkToken
     require(gasleft() >= MINIMUM_CONSUMER_GAS_LIMIT, "Must provide consumer enough gas");
     // All updates to the oracle's fulfillment should come before calling the
     // callback(addr+functionId) as it is untrusted.
+
+    // solhint-disable-next-line max-line-length
     // See: https://solidity.readthedocs.io/en/develop/security-considerations.html#use-the-checks-effects-interactions-pattern
-    (bool success, ) = callbackAddress.call(abi.encodePacked(callbackFunctionId, data)); // solhint-disable-line avoid-low-level-calls
+    (bool success, ) = callbackAddress.call(
+    abi.encodePacked(callbackFunctionId, data));
+    // solhint-disable-line avoid-low-level-calls
     return success;
   }
 

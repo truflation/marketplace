@@ -38,6 +38,7 @@ contract ERC677Token is ERC677 {
     returns (bool hasCode)
   {
     uint length;
+    // solhint-disable-next-line no-inline-assembly
     assembly { length := extcodesize(_addr) }
     return length > 0;
   }

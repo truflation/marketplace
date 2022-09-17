@@ -1,13 +1,15 @@
-# Sample Hardhat Project
+# TFI Marketplace
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+create .env files with
 
-Try running some of the following tasks:
+GOERLI_PRIVATE_KEY
+INFURA_API_KEY
+ETHERSCAN_API_KEY
 
-```shell
-npx hardhat help
-npx hardhat test
-GAS_REPORT=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+yarn install
+yarn lint
+yarn build
+
+Run
+
+docker-compose up

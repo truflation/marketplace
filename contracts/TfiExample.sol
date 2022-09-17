@@ -13,16 +13,13 @@ contract TfiExample is Initializable, TfiClient, ConfirmedOwnerUpgradeable {
     string public jobId;
     uint256 public fee;
 
-    function initialize(address oracleId_, string memory jobId_,
-                uint256 fee_) public initializer {
+    function initialize(
+      address oracleId_,
+      string memory jobId_,
+      uint256 fee_,
+      address token_) public initializer {
         ConfirmedOwnerUpgradeable.initialize(msg.sender, address(0));
-        // this call may fail in some chains
-        setPublicChainlinkToken();
-        // use this for BSC mainnet (chain: 56)
-        // setChainlinkToken(0x404460C6A5EdE2D891e8297795264fDe62ADBB75);
-        // use this for BSC testnet (chain; 97)
-        // setChainlinkToken(0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06);
-
+        setChainlinkToken(token_);
         oracleId = oracleId_;
         jobId = jobId_;
         fee = fee_;

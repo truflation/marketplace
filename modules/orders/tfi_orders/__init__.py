@@ -4,11 +4,18 @@ import logging
 import os
 import requests
 import sys
-import eth_abi
+from eth_abi import encode_abi
+import eth_utils
 import cbor2
 
 app = Flask(__name__)
 api_adapter = os.getenv('TRUFLATION_API_HOST', 'http://api-adapter:8081')
+func_sig = eth_utils.function_signature_to_4byte_selector(
+    'fulfillOracleRequest2(bytes32,uint256,address,bytes4,uint256,bytes)'
+)
+
+def fromHex(x):
+    return bytes.fromhex(x[2:])
 
 @app.route("/hello")
 def hello_world():
@@ -18,18 +25,45 @@ def hello_world():
 def process_order():
     content = request.json
     app.logger.debug(content)
-    logData = content['meta']['oracleRequest']['data']
+    oracleRequest = content['meta']['oracleRequest']
+    logData = oracleRequest['data']
+    requestId = oracleRequest['requestId']
     b = bytes.fromhex("bf" + logData[2:] + "ff")
     o = cbor2.decoder.loads(b)
     app.logger.debug(o)
     r = requests.post(api_adapter, json=o)
-    return jsonify(r.json())
+    encode_large = encode_abi(
+        ['bytes32', 'bytes'],
+        [fromHex(requestId),
+         r.content]
+    )
+    encode_tx = encode_abi(
+        ['bytes4',
+         'bytes32',
+         'uint256',
+         'address',
+         'bytes4',
+         'uint256',
+         'bytes'],
+        [
+            func_sig,
+            fromHex(requestId),
+            int(oracleRequest['payment']),
+            fromHex(oracleRequest['callbackAddr']),
+            fromHex(oracleRequest['callbackFunctionId']),
+            int(oracleRequest['cancelExpiration']),
+            encode_large
+        ]
+    )
+    res = "0x" + encode_tx.hex()
+    app.logger.debug(res)
+    return res
 
 @app.route("/api-adapter", methods=['POST'])
 def process_api_adapter():
     content = request.json
     r = requests.post(api_adapter, json=content)
-    return jsonify(r.json())
+    return r.content
 
 if os.getenv('TFI_ORDERS_LOCAL_LOGLEVEL') is None:
     gunicorn_logger = logging.getLogger('gunicorn.error')

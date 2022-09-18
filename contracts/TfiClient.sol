@@ -13,7 +13,10 @@ import {ENSResolver as ENSResolver_Chainlink} from "@chainlink/contracts/src/v0.
  * @title The TfiClient contract
  * @notice Contract writers can inherit this contract in order to create requests for the
  * Chainlink network
+ *
+ * Must call initializeState in upgradeable contracts
  */
+
 abstract contract TfiClient {
   using Chainlink for Chainlink.Request;
 
@@ -30,12 +33,16 @@ abstract contract TfiClient {
   bytes32 private s_ensNode;
   LinkTokenInterface private s_link;
   OperatorInterface private s_oracle;
-  uint256 private s_requestCount = 1;
+  uint256 private s_requestCount;
   mapping(bytes32 => address) private s_pendingRequests;
 
   event ChainlinkRequested(bytes32 indexed id);
   event ChainlinkFulfilled(bytes32 indexed id);
   event ChainlinkCancelled(bytes32 indexed id);
+
+  function initializeState() public {
+    s_requestCount = 1;
+  }
 
   /**
    * @notice Creates a request that can hold additional parameters

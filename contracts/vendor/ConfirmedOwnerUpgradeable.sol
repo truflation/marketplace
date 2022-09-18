@@ -17,7 +17,7 @@ contract ConfirmedOwnerUpgradeable is OwnableInterface {
   event OwnershipTransferRequested(address indexed from, address indexed to);
   event OwnershipTransferred(address indexed from, address indexed to);
 
-  function initialize(address newOwner_, address pendingOwner_) public virtual {
+  function initializeState(address newOwner_, address pendingOwner_) public {
     require(!initialized, "Contract already initialized");
     require(newOwner_ != address(0), "Cannot set owner to zero");
     initialized = true;

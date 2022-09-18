@@ -78,8 +78,8 @@ OperatorInterface, WithdrawalInterface {
    * @param link The address of the LINK token
    * @param owner The address of the owner
    */
-  function initialize(address link, address owner) public override {
-    ConfirmedOwnerUpgradeable.initialize(owner, address(0));
+  function initialize(address link, address owner) public {
+    ConfirmedOwnerUpgradeable.initializeState(owner, address(0));
     linkToken = LinkTokenInterface(link); // external but already deployed and unalterable
     s_tokensInEscrow = ONE_FOR_CONSISTENT_GAS_COST;
   }

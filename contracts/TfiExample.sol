@@ -18,7 +18,8 @@ contract TfiExample is Initializable, TfiClient, ConfirmedOwnerUpgradeable {
       string memory jobId_,
       uint256 fee_,
       address token_) public initializer {
-        ConfirmedOwnerUpgradeable.initialize(msg.sender, address(0));
+        ConfirmedOwnerUpgradeable.initializeState(msg.sender, address(0));
+        TfiClient.initializeState();
         setChainlinkToken(token_);
         oracleId = oracleId_;
         jobId = jobId_;

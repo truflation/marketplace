@@ -14,7 +14,12 @@
     "@types/chai": "^4.3.3",
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.7.6",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
     "chai": "^4.3.6",
+    "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-promise": "^6.0.0",
     "ethers": "^5.6.9",
     "hardhat": "^2.10.2",
     "hardhat-gas-reporter": "^1.0.8",
@@ -22,19 +27,20 @@
     "solidity-coverage": "^0.7.21",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.0",
-    "typescript": "^4.7.4"
+    "typescript": "*"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.4.2",
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
-    "dotenv": "^16.0.2"
+    "dotenv": "^16.0.2",
+    "eslint": "^8.0.1"
   },
   "scripts": {
     "build": "hardhat compile",
     "up": "docker-compose up",
     "down": "docker-compose down",
-    "lint": "solhint contracts/**/*.sol",
+    "lint": "solhint contracts/**/*.sol ; eslint scripts/**/*.ts",
     "test": "hardhat test"
   }
 }

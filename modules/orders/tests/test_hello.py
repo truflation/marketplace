@@ -1,5 +1,5 @@
 import pytest
-from orders import create_app
+from tfi_orders import create_app
 
 @pytest.fixture()
 def app():

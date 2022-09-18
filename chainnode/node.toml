@@ -2,9 +2,9 @@ type = "directrequest"
 schemaVersion = 1
 name = ""
 maxTaskDuration = "0s"
-contractAddress = "0x0Ad44D64eD0B7acE8C1C0611E72f12dF1Fe016fa"
+contractAddress = "0x7C2e0E489493e487903941F399A0255C4c170C91"
+externalJobID = "cef7d7ad-405e-45eb-91e2-da0f415c920e"
 minIncomingConfirmations = 0
-minContractPaymentLinkJuels = "10000000000000000"
 observationSource = """
 // First, we parse the request log and the CBOR payload inside of it
 decode_log  [type="ethabidecodelog"
@@ -28,7 +28,7 @@ encode_tx       [type="ethabiencode"
                  data="{\\"requestId\\": $(decode_log.requestId), \\"payment\\": $(decode_log.payment), \\"callbackAddress\\": $(decode_log.callbackAddr), \\"callbackFunctionId\\": $(decode_log.callbackFunctionId), \\"expiration\\": $(decode_log.cancelExpiration), \\"data\\": $(encode_large)}"
                  ]
 
-submit_tx  [type="ethtx" to="0x0Ad44D64eD0B7acE8C1C0611E72f12dF1Fe016fa" data="$(encode_tx)"]
+submit_tx  [type="ethtx" to="0x7C2e0E489493e487903941F399A0255C4c170C91" data="$(encode_tx)"]
 
 decode_log -> decode_cbor -> fetch -> encode_large -> encode_tx -> submit_tx
 """

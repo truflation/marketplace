@@ -1,0 +1,15 @@
+type = "directrequest"
+schemaVersion = 1
+name = ""
+externalJobID = "5db955da-bd33-4024-8614-06858e1fbbe2"
+maxTaskDuration = "0s"
+contractAddress = "0x7C2e0E489493e487903941F399A0255C4c170C91"
+minContractPaymentLinkJuels = "0"
+observationSource = """
+
+// Then, we use the decoded request parameters to make an HTTP fetch
+fetch [type="bridge" name="orders" requestData="$(jobRun)"]
+
+
+fetch
+"""

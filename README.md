@@ -7,8 +7,10 @@ INFURA_API_KEY
 ETHERSCAN_API_KEY
 
 yarn install
-yarn lint
+yarn test
 yarn build
+
+change password in chainnode
 
 Run
 

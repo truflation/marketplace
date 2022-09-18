@@ -12,8 +12,11 @@ services:
     restart: always
     env_file:
       - config.env
-  fee-server:
-    build: https://github.com/truflationdev/tfi-fee-server.git#develop
+  orders:
+    build:
+       context: ./modules/orders
+    ports:
+      - 8000:8000
     restart: always
     env_file:
       - config.env
@@ -36,7 +39,7 @@ services:
     depends_on: 
       - postgres
       - api-adapter
-      - fee-server
+      - orders
     volumes:
       - chainlink_data:/chainlink
   frontend:

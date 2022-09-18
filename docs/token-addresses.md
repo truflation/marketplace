@@ -13,3 +13,9 @@ jobid - cef7d7ad405e45eb91e2da0f415c920e
 TfiToken chain
 
 TfiToken - 0x3417dd955d4408638870723b9ad8aae81953b478
+chainlink sender - 0xd00861530c5D35Aa661D950F4c873CDF261D1cc6
+
+Operator(baseline) - 0x7C2e0E489493e487903941F399A0255C4c170C91
+jobid(baseline) - cef7d7ad-405e-45eb-91e2-da0f415c920e
+Client(baseline) - 0xcb57ED564dEe9BDdF830353C8C3a09A60cBB7278
+

@@ -12,6 +12,11 @@ yarn test
 
 change password in chainnode
 
+create bridges
+
+test -> http://api-adapter:8080/
+main
+
 Run
 
 docker-compose up

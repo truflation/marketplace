@@ -38,15 +38,13 @@ def process_order():
          r.content]
     )
     encode_tx = encode_abi(
-        ['bytes4',
-         'bytes32',
+        ['bytes32',
          'uint256',
          'address',
          'bytes4',
          'uint256',
          'bytes'],
         [
-            func_sig,
             fromHex(requestId),
             int(oracleRequest['payment']),
             fromHex(oracleRequest['callbackAddr']),
@@ -55,7 +53,7 @@ def process_order():
             encode_large
         ]
     )
-    res = "0x" + encode_tx.hex()
+    res = "0x" + func_sig.hex() + encode_tx.hex()
     app.logger.debug(res)
     return res
 

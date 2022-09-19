@@ -1,3 +1,5 @@
+// see token addresses for the meaning of these addresses
+
 export const address = {
   token_tfi: '0x3417dd955d4408638870723B9Ad8Aae81953B478',
   owner: '0x968E88df55AcAeC002e3d7c2393F9742e40d94b9',
@@ -5,6 +7,8 @@ export const address = {
   jobid_baseline: 'cef7d7ad405e45eb91e2da0f415c920e',
   client_baseline: '0xcb57ED564dEe9BDdF830353C8C3a09A60cBB7278',
   jobid_new_pipeline: '5db955dabd334024861406858e1fbbe2',
+  operator_tfi: '0x394fdd656749CCCcc21280BBDF6CC209745f4d0D',
+  jobid_tfi: 'c1fe44c9e9d5407f9a9f8f72d0d901f6',
   token: ''
 }
 

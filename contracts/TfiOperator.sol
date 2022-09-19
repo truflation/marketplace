@@ -576,6 +576,22 @@ OperatorInterface, WithdrawalInterface {
     _;
   }
 
+  // TFI addition
+  modifier validateMultiWordResponseId2(bytes32 requestId, bytes calldata data) {
+    require(data.length >= 32, "Response must be > 32 bytes");
+    bytes32 firstDataWord;
+    assembly {
+      // extract the first word from data
+      // functionSelector = 4
+      // wordLength = 32
+      // dataArgumentOffset = 8 * wordLength
+      // funcSelector + dataArgumentOffset == 0x104
+      firstDataWord := calldataload(0x104)
+    }
+    require(requestId == firstDataWord, "First word must be requestId");
+    _;
+  }
+
   /**
    * @dev Reverts if amount requested is greater than withdrawable balance
    * @param amount The given amount to compare to `s_withdrawableTokens`
@@ -612,28 +628,62 @@ OperatorInterface, WithdrawalInterface {
   }
 
   //TFI -----
-  //
-  // this function must be called before the contract has been executed
-  // this function will always return if refund is zero to not cause an exception
-  // the in node server.
+
   function proposeRefund(
+    bytes32 requestId,
+    uint256 payment,
+    uint256 refund
+  ) private {
+    if (refund == 0) {
+      return;
+    }
+    require(refund <= payment, 'refund too large');
+    s_refunds[requestId] = refund;
+  }
+
+  // TFI
+  /**
+   * @notice Called by the Chainlink node to fulfill requests with multi-word support
+   * @dev Given params must hash back to the commitment stored from `oracleRequest`.
+   * Will call the callback address' callback function without bubbling up error
+   * checking in a `require` so that the node can get paid.
+   * @param requestId The fulfillment request ID that must match the requester's
+   * @param payment The payment amount that will be released for the oracle (specified in wei)
+   * @param callbackAddress The callback address to call for fulfillment
+   * @param callbackFunctionId The callback function ID to use for fulfillment
+   * @param expiration The expiration that the node should respond by before the requester can cancel
+   * @param data The data to return to the consuming contract
+   * @return Status if the external call was successful
+   */
+  function fulfillOracleRequest2AndRefund(
     bytes32 requestId,
     uint256 payment,
     address callbackAddress,
     bytes4 callbackFunctionId,
     uint256 expiration,
-    uint256 dataVersion,
+    bytes calldata data,
     uint256 refund
-  ) external validateAuthorizedSender {
-    if (refund == 0) {
-      return;
-    }
-    bytes31 paramsHash = _buildParamsHash(payment, callbackAddress, callbackFunctionId, expiration);
-    require(s_commitments[requestId].paramsHash == paramsHash, "Params do not match request ID");
-    require(s_commitments[requestId].dataVersion <= _safeCastToUint8(dataVersion), "Data versions must match");
+  )
+    external
+    validateAuthorizedSender
+    validateRequestId(requestId)
+    validateCallbackAddress(callbackAddress)
+    validateMultiWordResponseId2(requestId, data)
+    returns (bool)
+  {
+    proposeRefund(requestId, payment, refund);
+    _verifyOracleRequestAndProcessPayment(requestId, payment, callbackAddress, callbackFunctionId, expiration, 2);
+    emit OracleResponse(requestId);
+    require(gasleft() >= MINIMUM_CONSUMER_GAS_LIMIT, "Must provide consumer enough gas");
+    // All updates to the oracle's fulfillment should come before calling the
+    // callback(addr+functionId) as it is untrusted.
 
-    require(refund <= payment, 'refund too large');
-    s_refunds[requestId] = refund;
+    // solhint-disable-next-line max-line-length
+    // See: https://solidity.readthedocs.io/en/develop/security-considerations.html#use-the-checks-effects-interactions-pattern
+    (bool success, ) = callbackAddress.call(
+    abi.encodePacked(callbackFunctionId, data));
+    // solhint-disable-line avoid-low-level-calls
+    return success;
   }
 
   function processRefund(

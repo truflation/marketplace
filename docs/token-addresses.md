@@ -32,3 +32,6 @@ Jobid(tfi) - c1fe44c9e9d5407f9a9f8f72d0d901f6
 
 //another contract
 Example(tfi) - 0x8C8Ac194aFDA4C676d0CF2835911EaeD792335F5
+
+// uses refund api on tfi oracle
+Jobid 2868d2f92fdc4c9abd6437eb016ab772

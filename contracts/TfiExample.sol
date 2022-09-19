@@ -18,12 +18,16 @@ contract TfiExample is Initializable, TfiClient, ConfirmedOwnerUpgradeable {
       string memory jobId_,
       uint256 fee_,
       address token_) public initializer {
-        ConfirmedOwnerUpgradeable.initializeState(msg.sender, address(0));
-        TfiClient.initializeState();
+        initializeParents();
         setChainlinkToken(token_);
         oracleId = oracleId_;
         jobId = jobId_;
         fee = fee_;
+    }
+
+    function initializeParents() private {
+        ConfirmedOwnerUpgradeable.initializeState(msg.sender, address(0));
+        TfiClient.initializeState();
     }
 
     function doRequest(
@@ -76,5 +80,9 @@ contract TfiExample is Initializable, TfiClient, ConfirmedOwnerUpgradeable {
     function withdrawLink() public onlyOwner {
         LinkTokenInterface link = LinkTokenInterface(chainlinkTokenAddress());
             require(link.transfer(msg.sender, link.balanceOf(address(this))), "Unable to transfer");
-  }
+    }
+
+    function version() public pure returns (string memory) {
+        return "TFI/0.1";
+    }
 }

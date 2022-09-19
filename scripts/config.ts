@@ -9,6 +9,7 @@ export const address = {
   jobid_new_pipeline: '5db955dabd334024861406858e1fbbe2',
   operator_tfi: '0x394fdd656749CCCcc21280BBDF6CC209745f4d0D',
   jobid_tfi: 'c1fe44c9e9d5407f9a9f8f72d0d901f6',
+  example_tfi: '0xe33D680ddba7e36c2055d923FEc4fb88F6c9151D',
   token: ''
 }
 

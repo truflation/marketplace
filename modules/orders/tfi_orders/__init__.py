@@ -7,6 +7,7 @@ import sys
 from eth_abi import encode_abi
 import eth_utils
 import cbor2
+from tfi_orders.fees import get_fee
 
 app = Flask(__name__)
 api_adapter = os.getenv('TRUFLATION_API_HOST', 'http://api-adapter:8081')
@@ -29,6 +30,60 @@ def fromHex(x):
 @app.route("/hello")
 def hello_world():
     return "<h2>Hello, World!</h2>"
+
+@app.route("/api1", methods=['POST'])
+def api1():
+    content = request.json
+    app.logger.debug(content)
+    oracleRequest = content['meta']['oracleRequest']
+    logData = oracleRequest['data']
+    requestId = oracleRequest['requestId']
+    payment = int(oracleRequest['payment'])
+    b = bytes.fromhex("bf" + logData[2:] + "ff")
+    o = cbor2.decoder.loads(b)
+    app.logger.debug(o)
+    encode_tx = None
+    fee = get_fee(o)
+
+    if payment < fee:
+        encode_tx = encode_function(
+            'rejectOracleRequest(bytes32,uint256,address,bytes4,uint256,address)', [
+                fromHex(requestId),
+                int(oracleRequest['payment']),
+                fromHex(oracleRequest['callbackAddr']),
+                fromHex(oracleRequest['callbackFunctionId']),
+                int(oracleRequest['cancelExpiration']),
+                fromHex(oracleRequest['callbackAddr'])
+            ])
+    else:
+        r = requests.post(api_adapter, json=o)
+        encode_large = encode_abi(
+            ['bytes32', 'bytes'],
+            [fromHex(requestId),
+             r.content]
+        )
+        encode_tx = encode_function(
+            'fulfillOracleRequest2AndRefund(bytes32,uint256,address,bytes4,uint256,bytes,uint256)', [
+                fromHex(requestId),
+                int(oracleRequest['payment']),
+                fromHex(oracleRequest['callbackAddr']),
+                fromHex(oracleRequest['callbackFunctionId']),
+                int(oracleRequest['cancelExpiration']),
+                encode_large,
+                payment - fee
+            ])
+
+    process_refund = encode_function(
+        'processRefund(bytes32,address)',
+        [
+            fromHex(requestId),
+            fromHex(oracleRequest['callbackAddr'])
+        ])
+    return jsonify({
+        "tx0": encode_tx,
+        "tx1": process_refund
+    })
+
 
 @app.route("/api0", methods=['POST'])
 def api0():
@@ -57,94 +112,6 @@ def api0():
         ])
     app.logger.debug(encode_tx)
     return encode_tx
-
-@app.route("/api1-old", methods=['POST'])
-def api1_old():
-    content = request.json
-    app.logger.debug(content)
-    oracleRequest = content['meta']['oracleRequest']
-    logData = oracleRequest['data']
-    requestId = oracleRequest['requestId']
-    b = bytes.fromhex("bf" + logData[2:] + "ff")
-    o = cbor2.decoder.loads(b)
-    app.logger.debug(o)
-    r = requests.post(api_adapter, json=o)
-    encode_large = encode_abi(
-        ['bytes32', 'bytes'],
-        [fromHex(requestId),
-         r.content]
-    )
-    propose_refund = encode_function(
-        'proposeRefund(bytes32,uint256,address,bytes4,uint256,uint256,uint256)',
-        [
-            fromHex(requestId),
-            int(oracleRequest['payment']),
-            fromHex(oracleRequest['callbackAddr']),
-            fromHex(oracleRequest['callbackFunctionId']),
-            int(oracleRequest['cancelExpiration']),
-            int(oracleRequest['dataVersion']),
-            0
-        ])
-
-    encode_tx = encode_function(
-        'fulfillOracleRequest2(bytes32,uint256,address,bytes4,uint256,bytes)', [
-            fromHex(requestId),
-            int(oracleRequest['payment']),
-            fromHex(oracleRequest['callbackAddr']),
-            fromHex(oracleRequest['callbackFunctionId']),
-            int(oracleRequest['cancelExpiration']),
-            encode_large
-        ])
-
-    process_refund = encode_function(
-        'processRefund(bytes32,address)',
-        [
-            fromHex(requestId),
-            fromHex(oracleRequest['callbackAddr'])
-        ])
-    return jsonify({
-        "tx0": propose_refund,
-        "tx1": encode_tx,
-        "tx2": process_refund
-    })
-
-@app.route("/api1", methods=['POST'])
-def api1():
-    content = request.json
-    app.logger.debug(content)
-    oracleRequest = content['meta']['oracleRequest']
-    logData = oracleRequest['data']
-    requestId = oracleRequest['requestId']
-    b = bytes.fromhex("bf" + logData[2:] + "ff")
-    o = cbor2.decoder.loads(b)
-    app.logger.debug(o)
-    r = requests.post(api_adapter, json=o)
-    encode_large = encode_abi(
-        ['bytes32', 'bytes'],
-        [fromHex(requestId),
-         r.content]
-    )
-    encode_tx = encode_function(
-        'fulfillOracleRequest2AndRefund(bytes32,uint256,address,bytes4,uint256,bytes,uint256)', [
-            fromHex(requestId),
-            int(oracleRequest['payment']),
-            fromHex(oracleRequest['callbackAddr']),
-            fromHex(oracleRequest['callbackFunctionId']),
-            int(oracleRequest['cancelExpiration']),
-            encode_large,
-            0
-        ])
-
-    process_refund = encode_function(
-        'processRefund(bytes32,address)',
-        [
-            fromHex(requestId),
-            fromHex(oracleRequest['callbackAddr'])
-        ])
-    return jsonify({
-        "tx0": encode_tx,
-        "tx1": process_refund
-    })
 
 @app.route("/api-adapter", methods=['POST'])
 def process_api_adapter():

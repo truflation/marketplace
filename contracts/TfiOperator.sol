@@ -714,15 +714,17 @@ OperatorInterface, WithdrawalInterface {
   function rejectOracleRequest(
     bytes32 requestId,
     uint256 payment,
+    address callbackAddr,
     bytes4 callbackFunc,
-    uint256 expiration
+    uint256 expiration,
+    address refundAddress
   ) external validateAuthorizedSender {
-    bytes31 paramsHash = _buildParamsHash(payment, msg.sender, callbackFunc, expiration);
+    bytes31 paramsHash = _buildParamsHash(payment, callbackAddr, callbackFunc, expiration);
     require(s_commitments[requestId].paramsHash == paramsHash, "Params do not match request ID");
     delete s_refunds[requestId];
     delete s_commitments[requestId];
     emit CancelOracleRequest(requestId);
-    linkToken.transfer(msg.sender, payment);
+    linkToken.transfer(refundAddress, payment);
   }
   // ------
 }

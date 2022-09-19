@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
 
+// TFI: make contract upgradeable
 import "@chainlink/contracts/src/v0.7/AuthorizedReceiver.sol";
 import "./vendor/LinkTokenReceiver.sol";
 import "./vendor/ConfirmedOwnerUpgradeable.sol";
@@ -12,9 +13,11 @@ import "./vendor/AddressUpgradeable.sol";
 import "@chainlink/contracts/src/v0.7/vendor/SafeMathChainlink.sol";
 
 /** Truflation changes
+/** search for TFI for the places where there are changes */
 /** use internal initializer as the contract uses 0.7.0 */
 /** linkToken no longer immutable */
 /** use AddressUpgradeable to remove delegateCall */
+/** add refundable mechanism */
 
 /**
  * @title The Chainlink Operator contract
@@ -51,6 +54,8 @@ OperatorInterface, WithdrawalInterface {
   mapping(address => bool) private s_owned;
   // Tokens sent for requests that have not been fulfilled yet
   uint256 private s_tokensInEscrow;
+  // TFI
+  mapping(bytes32 => uint256) s_refunds;
 
   event OracleRequest(
     bytes32 indexed specId,
@@ -396,6 +401,8 @@ OperatorInterface, WithdrawalInterface {
     // solhint-disable-next-line not-rely-on-time
     require(expiration <= block.timestamp, "Request is not expired");
 
+    // TFI
+    delete s_refunds[requestId];
     delete s_commitments[requestId];
     emit CancelOracleRequest(requestId);
 
@@ -425,6 +432,8 @@ OperatorInterface, WithdrawalInterface {
     require(expiration <= block.timestamp, "Request is not expired");
 
     delete s_commitments[requestId];
+    // TFI
+    delete s_refunds[requestId];
     emit CancelOracleRequest(requestId);
 
     linkToken.transfer(msg.sender, payment);
@@ -496,7 +505,8 @@ OperatorInterface, WithdrawalInterface {
     bytes31 paramsHash = _buildParamsHash(payment, callbackAddress, callbackFunctionId, expiration);
     require(s_commitments[requestId].paramsHash == paramsHash, "Params do not match request ID");
     require(s_commitments[requestId].dataVersion <= _safeCastToUint8(dataVersion), "Data versions must match");
-    s_tokensInEscrow = s_tokensInEscrow.sub(payment);
+    // TFI
+    s_tokensInEscrow = s_tokensInEscrow.sub(payment).add(s_refunds[requestId]);
     delete s_commitments[requestId];
   }
 
@@ -600,4 +610,69 @@ OperatorInterface, WithdrawalInterface {
     require(!s_owned[callbackAddress], "Cannot call owned contract");
     _;
   }
+
+  //TFI -----
+  //
+  // this function must be called before the contract has been executed
+  // this function will always return if refund is zero to not cause an exception
+  // the in node server.
+  function proposeRefund(
+    bytes32 requestId,
+    uint256 payment,
+    address callbackAddress,
+    bytes4 callbackFunctionId,
+    uint256 expiration,
+    uint256 dataVersion,
+    uint256 refund
+  ) external validateAuthorizedSender {
+    if (refund == 0) {
+      return;
+    }
+    bytes31 paramsHash = _buildParamsHash(payment, callbackAddress, callbackFunctionId, expiration);
+    require(s_commitments[requestId].paramsHash == paramsHash, "Params do not match request ID");
+    require(s_commitments[requestId].dataVersion <= _safeCastToUint8(dataVersion), "Data versions must match");
+
+    require(refund <= payment, 'refund too large');
+    s_refunds[requestId] = refund;
+  }
+
+  function processRefund(
+    bytes32 requestId,
+    address recipient
+  ) external
+  validateAuthorizedSender
+  validateNotToLINK(recipient) {
+    uint256 refund = s_refunds[requestId];
+    if (refund == 0) {
+      return;
+    }
+    assert(linkToken.transfer(recipient, refund));
+    s_tokensInEscrow = s_tokensInEscrow.sub(refund);
+    delete s_refunds[requestId];
+  }
+
+  /**
+   * @notice Allows recipient to cancel requests sent to this oracle contract.
+   * Will transfer the LINK sent for the request back to the recipient address.
+   * @dev Given params must hash to a commitment stored on the contract in order
+   * for the request to be valid. Emits CancelOracleRequest event.
+   * @param requestId The request ID
+   * @param payment The amount of payment given (specified in wei)
+   * @param callbackFunc The requester's specified callback function selector
+   * @param expiration The time of the expiration for the request
+   */
+  function rejectOracleRequest(
+    bytes32 requestId,
+    uint256 payment,
+    bytes4 callbackFunc,
+    uint256 expiration
+  ) external validateAuthorizedSender {
+    bytes31 paramsHash = _buildParamsHash(payment, msg.sender, callbackFunc, expiration);
+    require(s_commitments[requestId].paramsHash == paramsHash, "Params do not match request ID");
+    delete s_refunds[requestId];
+    delete s_commitments[requestId];
+    emit CancelOracleRequest(requestId);
+    linkToken.transfer(msg.sender, payment);
+  }
+  // ------
 }

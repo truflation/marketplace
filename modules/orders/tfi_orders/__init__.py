@@ -43,9 +43,11 @@ def api1():
     o = cbor2.decoder.loads(b)
     app.logger.debug(o)
     encode_tx = None
+    encode_large = None
     fee = get_fee(o)
-
+    # should reject request but some networks require polling
     if payment < fee:
+        """
         encode_tx = encode_function(
             'rejectOracleRequest(bytes32,uint256,address,bytes4,uint256,address)', [
                 fromHex(requestId),
@@ -54,6 +56,22 @@ def api1():
                 fromHex(oracleRequest['callbackFunctionId']),
                 int(oracleRequest['cancelExpiration']),
                 fromHex(oracleRequest['callbackAddr'])
+            ])
+        """
+        encode_large = encode_abi(
+            ['bytes32', 'bytes'],
+            [fromHex(requestId),
+             b'{"error": "fee too small"}']
+        )
+        encode_tx = encode_function(
+            'fulfillOracleRequest2AndRefund(bytes32,uint256,address,bytes4,uint256,bytes,uint256)', [
+                fromHex(requestId),
+                int(oracleRequest['payment']),
+                fromHex(oracleRequest['callbackAddr']),
+                fromHex(oracleRequest['callbackFunctionId']),
+                int(oracleRequest['cancelExpiration']),
+                encode_large,
+                payment
             ])
     else:
         r = requests.post(api_adapter, json=o)
@@ -72,7 +90,6 @@ def api1():
                 encode_large,
                 payment - fee
             ])
-
     process_refund = encode_function(
         'processRefund(bytes32,address)',
         [

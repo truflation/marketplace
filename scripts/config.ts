@@ -8,9 +8,8 @@ export const address = {
   client_baseline: '0xcb57ED564dEe9BDdF830353C8C3a09A60cBB7278',
   jobid_new_pipeline: '5db955dabd334024861406858e1fbbe2',
   operator_tfi: '0x394fdd656749CCCcc21280BBDF6CC209745f4d0D',
-  jobid_tfi: 'c1fe44c9e9d5407f9a9f8f72d0d901f6',
-  example_tfi: '0xe33D680ddba7e36c2055d923FEc4fb88F6c9151D',
+  jobid_tfi: '2868d2f92fdc4c9abd6437eb016ab772',
+  example_tfi: '0xF4A440F09B52dCFCe0303BD81f457761cB008Bb4'
   token: ''
 }
-
 address.token = address.token_tfi

@@ -26,15 +26,19 @@ Example(new_pipeline) - 0x2aBeB7AFC86612A6D9A1727aBc677270adc2422a
 jobid(new_newpipe) - 5db955dabd334024861406858e1fbbe2
 
 // tfi uses the tfi operator
-Example(tfi) - 0xe33D680ddba7e36c2055d923FEc4fb88F6c9151D
 Operator(tfi) - 0x394fdd656749CCCcc21280BBDF6CC209745f4d0D
-Jobid(tfi) - c1fe44c9e9d5407f9a9f8f72d0d901f6
-
-//another contract
-Example(tfi) - 0x8C8Ac194aFDA4C676d0CF2835911EaeD792335F5
-
-// uses refund api on tfi oracle
-Jobid 2868d2f92fdc4c9abd6437eb016ab772
+Jobid(tfi) - 2868d2f92fdc4c9abd6437eb016ab772
+Example(tfi) - 0xF4A440F09B52dCFCe0303BD81f457761cB008Bb4
 
 // subscription tests
 SubscriptionTest - 0x9a10d416153d4586Bb93473288D4Ebe7A8197B74
+
+// -----------  old versions
+// uses openzepplien tags
+Example(tfi) - 0x4f2C22aBAF0694841f02FD73eb64D14969EF169E
+Example(tfi) - 0x8C8Ac194aFDA4C676d0CF2835911EaeD792335F5
+Example(tfi) - 0xe33D680ddba7e36c2055d923FEc4fb88F6c9151D
+
+//old version - does not do refunds
+
+Jobid(tfi) - c1fe44c9e9d5407f9a9f8f72d0d901f6

@@ -29,9 +29,7 @@ def from_hex(x):
 def hello_world():
     return "<h2>Hello, World!</h2>"
 
-@app.route("/api1", methods=['POST'])
-def api1():
-    content = request.json
+def process_request_api1(content, handler):
     app.logger.debug(content)
     oracle_request = content['meta']['oracleRequest']
     log_data = oracle_request['data']
@@ -72,11 +70,11 @@ def api1():
                 payment
             ])
     else:
-        r = requests.post(api_adapter, json=obj)
+        content = handler(obj)
         encode_large = encode_abi(
             ['bytes32', 'bytes'],
             [from_hex(request_id),
-             r.content]
+             content]
         )
         encode_tx = encode_function(
             'fulfillOracleRequest2AndRefund(bytes32,uint256,address,bytes4,uint256,bytes,uint256)', [
@@ -98,7 +96,20 @@ def api1():
         "tx0": encode_tx,
         "tx1": process_refund
     })
+    
 
+@app.route("/api1", methods=['POST'])
+def api1():
+    def handler(obj):
+        r = requests.post(api_adapter, json=obj)
+        return r.content
+    return process_request_api1(request.json, handler)
+
+@app.route("/api1-test", methods=['POST'])
+def api1_test():
+    def handler(obj):
+        return obj.get('data', '')
+    return process_request_api1(request.json, handler)
 
 @app.route("/api0", methods=['POST'])
 def api0():

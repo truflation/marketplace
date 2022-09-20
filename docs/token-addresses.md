@@ -35,3 +35,6 @@ Example(tfi) - 0x8C8Ac194aFDA4C676d0CF2835911EaeD792335F5
 
 // uses refund api on tfi oracle
 Jobid 2868d2f92fdc4c9abd6437eb016ab772
+
+// subscription tests
+SubscriptionTest - 0x9a10d416153d4586Bb93473288D4Ebe7A8197B74

@@ -2,7 +2,6 @@
 
 import logging
 import os
-import sys
 import requests
 import eth_utils
 import cbor2
@@ -13,6 +12,7 @@ from tfi_orders.fees import get_fee
 app = Flask(__name__)
 api_adapter = os.getenv('TRUFLATION_API_HOST', 'http://api-adapter:8081')
 
+
 def encode_function(signature, parameters):
     params_list = signature.split("(")[1]
     param_types = params_list.replace(")", "").replace(" ", "").split(",")
@@ -22,12 +22,15 @@ def encode_function(signature, parameters):
     encode_tx = encode_abi(param_types, parameters)
     return "0x" + func_sig.hex() + encode_tx.hex()
 
+
 def from_hex(x):
     return bytes.fromhex(x[2:])
+
 
 @app.route("/hello")
 def hello_world():
     return "<h2>Hello, World!</h2>"
+
 
 def process_request_api1(content, handler):
     app.logger.debug(content)
@@ -96,7 +99,7 @@ def process_request_api1(content, handler):
         "tx0": encode_tx,
         "tx1": process_refund
     })
-    
+
 
 @app.route("/api1", methods=['POST'])
 def api1():
@@ -105,11 +108,13 @@ def api1():
         return r.content
     return process_request_api1(request.json, handler)
 
+
 @app.route("/api1-test", methods=['POST'])
 def api1_test():
     def handler(obj):
         return obj.get('data', '')
     return process_request_api1(request.json, handler)
+
 
 @app.route("/api0", methods=['POST'])
 def api0():
@@ -139,11 +144,13 @@ def api0():
     app.logger.debug(encode_tx)
     return encode_tx
 
+
 @app.route("/api-adapter", methods=['POST'])
 def process_api_adapter():
     content = request.json
     r = requests.post(api_adapter, json=content)
     return r.content
+
 
 if os.getenv('TFI_ORDERS_LOCAL_LOGLEVEL') is None:
     gunicorn_logger = logging.getLogger('gunicorn.error')
@@ -153,6 +160,7 @@ else:
     app.logger.setLevel(os.getenv('TFI_ORDERS_LOCAL_LOGLEVEL'))
 
 app.logger.info(f'Connecting to adapter at {api_adapter}')
+
 
 def create_app():
     return app

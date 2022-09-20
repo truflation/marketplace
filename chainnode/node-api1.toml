@@ -9,7 +9,7 @@ observationSource = """
 fetch [type="bridge" name="orders-api1" requestData="$(jobRun)"]
 tx0 [type="jsonparse" data="$(fetch)" path="tx0"]
 tx1 [type="jsonparse" data="$(fetch)" path="tx1"]
-submit_tx0  [type="ethtx" to="0x394fdd656749CCCcc21280BBDF6CC209745f4d0D" data="$(tx0)"]
+submit_tx0  [type="ethtx" to="0x394fdd656749CCCcc21280BBDF6CC209745f4d0D" data="$(tx0)" minConfirmations="1"]
 submit_tx1  [type="ethtx" to="0x394fdd656749CCCcc21280BBDF6CC209745f4d0D" data="$(tx1)"]
 
 fetch -> tx0 -> tx1 -> submit_tx0 -> submit_tx1

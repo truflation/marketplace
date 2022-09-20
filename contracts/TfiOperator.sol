@@ -55,7 +55,7 @@ OperatorInterface, WithdrawalInterface {
   // Tokens sent for requests that have not been fulfilled yet
   uint256 private s_tokensInEscrow;
   // TFI
-  mapping(bytes32 => uint256) s_refunds;
+  mapping(bytes32 => uint256) private s_refunds;
 
   event OracleRequest(
     bytes32 indexed specId,
@@ -637,7 +637,7 @@ OperatorInterface, WithdrawalInterface {
     if (refund == 0) {
       return;
     }
-    require(refund <= payment, 'refund too large');
+    require(refund <= payment, "refund too large");
     s_refunds[requestId] = refund;
   }
 
@@ -696,9 +696,9 @@ OperatorInterface, WithdrawalInterface {
     if (refund == 0) {
       return;
     }
-    assert(linkToken.transfer(recipient, refund));
     s_tokensInEscrow = s_tokensInEscrow.sub(refund);
     delete s_refunds[requestId];
+    assert(linkToken.transfer(recipient, refund));
   }
 
   /**
@@ -724,7 +724,7 @@ OperatorInterface, WithdrawalInterface {
     delete s_refunds[requestId];
     delete s_commitments[requestId];
     emit CancelOracleRequest(requestId);
-    linkToken.transfer(refundAddress, payment);
+    assert(linkToken.transfer(refundAddress, payment));
   }
   // ------
 }

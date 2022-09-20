@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 import "./TfiClient.sol";
-import "./vendor/ConfirmedOwnerUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 
-contract TfiExample is Initializable, TfiClient, ConfirmedOwnerUpgradeable {
+contract TfiExample is Initializable, OwnableUpgradeable, TfiClient {
     using Chainlink for Chainlink.Request;
     bytes public result;
     mapping(bytes32 => bytes) public results;
@@ -18,16 +18,12 @@ contract TfiExample is Initializable, TfiClient, ConfirmedOwnerUpgradeable {
       string memory jobId_,
       uint256 fee_,
       address token_) public initializer {
-        initializeParents();
+        __Ownable_init();
+        __TfiClient_init();
         setChainlinkToken(token_);
         oracleId = oracleId_;
         jobId = jobId_;
         fee = fee_;
-    }
-
-    function initializeParents() private {
-        ConfirmedOwnerUpgradeable.initializeState(msg.sender, address(0));
-        TfiClient.initializeState();
     }
 
     function doRequest(
@@ -84,5 +80,9 @@ contract TfiExample is Initializable, TfiClient, ConfirmedOwnerUpgradeable {
 
     function version() public pure returns (string memory) {
         return "TFI/0.1";
+    }
+
+    // do not allow renouncing ownership
+    function renounceOwnership() public view override onlyOwner {
     }
 }

@@ -14,7 +14,7 @@ import {ENSResolver as ENSResolver_Chainlink} from "@chainlink/contracts/src/v0.
  * @notice Contract writers can inherit this contract in order to create requests for the
  * Chainlink network
  *
- * Must call initializeState in upgradeable contracts
+ * Must call __TfiClient_init() in upgradeable contracts
  */
 
 abstract contract TfiClient {
@@ -40,7 +40,7 @@ abstract contract TfiClient {
   event ChainlinkFulfilled(bytes32 indexed id);
   event ChainlinkCancelled(bytes32 indexed id);
 
-  function initializeState() public {
+  function __TfiClient_init() public {
     s_requestCount = 1;
   }
 

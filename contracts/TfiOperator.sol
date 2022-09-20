@@ -84,7 +84,7 @@ OperatorInterface, WithdrawalInterface {
    * @param owner The address of the owner
    */
   function initialize(address link, address owner) public {
-    ConfirmedOwnerUpgradeable.initializeState(owner, address(0));
+    __ConfirmedOwnerUpgradeable_init(owner, address(0));
     linkToken = LinkTokenInterface(link); // external but already deployed and unalterable
     s_tokensInEscrow = ONE_FOR_CONSISTENT_GAS_COST;
   }
@@ -94,7 +94,7 @@ OperatorInterface, WithdrawalInterface {
    * @return Type and version string
    */
   function typeAndVersion() external pure virtual returns (string memory) {
-    return "Operator 1.0.0";
+    return "Operator/TFI 1.0.0";
   }
 
   /**

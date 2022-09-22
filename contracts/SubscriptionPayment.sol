@@ -1,6 +1,6 @@
 pragma solidity ^0.8.7;
 
-import "./Authentication.sol";
+import "./SubscriptionManager.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -16,13 +16,13 @@ contract SubscriptionPayment is Ownable {
     mapping(address=>bool) public subscribers;//this field is needed to identify renewal users on next billing cycle
     mapping(address=>uint256) subscribedPeriod;
 
-    Authentication public authorize;
+    SubscriptionManager public subscriptionManager;
     IERC20 public currency;
     uint256 public fee; //fee for 30DAY
 
 
-    constructor(address _authorize, address _currency, uint256 _fee) {
-        authorize = Authentication(_authorize);
+    constructor(address _subscriptionManager, address _currency, uint256 _fee) {
+        subscriptionManager = SubscriptionManager(_subscriptionManager);
         currency = IERC20(_currency);
         fee = _fee;
     }
@@ -33,7 +33,7 @@ contract SubscriptionPayment is Ownable {
 
     //can consider to change the function name to avoid polymorphism which cause some tips to access from client.
     function startSubscription() public {
-        startSubscription(msg.sender);
+       startSubscription(msg.sender);
     }
 
     function startSubscription(address client) public {
@@ -41,7 +41,7 @@ contract SubscriptionPayment is Ownable {
         subscribers[msg.sender] = true;
         subscribedPeriod[msg.sender] = block.timestamp + SECONDS_IN_A_DAY*30;
         console.log(client);
-        authorize.addNewSubscriber(msg.sender, client, subscribedPeriod[msg.sender]);
+        subscriptionManager.addNewSubscriber(msg.sender, client, subscribedPeriod[msg.sender]);
     }
 
 
@@ -69,7 +69,7 @@ contract SubscriptionPayment is Ownable {
         require(subscribedPeriod[subscriber]<block.timestamp, 'user already paid');
         try currency.transferFrom(subscriber, address(this), fee){
             subscribedPeriod[subscriber] += SECONDS_IN_A_DAY*30;
-            authorize.extendSubscriptionPeriod(subscriber, subscribedPeriod[subscriber]);
+            subscriptionManager.extendSubscriptionPeriod(subscriber, subscribedPeriod[subscriber]);
         } catch {
             subscribers[subscriber] = false;
             //nothing will update in Authentication contract(automatically expired)

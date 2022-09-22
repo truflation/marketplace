@@ -2,12 +2,15 @@
 pragma solidity ^0.8.7;
 
 import "./interfaces/ISubscriptionPayment.sol";
+import "./interfaces/ISubscriptionManager.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "hardhat/console.sol";
 
-contract Authentication is Initializable, OwnableUpgradeable, UUPSUpgradeable {
+contract SubscriptionManager is Initializable, OwnableUpgradeable, UUPSUpgradeable, ISubscriptionManager {
+    //TODO need to consider if we should inherit ISubscriptionManager as upgradable contract.
+
     mapping(address=>uint256) clientAddrList;//client address => expiry date
     mapping(address=>address) addressOfSubscriber;
     //Right now one subscriber can only have one client addresses for access
@@ -28,9 +31,16 @@ contract Authentication is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         subscriptionPayment = ISubscriptionPayment(_subscriptionPayment);
     }
 
+    function subscriptionStatus(address sender, string calldata dataString1, string calldata dataString2,
+        uint256 dataInt, address dataAddress, bytes calldata dataBytes) external view returns (uint256 errorCode){
+        if (isAccessible(sender)){
+            return 0;
+        } else {
+            return 1;//temporal error code
+        }
+    }
 
-
-    function isAccessible(address user) external view returns (bool accessible) {
+    function isAccessible(address user) public view returns (bool accessible) {
         return clientAddrList[user] >= block.timestamp;
     }
 
@@ -61,6 +71,10 @@ contract Authentication is Initializable, OwnableUpgradeable, UUPSUpgradeable {
             addressOfSubscriber[msg.sender]= clientAddr;
             clientAddrList[clientAddr] = subscriptionPayment.getSubscriptionExpiryDate(msg.sender)+SECONDS_IN_A_DAY;
         }
+    }
+
+    function getVersion() external virtual pure returns (uint256) {
+        return 1;
     }
 
 

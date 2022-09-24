@@ -1,6 +1,7 @@
 import { ethers, upgrades } from 'hardhat'
-import { address } from './config'
+import { getConfig } from './config'
 
+const address = getConfig()
 async function main (): void {
   const TfiOperator = await ethers.getContractFactory('TfiOperator')
   const tfiOperator =

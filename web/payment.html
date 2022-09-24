@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="./style.css">
+  <title>Subscription Dashboard</title>
+</head>
+<body>
+<!--
+<style>
+  * {
+    border: 1px solid red;
+  }
+</style>
+-->
+
+<div class = "nav-bar">
+<ul >
+  <li><a href="/ibond.html">HOME</a></li>
+  <li><a href="/admin.html">ADMIN</a></li>
+  <div class="right-menu">
+  <li><button id="enable-button">Enable Metamask</button></li>
+  </div>
+</ul>
+</div>
+
+
+  <h1>Subscription Dashboard</h1>
+
+<div id="metamask-announce" class="disc" style="display: none">
+  <div >It seems you don't connect to Metamask. Please do so. </div>
+</div>
+
+<div id="buy-announce" class="disc" style="display: none">
+  <div >It seems you don't have enough token to subsribe our service. <br/>
+    token address:  <span id="token_address"></span></div>
+</div>
+
+<div class="box-interface">
+  <div class="row1">
+    <h3>Data Subscription Status</h3>
+  </div>
+  <div class="row2">
+
+      <li>Subscribed: <span id="isSubscriber">true</span><br></li>
+      <li>expired: <span id="expire_date">2022/10/11</span><br></li>
+    <br />
+    <span id="bill_notice" style="display: none">The next bill will be charged on expiry date automatically.</span>
+
+  </div>
+
+</div>
+
+  <div class="box-interface">
+    <div class="row1">
+      <h3>Payment</h3>
+    </div>
+    <div class="row2">
+      <label>
+        Period: <span id="cycle_period">30</span> Days
+      </label>
+    </div>
+    <div class="row3">
+      <label>
+        Price: <span id="fee">1200</span> TFI
+      </label>
+      <button id="subscribe-button" >Start Subscribe</button>
+<!--      <input id="subscribe-amount" type="text" placeholder="amount" />-->
+      <button id="terminate-button" >Terminate Subscription</button><br/>
+
+    </div>
+  </div>
+
+
+
+</body>
+
+
+
+<script type="text/javascript" src="./js/etherjs.min.js"></script>
+<script type="text/javascript" src="./js/erc20Abi.js"></script>
+<script type="text/javascript" src="./js/subscriptionPaymentAbi.js"></script>
+<script type="text/javascript" src="./js/payment.js"></script>
+
+</html>

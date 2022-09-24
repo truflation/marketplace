@@ -2,29 +2,45 @@
 pragma solidity ^0.8.7;
 
 import "./interfaces/ISubscriptionPayment.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "./interfaces/ISubscriptionManager.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "hardhat/console.sol";
 
-contract Authentication is Initializable, Ownable {
+contract SubscriptionManager is Initializable, OwnableUpgradeable, UUPSUpgradeable, ISubscriptionManager {
+    //TODO need to consider if we should inherit ISubscriptionManager as upgradable contract.
+
     mapping(address=>uint256) clientAddrList;//client address => expiry date
     mapping(address=>address) addressOfSubscriber;
     //Right now one subscriber can only have one client addresses for access
 
     ISubscriptionPayment public subscriptionPayment;
-    uint256 SECONDS_IN_A_DAY = 86400;
+    uint256 SECONDS_IN_A_DAY;
 
 
     function initialize() initializer public {
+        SECONDS_IN_A_DAY = 86400;
+        __Ownable_init();
     }
+
+    ///@dev required by the OZ UUPS module
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function setSubscriptionPayment(address _subscriptionPayment) public onlyOwner {
         subscriptionPayment = ISubscriptionPayment(_subscriptionPayment);
     }
 
+    function subscriptionStatus(address sender, string calldata dataString1, string calldata dataString2,
+        uint256 dataInt, address dataAddress, bytes calldata dataBytes) external view returns (uint256 errorCode){
+        if (isAccessible(sender)){
+            return 0;
+        } else {
+            return 1;//temporal error code
+        }
+    }
 
-
-    function isAccessible(address user) external view returns (bool accessible) {
+    function isAccessible(address user) public view returns (bool accessible) {
         return clientAddrList[user] >= block.timestamp;
     }
 
@@ -57,12 +73,9 @@ contract Authentication is Initializable, Ownable {
         }
     }
 
-
-
-
-
-
-
+    function getVersion() external virtual pure returns (uint256) {
+        return 1;
+    }
 
 
     /* ========== MODIFIERS ========== */
@@ -70,7 +83,5 @@ contract Authentication is Initializable, Ownable {
         require(address(subscriptionPayment) ==msg.sender, "caller is not the subsciptionPayment contract");
         _;
     }
-
-
 
 }

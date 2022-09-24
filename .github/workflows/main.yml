@@ -9,7 +9,7 @@ on:
 env:
   REGISTRY: ghcr.io
   REPOSITORY: truflationdev
-  ORDERS_IMAGE_NAME: tfi-marketplace-orders
+  ORDERS_IMAGE_NAME: orders
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 jobs:
@@ -56,4 +56,4 @@ jobs:
           username: ${{ secrets.SSH_HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: ./tfi-marketplace-orders/run.sh;
+          script: ./orders/run.sh;

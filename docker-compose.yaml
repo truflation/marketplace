@@ -12,7 +12,7 @@ services:
     restart: always
     env_file:
       - config.env
-  tfi-marketplace-orders:
+  orders:
     build:
        context: ./modules/orders
     restart: always
@@ -32,7 +32,7 @@ services:
     depends_on:
       - postgres
       - api-adapter
-      - tfi-marketplace-orders
+      - orders
     volumes:
       - chainlink_data:/chainlink
   chainlink-link:
@@ -49,7 +49,7 @@ services:
     depends_on: 
       - postgres
       - api-adapter
-      - tfi-marketplace-orders
+      - orders
     volumes:
       - chainlink_link_data:/chainlink
   frontend:

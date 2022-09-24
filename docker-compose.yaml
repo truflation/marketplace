@@ -25,8 +25,25 @@ services:
       - config.env
     command: node start -p /chainlink/.password -a /chainlink/.api
     restart: on-failure
+    ports:
+      - 6689:6688
+    links:
+      - postgres
+    depends_on:
+      - postgres
+      - api-adapter
+      - tfi-marketplace-orders
+    volumes:
+      - chainlink_data:/chainlink
+  chainlink-link:
+    build:
+       context: ./chainnode
+    env_file:
+      - config.env.link
+    command: node start -p /chainlink/.password -a /chainlink/.api
+    restart: on-failure
     ports: 
-      - 6688:6688
+      - 6690:6688
     links:
       - postgres
     depends_on: 
@@ -34,7 +51,7 @@ services:
       - api-adapter
       - tfi-marketplace-orders
     volumes:
-      - chainlink_data:/chainlink
+      - chainlink_link_data:/chainlink
   frontend:
      build:
        context: https://github.com/truflation/sample-frontend.git#develop
@@ -42,9 +59,10 @@ services:
          inflationAddress: "0x79053120810FdDf61ceFB781fc898D1cf52A44a0"
          apiAddress: "0xF4A440F09B52dCFCe0303BD81f457761cB008Bb4"
      ports:
-       - 9011:9011
+       - 9012:9011
      depends_on:
        - chainlink
 volumes: 
   db-data:
   chainlink_data:
+  chainlink_link_data:

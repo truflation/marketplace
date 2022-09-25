@@ -11,6 +11,6 @@ const config = {
 }
 
 testEchoTransfer(config)
-#testInflation(config)
-#testChain(config)
+testInflation(config)
+testChain(config)
 

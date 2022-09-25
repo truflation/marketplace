@@ -10,6 +10,13 @@ Truflation tester - 0xfc0E447EfBb2707e09ECb1bA75C215e7D69703f9
 Operator - 0x7911771BE70C8CD2298433A27737E2b62E806961
 jobid - cef7d7ad405e45eb91e2da0f415c920e
 
+// new production pipeline
+
+Operator - '0x6888BdA6a975eCbACc3ba69CA2c80d7d7da5A344'
+jobid - 'd220e5e687884462909a03021385b7ae'
+example_link - '0x0edBa69e2aE5C668a46360964f8a0b402359F2E0'
+
+
 TfiToken chain
 
 TfiToken - 0x3417dd955d4408638870723b9ad8aae81953b478

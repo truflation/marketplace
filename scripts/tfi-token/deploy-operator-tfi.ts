@@ -1,5 +1,5 @@
 import { ethers, upgrades } from 'hardhat'
-import { getConfig } from './config'
+import { getConfig } from '../config'
 
 const address = getConfig()
 async function main (): void {
@@ -7,7 +7,7 @@ async function main (): void {
   const tfiOperator =
         await upgrades.deployProxy(
           TfiOperator, [
-            address.token,
+            address.token_tfi,
             address.owner
           ], {
             unsafeAllow: ['delegatecall']

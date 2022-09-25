@@ -22,10 +22,14 @@ def encode_function(signature, parameters):
     encode_tx = eth_abi.encode(param_types, parameters)
     return "0x" + func_sig.hex() + encode_tx.hex()
 
-
 def from_hex(x):
     return bytes.fromhex(x[2:])
 
+def refund_address(obj, default):
+    refund_addr = obj.get('refundTo', None)
+    if refund_addr is None or not eth_utils.is_hex_address(refund_addr):
+        refund_addr = default
+    return refund_addr
 
 @app.route("/hello")
 def hello_world():
@@ -89,11 +93,13 @@ def process_request_api1(content, handler):
                 encode_large,
                 payment - fee
             ])
+    refund_addr = refund_address(obj, oracle_request['callbackAddr'])
+    
     process_refund = encode_function(
         'processRefund(bytes32,address)',
         [
             from_hex(request_id),
-            from_hex(oracle_request['callbackAddr'])
+            from_hex(refund_addr)
         ])
     return jsonify({
         "tx0": encode_tx,

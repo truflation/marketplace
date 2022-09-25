@@ -1,6 +1,6 @@
 import pytest
 import json
-from tfi_orders import create_app
+from tfi_orders import create_app, refund_address
 from tfi_orders.fees import get_fee
 
 mimetype = 'application/json'
@@ -48,3 +48,13 @@ def test_fee():
     echo_fee = get_fee({'service': 'echo/'})
     assert echo_fee > 0 and echo_fee <= 10**18 * 1
     assert echo_fee != fee
+
+def test_refund_address():
+    a = refund_address({
+        'refundTo':
+        '0x396f4277ee4aa0ee538b9821b1478b4f7aed8d22'},
+        '0x0edba69e2ae5c668a46360964f8a0b402359f2e0')
+    assert a == '0x396f4277ee4aa0ee538b9821b1478b4f7aed8d22'
+    a = refund_address({'refundTo': '0xdeadbeef'},
+                       '0x0edba69e2ae5c668a46360964f8a0b402359f2e0')
+    assert a == '0x0edba69e2ae5c668a46360964f8a0b402359f2e0'

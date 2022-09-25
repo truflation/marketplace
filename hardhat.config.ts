@@ -1,46 +1,88 @@
-import { HardhatUserConfig } from "hardhat/config"
-import "@nomicfoundation/hardhat-toolbox"
+import { HardhatUserConfig } from 'hardhat/config'
+import '@nomicfoundation/hardhat-toolbox'
 import '@openzeppelin/hardhat-upgrades'
 
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-const INFURA_API_KEY = process.env.INFURA_API_KEY
-const GOERLI_PRIVATE_KEY = process.env.GOERLI_PRIVATE_KEY
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
+const INFURA_API_KEY = process.env.INFURA_API_KEY ?? ''
+const MAINNET_PRIVATE_KEY = process.env.MAINNET_PRIVATE_KEY ?? ''
+const TESTNET_PRIVATE_KEY = process.env.TESTNET_PRIVATE_KEY ?? ''
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY ?? ''
 
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-	version: "0.7.0"
+        version: '0.7.0'
       },
       {
-	version: "0.8.15"
+        version: '0.8.15'
       },
       {
-	version: "0.4.24"
+        version: '0.4.24'
       }
     ],
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200,
-      },
-    },
+        runs: 200
+      }
+    }
   },
   networks: {
+    mainnet: {
+      chainId: 1,
+      url: `https://mainnet.infura.io/v3/${INFURA_API_KEY}`,
+      accounts: [MAINNET_PRIVATE_KEY]
+    },
+    bnb_mainnet: {
+      chainId: 56,
+      url: 'https://bsc-dataseed.binance.org/',
+      accounts: [MAINNET_PRIVATE_KEY]
+    },
+    polygon: {
+      chainId: 137,
+      url: 'https://polygon-rpc.com',
+      accounts: [MAINNET_PRIVATE_KEY]
+    },
+    avalanche: {
+      chainId: 43114,
+      url: 'https://api.avax.network/ext/bc/C/rpc',
+      accounts: [MAINNET_PRIVATE_KEY]
+    },
     goerli: {
       chainId: 5,
       url: `https://goerli.infura.io/v3/${INFURA_API_KEY}`,
-      accounts: [GOERLI_PRIVATE_KEY!],
+      accounts: [TESTNET_PRIVATE_KEY]
     },
+    bnb_testnet: {
+      chainId: 97,
+      url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+      accounts: [TESTNET_PRIVATE_KEY]
+    },
+    mumbai_testnet: {
+      chainId: 80001,
+      url: 'https://rpc-mumbai.maticvigil.com',
+      accounts: [TESTNET_PRIVATE_KEY]
+    },
+    fuji_testnet: {
+      chainId: 43113,
+      url: 'https://api.avax.network/ext/bc/C/rpc',
+      accounts: [TESTNET_PRIVATE_KEY]
+    }
   },
   etherscan: {
     apiKey: {
-      goerli: ETHERSCAN_API_KEY!
+      mainnet: ETHERSCAN_API_KEY,
+      bnb_mainnet: ETHERSCAN_API_KEY,
+      polygon: ETHERSCAN_API_KEY,
+      avalanche: ETHERSCAN_API_KEY,
+      goerli: ETHERSCAN_API_KEY,
+      bnb_testnet: ETHERSCAN_API_KEY,
+      mumbai_testnet: ETHERSCAN_API_KEY
     }
   }
-};
+}
 
-export default config;
+export default config

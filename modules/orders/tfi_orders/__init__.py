@@ -5,7 +5,7 @@ import os
 import requests
 import eth_utils
 import cbor2
-from eth_abi import encode_abi
+import eth_abi
 from flask import Flask, request, jsonify
 from tfi_orders.fees import get_fee
 
@@ -19,7 +19,7 @@ def encode_function(signature, parameters):
     func_sig = eth_utils.function_signature_to_4byte_selector(
         signature
     )
-    encode_tx = encode_abi(param_types, parameters)
+    encode_tx = eth_abi.encode(param_types, parameters)
     return "0x" + func_sig.hex() + encode_tx.hex()
 
 
@@ -57,7 +57,7 @@ def process_request_api1(content, handler):
                 from_hex(oracle_request['callbackAddr'])
             ])
         """
-        encode_large = encode_abi(
+        encode_large = eth_abi.encode(
             ['bytes32', 'bytes'],
             [from_hex(request_id),
              b'{"error": "fee too small"}']
@@ -74,7 +74,7 @@ def process_request_api1(content, handler):
             ])
     else:
         content = handler(obj)
-        encode_large = encode_abi(
+        encode_large = eth_abi.encode(
             ['bytes32', 'bytes'],
             [from_hex(request_id),
              content]

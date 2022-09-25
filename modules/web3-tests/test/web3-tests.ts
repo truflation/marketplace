@@ -66,3 +66,25 @@ export function testInflation (config) {
     }).timeout(200000)
   })
 }
+
+export function testEchoTransfer (config) {
+  describe('Echo transfer call', function () {
+    let app, web3, address, fee
+    before(() => {
+      app = new TfiApi.TfiApi(account)
+      web3 = getWeb3(config)
+      address = config.apiAddress,
+      fee = config.fee
+    })
+
+    it(`echo ${config.chainName}`, async () => {
+      const r = await app.doApiTransferAndRequest(web3, {
+        service: 'echo',
+        data: '1024',
+        address,
+        fee
+      })
+      assert.equal(r, 1024)
+    }).timeout(200000)
+  })
+}

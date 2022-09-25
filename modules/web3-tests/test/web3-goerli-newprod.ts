@@ -1,4 +1,4 @@
-import { testChain, testInflation } from './web3-tests'
+import { testChain, testInflation, testEchoTransfer } from './web3-tests'
 
 const INFURA_API = process.env.INFURA_API
 const config = {
@@ -6,9 +6,11 @@ const config = {
   chainName: 'Goerli',
   chainId: 5,
   provider: `wss://goerli.infura.io/ws/v3/${INFURA_API}`,
-  poll: 1000
+  poll: 1000,
+  fee: '1000000000000000000'
 }
 
-testInflation(config)
-testChain(config)
+testEchoTransfer(config)
+#testInflation(config)
+#testChain(config)
 

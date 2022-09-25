@@ -1,4 +1,4 @@
-import { testChain, testInflation, testEchoTransfer } from './web3-tests'
+import { testChain, testInflation, testTransferAndRequest } from './web3-tests'
 
 const INFURA_API = process.env.INFURA_API
 const config = {
@@ -10,7 +10,6 @@ const config = {
   fee: '1000000000000000000'
 }
 
-testEchoTransfer(config)
-testInflation(config)
-testChain(config)
+testTransferAndRequest(config)
+
 

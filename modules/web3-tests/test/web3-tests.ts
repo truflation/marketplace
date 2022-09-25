@@ -67,7 +67,7 @@ export function testInflation (config) {
   })
 }
 
-export function testEchoTransfer (config) {
+export function testTransferAndRequest (config) {
   describe('Echo transfer call', function () {
     let app, web3, address, fee
     before(() => {
@@ -85,6 +85,19 @@ export function testEchoTransfer (config) {
         fee
       })
       assert.equal(r, 1024)
+    }).timeout(200000)
+
+    it(`inflation ${config.chainName}`, async () => {
+      const r = await app.doApiTransferAndRequest(web3, {
+        service: 'truflation/current',
+	keypath: 'yearOverYearInflation',
+        address,
+        fee
+      })
+      const inflation = parseFloat(r)
+      assert.equal(
+        inflation >= -10.0 &&
+        inflation < 50.0, true)
     }).timeout(200000)
   })
 }

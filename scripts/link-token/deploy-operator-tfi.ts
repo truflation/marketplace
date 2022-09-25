@@ -7,7 +7,7 @@ async function main (): void {
   const tfiOperator =
         await upgrades.deployProxy(
           TfiOperator, [
-            address.token_tfi,
+            address.token_link,
             address.owner
           ], {
             unsafeAllow: ['delegatecall']

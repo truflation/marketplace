@@ -1,16 +1,17 @@
 // deploy upgradeable client
 
 import { ethers, upgrades } from 'hardhat'
-import { address } from './config'
+import { getConfig } from '../config'
 
+const address = getConfig()
 async function main (): void {
   const name = 'TfiExample'
   const contract = await ethers.getContractFactory(name)
   const inst = await upgrades.deployProxy(contract, [
-    address.operator_tfi,
-    address.jobid_tfi,
-    '100000000000000000',
-    address.token_tfi
+    address.operator_link,
+    address.jobid_link,
+    '1000000000000000000', // 1 LINK
+    address.token_link
   ])
 
   await inst.deployed()

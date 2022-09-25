@@ -14,8 +14,8 @@ export const addressesByChain = {
     operator_tfi: '0x394fdd656749CCCcc21280BBDF6CC209745f4d0D',
     jobid_tfi: '2868d2f92fdc4c9abd6437eb016ab772',
     example_tfi: '0xF4A440F09B52dCFCe0303BD81f457761cB008Bb4',
-    token: '0x3417dd955d4408638870723B9Ad8Aae81953B478',
-    token_link: '0x326c977e6efc84e512bb9c30f76e30c160ed06fb'
+    token_link: '0x326c977e6efc84e512bb9c30f76e30c160ed06fb',
+    operator_link: '0x6888BdA6a975eCbACc3ba69CA2c80d7d7da5A344',
   }
 }
 

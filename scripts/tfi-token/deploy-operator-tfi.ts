@@ -1,5 +1,5 @@
 import { ethers, upgrades } from 'hardhat'
-import { getConfig } from './config'
+import { getConfig } from '../config'
 
 const address = getConfig()
 async function main (): void {

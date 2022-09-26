@@ -2,13 +2,25 @@
 
 create .env files with
 
-GOERLI_PRIVATE_KEY
+MAINNET_PRIVATE_KEY
+TESTNET_PRIVATE_KEY
 INFURA_API_KEY
 ETHERSCAN_API_KEY
 
+
+
+To run
+------
 yarn install
 yarn build
 yarn test
+
+
+To deploy
+---------
+
+edit scripts/config.js
+npx hardhat run (deploy script) --network network
 
 change password in chainnode
 

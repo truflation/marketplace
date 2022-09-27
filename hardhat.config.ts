@@ -10,6 +10,9 @@ const MAINNET_PRIVATE_KEY = process.env.MAINNET_PRIVATE_KEY ?? ''
 const TESTNET_PRIVATE_KEY = process.env.TESTNET_PRIVATE_KEY ?? ''
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY ?? ''
 const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY ?? ''
+const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY ?? ''
+const SNOWTRACE_API_KEY = process.env.SNOWTRACE_API_KEY ?? ''
+const FTMSCAN_API_KEY = process.env.FTMSCAN_API_KEY ?? ''
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -52,6 +55,11 @@ const config: HardhatUserConfig = {
       url: 'https://api.avax.network/ext/bc/C/rpc',
       accounts: [MAINNET_PRIVATE_KEY],
     },
+    opera: {
+      chainId: 250,
+      url: 'https://rpc.ankr.com/fantom/',
+      accounts: [MAINNET_PRIVATE_KEY],
+    },
     goerli: {
       chainId: 5,
       url: `https://goerli.infura.io/v3/${INFURA_API_KEY}`,
@@ -64,12 +72,17 @@ const config: HardhatUserConfig = {
     },
     polygonMumbai: {
       chainId: 80001,
-      url: 'https://rpc-mumbai.maticvigil.com',
+      url: 'https://matic-mumbai.chainstacklabs.com',
       accounts: [TESTNET_PRIVATE_KEY],
     },
     avalancheFujiTestnet: {
       chainId: 43113,
-      url: 'https://api.avax.network/ext/bc/C/rpc',
+      url: 'https://api.avax-test.network/ext/bc/C/rpc',
+      accounts: [TESTNET_PRIVATE_KEY],
+    },
+    ftmTestnet: {
+      chainId: 4002,
+      url: 'https://rpc.testnet.fantom.network/',
       accounts: [TESTNET_PRIVATE_KEY],
     },
   },
@@ -79,10 +92,12 @@ const config: HardhatUserConfig = {
       bsc: BSCSCAN_API_KEY,
       polygon: POLYGONSCAN_API_KEY,
       avalanche: SNOWTRACE_API_KEY,
+      opera: FTMSCAN_API_KEY,
       goerli: ETHERSCAN_API_KEY,
       bscTestnet: BSCSCAN_API_KEY,
       polygonMumbai: POLYGONSCAN_API_KEY,
-      avalancheFujiTestnet: SNOWTRACE_API_KEY
+      avalancheFujiTestnet: SNOWTRACE_API_KEY,
+      ftmTestnet: FTMSCAN_API_KEY,
     },
   },
 }

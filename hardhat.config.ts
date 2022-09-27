@@ -67,7 +67,7 @@ const config: HardhatUserConfig = {
       url: 'https://rpc-mumbai.maticvigil.com',
       accounts: [TESTNET_PRIVATE_KEY],
     },
-    fuji_testnet: {
+    avalancheFujiTestnet: {
       chainId: 43113,
       url: 'https://api.avax.network/ext/bc/C/rpc',
       accounts: [TESTNET_PRIVATE_KEY],
@@ -76,12 +76,13 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       mainnet: ETHERSCAN_API_KEY,
-      bsc: ETHERSCAN_API_KEY,
-      polygon: ETHERSCAN_API_KEY,
-      avalanche: ETHERSCAN_API_KEY,
+      bsc: BSCSCAN_API_KEY,
+      polygon: POLYGONSCAN_API_KEY,
+      avalanche: SNOWTRACE_API_KEY,
       goerli: ETHERSCAN_API_KEY,
       bscTestnet: BSCSCAN_API_KEY,
-      polygonMumbai: ETHERSCAN_API_KEY,
+      polygonMumbai: POLYGONSCAN_API_KEY,
+      avalancheFujiTestnet: SNOWTRACE_API_KEY
     },
   },
 }

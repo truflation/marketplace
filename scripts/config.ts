@@ -5,7 +5,7 @@ import hre from 'hardhat'
 const testnetOwner = '0x968E88df55AcAeC002e3d7c2393F9742e40d94b9'
 export const addressesByChain = {
   1: {
-    token_link: '0x514910771AF9Ca656af840dff83E8264EcF986CA'
+    token_link: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
   },
   5: {
     token_tfi: '0x3417dd955d4408638870723B9Ad8Aae81953B478',
@@ -20,34 +20,41 @@ export const addressesByChain = {
     token_link: '0x326c977e6efc84e512bb9c30f76e30c160ed06fb',
     operator_link: '0x6888BdA6a975eCbACc3ba69CA2c80d7d7da5A344',
     jobid_link: 'd220e5e687884462909a03021385b7ae',
-    example_link: '0x0edBa69e2aE5C668a46360964f8a0b402359F2E0'
+    example_link: '0x0edBa69e2aE5C668a46360964f8a0b402359F2E0',
   },
-  56: { // BNB mainnet
-    token_link: '0x404460c6a5ede2d891e8297795264fde62adbb75'
+  56: {
+    // BNB mainnet
+    token_link: '0x404460c6a5ede2d891e8297795264fde62adbb75',
   },
-  97: { // BNB testnet
+  97: {
+    // BNB testnet
     token_link: '0x84b9b910527ad5c03a9ca831909e21e236ea7b06',
-    owner: testnetOwner
+    owner: testnetOwner,
+    operator_tfi: '0x758d864483c685Ad4484984DAcdD44c9c1F62274',
   },
-  137: { // polygon mainnet
-    token_link: '0xb0897686c545045afc77cf20ec7a532e3120e0f1'
+  137: {
+    // polygon mainnet
+    token_link: '0xb0897686c545045afc77cf20ec7a532e3120e0f1',
   },
-  80001: { // polygon (mumbai) testnet
+  80001: {
+    // polygon (mumbai) testnet
     token_link: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB',
-    owner: testnetOwner
+    owner: testnetOwner,
   },
-  43114: { // avalanche mainnet
-    token_link: '0x5947BB275c521040051D82396192181b413227A3'
+  43114: {
+    // avalanche mainnet
+    token_link: '0x5947BB275c521040051D82396192181b413227A3',
   },
-  43113: { // fuji testnet
+  43113: {
+    // fuji testnet
     token_link: '0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846',
-    owner: testnetOwner
-  }
+    owner: testnetOwner,
+  },
 }
 
 export const address = addressesByChain[5]
 
-export function getConfig (): any {
+export function getConfig(): any {
   const networkName = hre.network.name
   const chainId = hre.network.config.chainId
   console.log('Network name=', networkName)

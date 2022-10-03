@@ -6,7 +6,7 @@ import "../interfaces/ISubscriptionManager.sol";
 // echo subscrption code to subscription request
 // this is used for testing
 
-contract SubscriptionTest is ISubscriptionManager {
+contract SubscriptionTest  {
    function subscriptionStatus(address,
       string calldata,
       string calldata,

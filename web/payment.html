@@ -5,13 +5,13 @@
   <title>Subscription Dashboard</title>
 </head>
 <body>
-<!--
-<style>
-  * {
-    border: 1px solid red;
-  }
-</style>
--->
+
+<!--<style>-->
+<!--  * {-->
+<!--    border: 1px solid red;-->
+<!--  }-->
+<!--</style>-->
+
 
 <div class = "nav-bar">
 <ul >
@@ -37,14 +37,14 @@
 
 <div class="box-interface">
   <div class="row1">
-    <h3>Data Subscription Status</h3>
+    <h3>US Index Subscription Status</h3>
   </div>
   <div class="row2">
 
-      <li>Subscribed: <span id="isSubscriber">true</span><br></li>
-      <li>expired: <span id="expire_date">2022/10/11</span><br></li>
+      <li>Subscribed: <span id="isSubscriber">false</span><br></li>
+      <li>expired: <span id="expire_date">N/A</span><br></li>
+      <li>Auto Renew: <span id="isAutoRenew">false</span><br></li>
     <br />
-    <span id="bill_notice" style="display: none">The next bill will be charged on expiry date automatically.</span>
 
   </div>
 
@@ -52,22 +52,30 @@
 
   <div class="box-interface">
     <div class="row1">
-      <h3>Payment</h3>
+      <h3>Payment Section</h3>
     </div>
     <div class="row2">
-      <label>
-        Period: <span id="cycle_period">30</span> Days
-      </label>
-    </div>
-    <div class="row3">
-      <label>
-        Price: <span id="fee">1200</span> TFI
-      </label>
-      <button id="subscribe-button" >Start Subscribe</button>
-<!--      <input id="subscribe-amount" type="text" placeholder="amount" />-->
-      <button id="terminate-button" >Terminate Subscription</button><br/>
+      <label> Package Plan Payment </label>
+      <div class="radio-group" id="data-pack-group">
+        <input type="radio" id="1" name="data-pack" value="50">Day: 50 TFI <br/>
+        <input type="radio" id="2" name="data-pack" value="300">Week: 300 TFI<br/>
+        <input type="radio" id="3" name="data-pack" value="1000" checked >Month: 1000 TFI<br>
+        <input type="radio" id="4" name="data-pack" value="10000">Year: 10000 TFI</label><br>
+      </div>
+      Duration<input id="duration" type="number" min="1" max="10" value="1"> <br/>
+      Price: <span id="package-price" value="0">0</span> <br/>
+      <button id="buy-package-button" >Buy Data Package</button>
 
     </div>
+    <div class="row3">
+      <label> Monthly Auto Renewal Payment </label>
+      <span>Period: <span id="cycle_period">30</span> Days
+      Price: <span id="fee">1000</span> TFI </span>
+      <button id="subscribe-button" >Start </button>
+      <button id="terminate-button" >Terminate </button><br/>
+      <span id="bill_notice" style="display: none">The next bill will be charged on expiry date automatically.</span>
+    </div>
+
   </div>
 
 
@@ -78,7 +86,9 @@
 
 <script type="text/javascript" src="./js/etherjs.min.js"></script>
 <script type="text/javascript" src="./js/erc20Abi.js"></script>
-<script type="text/javascript" src="./js/subscriptionPaymentAbi.js"></script>
+<script type="text/javascript" src="./js/SubscriptionManagerAbi.js"></script>
+<script type="text/javascript" src="./js/PackagePlanPaymentAbi.js"></script>
+<script type="text/javascript" src="./js/SubscriptionPaymentAbi.js"></script>
 <script type="text/javascript" src="./js/payment.js"></script>
 
 </html>

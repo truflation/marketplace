@@ -1,6 +1,6 @@
 pragma solidity ^0.8.7;
 
-import "./interfaces/ISubscriptionManager.sol";
+import "./interfaces/ISubscriptionManagerV2.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -30,7 +30,7 @@ contract PackagePlanPayment is Ownable {
 
     mapping(address=>uint256) subscribedPeriod;
 
-    ISubscriptionManager public subscriptionManager;
+    ISubscriptionManagerV2 public subscriptionManager;
     IERC20 public currency;
     uint256 productId;
 
@@ -39,13 +39,14 @@ contract PackagePlanPayment is Ownable {
 
     constructor(address _subscriptionManager, address _currency, uint256 _productId) {
         productId = _productId;
-        subscriptionManager = ISubscriptionManager(_subscriptionManager);
+        subscriptionManager = ISubscriptionManagerV2(_subscriptionManager);
         currency = IERC20(_currency);
         //TODO make fee value configurable
         plans[DAILY] = PackagePlan(SECONDS_IN_A_DAY, 100 ether);
         plans[WEEKLY] = PackagePlan(SECONDS_IN_A_DAY, 500 ether);
         plans[MONTHLY] = PackagePlan(SECONDS_IN_A_DAY, 1200 ether);
         plans[YEARLY] = PackagePlan(SECONDS_IN_A_DAY, 10000 ether);
+        fundWallet = msg.sender;
     }
 
     function updateFee(uint8 planId, uint256 _fee) public onlyOwner{
@@ -56,10 +57,12 @@ contract PackagePlanPayment is Ownable {
 
     function startSubscription(address client, uint8 planId, uint8 duration) public {
         uint price = plans[planId].fee * duration;
+        console.log('price: %s', price);
         currency.safeTransferFrom(msg.sender, address(this), price);
         //TODO will transfer collected fund to other company wallet
         subscribedPeriod[msg.sender] = block.timestamp + plans[planId].period.mul(duration);
         subscriptionManager.addNewSubscriber(productId, msg.sender, client, subscribedPeriod[msg.sender]);
+        IERC20(currency).safeTransfer(fundWallet, price);
     }
 
 

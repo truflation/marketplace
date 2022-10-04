@@ -9,16 +9,17 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "hardhat/console.sol";
 
 //TODO add more events
+//TODO implement subscription terminate-force method with ownerOnly
 contract SubscriptionManager is Initializable, OwnableUpgradeable, UUPSUpgradeable, ISubscriptionManager {
 
 
     struct SubscriptionProduct {
         mapping(address=>uint256) clientAddrList;//client address => expiry date
-        mapping(address=>address) addressOfSubscriber;
+        mapping(address=>address) addressOfSubscriber;//subscriber => client address
     }
 
-    mapping(uint256=>SubscriptionProduct) productList;
-    mapping(uint256=>mapping(address=>bool)) paymentChannels;
+    mapping(uint256=>SubscriptionProduct) productList;//productId => SubscriptionProduct
+    mapping(uint256=>mapping(address=>bool)) public paymentChannels;
     //mapping(uint256=>address[]) public paymentChannels;
 
 
@@ -55,8 +56,13 @@ contract SubscriptionManager is Initializable, OwnableUpgradeable, UUPSUpgradeab
         return productList[productId].clientAddrList[user] >= block.timestamp;
     }
 
+    function getSubscriptionExpiryDate(uint256 productId, address subscriber) external view returns (uint256 timestamp) {
+        return productList[productId].clientAddrList[subscriber];
+    }
+
     //add client address for non-crypto payment user
-    function addClientAddressByOwner(uint256 productId, address clientAddr, uint256 expiredDate) external onlyOwner {
+    function addClientAddressByOwner(uint256 productId, address subscriber, address clientAddr, uint256 expiredDate) external onlyOwner {
+        productList[productId].addressOfSubscriber[subscriber] = clientAddr;
         productList[productId].clientAddrList[clientAddr] = expiredDate;
     }
 
@@ -73,12 +79,12 @@ contract SubscriptionManager is Initializable, OwnableUpgradeable, UUPSUpgradeab
     function updateClientAddressBySubscriber(uint256 productId, address clientAddr) external {
         require(productList[productId].clientAddrList[productList[productId].addressOfSubscriber[msg.sender]] > block.timestamp,
             "this is not the request from current subscriber");
+        require(productList[productId].addressOfSubscriber[msg.sender]!=address(0),
+            "client address of this subscriber is not properly set");
 
-        if (productList[productId].addressOfSubscriber[msg.sender]!=address(0)){//Update client address
-            productList[productId].clientAddrList[clientAddr]=productList[productId].clientAddrList[productList[productId].addressOfSubscriber[msg.sender]];
-            productList[productId].clientAddrList[productList[productId].addressOfSubscriber[msg.sender]] = 0;
-            productList[productId].addressOfSubscriber[msg.sender]= clientAddr;
-        }
+        productList[productId].clientAddrList[clientAddr]=productList[productId].clientAddrList[productList[productId].addressOfSubscriber[msg.sender]];
+        productList[productId].clientAddrList[productList[productId].addressOfSubscriber[msg.sender]] = 0;
+        productList[productId].addressOfSubscriber[msg.sender]= clientAddr;
     }
 
     function getVersion() external virtual pure returns (uint256) {

@@ -1,6 +1,6 @@
 pragma solidity ^0.8.7;
 
-import "./interfaces/ISubscriptionManagerV2.sol";
+import "./interfaces/ISubscriptionManager.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -16,14 +16,14 @@ contract SubscriptionPayment is Ownable {
     mapping(address=>bool) public subscribers;//this field is needed to identify renewal users on next billing cycle
     mapping(address=>uint256) subscribedPeriod;
 
-    ISubscriptionManagerV2 public subscriptionManager;
+    ISubscriptionManager public subscriptionManager;
     IERC20 public currency;
     uint256 public fee; //fee for 30DAY
     uint256 productId;
 
 
     constructor(address _subscriptionManager, address _currency, uint256 _productId, uint256 _fee) {
-        subscriptionManager = ISubscriptionManagerV2(_subscriptionManager);
+        subscriptionManager = ISubscriptionManager(_subscriptionManager);
         currency = IERC20(_currency);
         productId = _productId;
         fee = _fee;

@@ -107,39 +107,6 @@ let SubscriptionManagerAbi = [
     {
         "inputs": [
             {
-                "internalType": "uint256",
-                "name": "productId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "address",
-                "name": "payer",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "clientAddr",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "expiredDate",
-                "type": "uint256"
-            }
-        ],
-        "name": "addNewSubscriber",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "productId",
-                "type": "uint256"
-            },
-            {
                 "internalType": "address",
                 "name": "channel",
                 "type": "address"
@@ -164,13 +131,37 @@ let SubscriptionManagerAbi = [
             },
             {
                 "internalType": "uint256",
-                "name": "expiredDate",
+                "name": "extendPeriod",
                 "type": "uint256"
             }
         ],
-        "name": "extendSubscriptionPeriod",
+        "name": "addSubscriptionPeriod",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "subscriber",
+                "type": "address"
+            }
+        ],
+        "name": "getClientAddressOfSubscriber",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "clientAddress",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -226,11 +217,11 @@ let SubscriptionManagerAbi = [
             },
             {
                 "internalType": "address",
-                "name": "user",
+                "name": "subscriber",
                 "type": "address"
             }
         ],
-        "name": "isAccessible",
+        "name": "isSubscriber",
         "outputs": [
             {
                 "internalType": "bool",
@@ -256,11 +247,6 @@ let SubscriptionManagerAbi = [
     },
     {
         "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            },
             {
                 "internalType": "address",
                 "name": "",
@@ -293,11 +279,6 @@ let SubscriptionManagerAbi = [
     },
     {
         "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "productId",
-                "type": "uint256"
-            },
             {
                 "internalType": "address",
                 "name": "channel",
@@ -371,6 +352,24 @@ let SubscriptionManagerAbi = [
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "subscriber",
+                "type": "address"
+            }
+        ],
+        "name": "terminateSubscriptionInForce",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {

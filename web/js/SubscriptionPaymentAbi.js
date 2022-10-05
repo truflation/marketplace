@@ -10,16 +10,6 @@ let SubscriptionPaymentAbi = [
                 "internalType": "address",
                 "name": "_currency",
                 "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_productId",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_fee",
-                "type": "uint256"
             }
         ],
         "stateMutability": "nonpayable",
@@ -47,6 +37,11 @@ let SubscriptionPaymentAbi = [
     {
         "inputs": [
             {
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
+            },
+            {
                 "internalType": "address",
                 "name": "subscriber",
                 "type": "address"
@@ -59,6 +54,11 @@ let SubscriptionPaymentAbi = [
     },
     {
         "inputs": [
+            {
+                "internalType": "uint256[]",
+                "name": "_productId",
+                "type": "uint256[]"
+            },
             {
                 "internalType": "address[]",
                 "name": "_subscribers",
@@ -84,12 +84,23 @@ let SubscriptionPaymentAbi = [
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "fee",
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "subscriber",
+                "type": "address"
+            }
+        ],
+        "name": "getAutoRenewDate",
         "outputs": [
             {
                 "internalType": "uint256",
-                "name": "",
+                "name": "timestamp",
                 "type": "uint256"
             }
         ],
@@ -99,17 +110,22 @@ let SubscriptionPaymentAbi = [
     {
         "inputs": [
             {
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
+            },
+            {
                 "internalType": "address",
                 "name": "subscriber",
                 "type": "address"
             }
         ],
-        "name": "getSubscriptionExpiryDate",
+        "name": "isAutoRenew",
         "outputs": [
             {
-                "internalType": "uint256",
-                "name": "timestamp",
-                "type": "uint256"
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
             }
         ],
         "stateMutability": "view",
@@ -138,40 +154,14 @@ let SubscriptionPaymentAbi = [
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "client",
-                "type": "address"
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
             }
         ],
         "name": "startSubscription",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "startSubscription",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "subscribers",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -179,7 +169,7 @@ let SubscriptionPaymentAbi = [
         "name": "subscriptionManager",
         "outputs": [
             {
-                "internalType": "contract ISubscriptionManagerV2",
+                "internalType": "contract ISubscriptionManager",
                 "name": "",
                 "type": "address"
             }
@@ -188,7 +178,13 @@ let SubscriptionPaymentAbi = [
         "type": "function"
     },
     {
-        "inputs": [],
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
+            }
+        ],
         "name": "terminateSubscription",
         "outputs": [],
         "stateMutability": "nonpayable",
@@ -211,6 +207,11 @@ let SubscriptionPaymentAbi = [
         "inputs": [
             {
                 "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
                 "name": "_fee",
                 "type": "uint256"
             }
@@ -221,7 +222,26 @@ let SubscriptionPaymentAbi = [
         "type": "function"
     },
     {
-        "inputs": [],
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_fundWallet",
+                "type": "address"
+            }
+        ],
+        "name": "updateFundWallet",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            }
+        ],
         "name": "withdrawFee",
         "outputs": [],
         "stateMutability": "nonpayable",

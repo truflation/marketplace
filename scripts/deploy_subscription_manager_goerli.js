@@ -6,7 +6,7 @@
 const hre = require("hardhat");
 const {moveTime} = require("./utils/move-time");
 const {moveBlocks} = require("./utils/move-blocks");
-const {upgrades} = require("hardhat");
+const {upgrades, ethers} = require("hardhat");
 
 let subscriptionManager, usdToken, subscriptionPayment, packagePlanPayment, deployer, subscriber1, subscriber2, fee;
 
@@ -17,6 +17,7 @@ const SECONDS_IN_A_YEAR = 31449600
 
 const tokenAddress = "0x3417dd955d4408638870723B9Ad8Aae81953B478";
 const productA = 10000;
+const productB = 20000;
 
 async function main() {
 
@@ -38,29 +39,31 @@ async function initialSetup(){
     await subscriptionManager.deployed();
     console.log("SubscriptionManager deployed to:", subscriptionManager.address);
 
-    const subscriptionPaymentContract = await hre.ethers.getContractFactory("SubscriptionPayment");
-    subscriptionPayment = await subscriptionPaymentContract.deploy(subscriptionManager.address, tokenAddress, productA, fee);
-    await subscriptionPayment.deployed();
-    console.log("SubscriptionPayment deployed to:", subscriptionPayment.address);
-
-    await subscriptionManager.addPaymentChannel(productA, subscriptionPayment.address);
 
     const packagePlanPaymentContract = await hre.ethers.getContractFactory("PackagePlanPayment");
-    packagePlanPayment = await packagePlanPaymentContract.deploy(subscriptionManager.address, tokenAddress, productA);
+    packagePlanPayment = await packagePlanPaymentContract.deploy(subscriptionManager.address, tokenAddress);
     await packagePlanPayment.deployed();
     console.log("PackagePlanPayment deployed to:", packagePlanPayment.address);
 
-    await subscriptionManager.addPaymentChannel(productA, packagePlanPayment.address);
+    let packageIds = [1, 2, 3, 4];
+    let packageFeesPlanA = [ethers.utils.parseEther("50"), ethers.utils.parseEther("300"), ethers.utils.parseEther("1000"), ethers.utils.parseEther("10000")];
+    let packageFeesPlanB = [ethers.utils.parseEther("40"), ethers.utils.parseEther("240"), ethers.utils.parseEther("800"), ethers.utils.parseEther("8000")];
+    await packagePlanPayment.updateFee(productA, packageIds, packageFeesPlanA);
+    await packagePlanPayment.updateFee(productB, packageIds, packageFeesPlanB);
+
+    await subscriptionManager.addPaymentChannel(packagePlanPayment.address);
+
+    const subscriptionPaymentContract = await hre.ethers.getContractFactory("SubscriptionPayment");
+    subscriptionPayment = await subscriptionPaymentContract.deploy(subscriptionManager.address, tokenAddress);
+    await subscriptionPayment.deployed();
+    console.log("SubscriptionPayment deployed to:", subscriptionPayment.address);
+
+    await subscriptionPayment.updateFee(productA, ethers.utils.parseEther("1000"));
+    await subscriptionPayment.updateFee(productB, ethers.utils.parseEther("800"));
+
+    await subscriptionManager.addPaymentChannel(subscriptionPayment.address);
 
 
-    //move reward token to staking contract
-    //await usdToken.transfer(iBond.address, hre.ethers.utils.parseEther("1000000"));
-    //move stake token to stakers
-    // await usdToken.transfer(subscriber1.address, hre.ethers.utils.parseEther("10000"));
-    // await usdToken.transfer(subscriber2.address, hre.ethers.utils.parseEther("10000"));
-    //
-    // await usdToken.connect(subscriber1).approve(subscriptionPayment.address, hre.ethers.constants.MaxUint256);
-    // await usdToken.connect(subscriber2).approve(subscriptionPayment.address, hre.ethers.constants.MaxUint256);
 
 }
 
@@ -76,8 +79,8 @@ async function printBalance(signer){
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main()
-    .then(() => process.exit(0))
-    .catch((error) => {
-        console.error(error);
-        process.exit(1);
-    });
+  .then(() => process.exit(0))
+  .catch((error) => {
+      console.error(error);
+      process.exit(1);
+  });

@@ -19,8 +19,7 @@ contract SubscriptionManager is Initializable, OwnableUpgradeable, UUPSUpgradeab
     }
 
     mapping(uint256=>SubscriptionProduct) productList;//productId => SubscriptionProduct
-    mapping(uint256=>mapping(address=>bool)) public paymentChannels;
-    //mapping(uint256=>address[]) public paymentChannels;
+    mapping(address=>bool) public paymentChannels;
 
 
 
@@ -32,12 +31,12 @@ contract SubscriptionManager is Initializable, OwnableUpgradeable, UUPSUpgradeab
         SubscriptionProduct storage product = productList[productId];
     }
 
-    function addPaymentChannel(uint256 productId, address channel) public onlyOwner {
-        paymentChannels[productId][channel]=true;
+    function addPaymentChannel(address channel) public onlyOwner {
+        paymentChannels[channel]=true;
     }
 
-    function removePaymentChannel(uint256 productId, address channel) public onlyOwner {
-        paymentChannels[productId][channel]=false;
+    function removePaymentChannel(address channel) public onlyOwner {
+        paymentChannels[channel]=false;
     }
 
     ///@dev required by the OZ UUPS module
@@ -45,19 +44,22 @@ contract SubscriptionManager is Initializable, OwnableUpgradeable, UUPSUpgradeab
 
     function subscriptionStatus(address sender, string calldata dataString1, string calldata dataString2,
         uint256 dataInt, address dataAddress, bytes calldata dataBytes) external view returns (uint256 errorCode){
-        if (isAccessible(dataInt, sender)){
+
+        //Assume dataInt = productId, sender=clientAddress
+        if (productList[dataInt].clientAddrList[sender] >= block.timestamp){
             return 0;
         } else {
             return 1;//temporal error code
         }
     }
 
-    function isAccessible(uint256 productId, address user) public view returns (bool accessible) {
-        return productList[productId].clientAddrList[user] >= block.timestamp;
+    function isSubscriber(uint256 productId, address subscriber) public view returns (bool accessible) {
+        address clientAddress = productList[productId].addressOfSubscriber[subscriber];
+        return productList[productId].clientAddrList[clientAddress] >= block.timestamp;
     }
 
     function getSubscriptionExpiryDate(uint256 productId, address subscriber) external view returns (uint256 timestamp) {
-        return productList[productId].clientAddrList[subscriber];
+        return productList[productId].clientAddrList[productList[productId].addressOfSubscriber[subscriber]];
     }
 
     //add client address for non-crypto payment user
@@ -66,21 +68,28 @@ contract SubscriptionManager is Initializable, OwnableUpgradeable, UUPSUpgradeab
         productList[productId].clientAddrList[clientAddr] = expiredDate;
     }
 
-    function addNewSubscriber(uint256 productId, address payer, address clientAddr, uint256 expiredDate) external paymentChannelOnly(productId) {
-        productList[productId].addressOfSubscriber[payer]= clientAddr;
-        productList[productId].clientAddrList[clientAddr] = expiredDate;
+    function addSubscriptionPeriod(uint256 productId, address payer, uint256 extendPeriod) external paymentChannelOnly {
+        if(isSubscriber(productId, payer)){ //current subscriber
+            productList[productId].clientAddrList[productList[productId].addressOfSubscriber[payer]] += extendPeriod;
+        } else { //
+            if (productList[productId].addressOfSubscriber[payer]==address(0)){
+                productList[productId].addressOfSubscriber[payer]= payer;
+            }
+            productList[productId].clientAddrList[productList[productId].addressOfSubscriber[payer]] = block.timestamp + extendPeriod;
+        }
     }
 
-    function extendSubscriptionPeriod(uint256 productId, address payer, uint256 expiredDate) external paymentChannelOnly(productId) {
-        productList[productId].clientAddrList[productList[productId].addressOfSubscriber[payer]] = expiredDate;
+    //Use only emergency case to terminate user access
+    function terminateSubscriptionInForce(uint256 productId, address subscriber) external onlyOwner {
+        productList[productId].clientAddrList[productList[productId].addressOfSubscriber[subscriber]] = 0;
     }
 
+    function getClientAddressOfSubscriber(uint256 productId, address subscriber) external view returns (address clientAddress){
+        return productList[productId].addressOfSubscriber[subscriber];
+    }
 
     function updateClientAddressBySubscriber(uint256 productId, address clientAddr) external {
-        require(productList[productId].clientAddrList[productList[productId].addressOfSubscriber[msg.sender]] > block.timestamp,
-            "this is not the request from current subscriber");
-        require(productList[productId].addressOfSubscriber[msg.sender]!=address(0),
-            "client address of this subscriber is not properly set");
+        require(isSubscriber(productId, msg.sender), "this is not the request from current subscriber");
 
         productList[productId].clientAddrList[clientAddr]=productList[productId].clientAddrList[productList[productId].addressOfSubscriber[msg.sender]];
         productList[productId].clientAddrList[productList[productId].addressOfSubscriber[msg.sender]] = 0;
@@ -88,13 +97,13 @@ contract SubscriptionManager is Initializable, OwnableUpgradeable, UUPSUpgradeab
     }
 
     function getVersion() external virtual pure returns (uint256) {
-        return 2;
+        return 3;
     }
 
 
     /* ========== MODIFIERS ========== */
-    modifier paymentChannelOnly(uint256 productId) {
-        require(paymentChannels[productId][msg.sender] || owner() == msg.sender, "caller is not the payment channel contract");
+    modifier paymentChannelOnly() {
+        require(paymentChannels[msg.sender] || owner() == msg.sender, "caller is not the payment channel contract");
         _;
     }
 

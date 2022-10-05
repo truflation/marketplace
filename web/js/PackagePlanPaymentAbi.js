@@ -10,11 +10,6 @@ let PackagePlanPaymentAbi = [
                 "internalType": "address",
                 "name": "_currency",
                 "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_productId",
-                "type": "uint256"
             }
         ],
         "stateMutability": "nonpayable",
@@ -107,16 +102,21 @@ let PackagePlanPaymentAbi = [
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "subscriber",
-                "type": "address"
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint8",
+                "name": "packageId",
+                "type": "uint8"
             }
         ],
-        "name": "getSubscriptionExpiryDate",
+        "name": "getProductFee",
         "outputs": [
             {
                 "internalType": "uint256",
-                "name": "timestamp",
+                "name": "fee",
                 "type": "uint256"
             }
         ],
@@ -144,20 +144,38 @@ let PackagePlanPaymentAbi = [
                 "type": "uint8"
             }
         ],
-        "name": "plans",
+        "name": "packagePeriod",
         "outputs": [
             {
                 "internalType": "uint256",
-                "name": "period",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "fee",
+                "name": "",
                 "type": "uint256"
             }
         ],
         "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint8",
+                "name": "packageId",
+                "type": "uint8"
+            },
+            {
+                "internalType": "uint8",
+                "name": "duration",
+                "type": "uint8"
+            }
+        ],
+        "name": "purchasePackage",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -168,34 +186,11 @@ let PackagePlanPaymentAbi = [
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "client",
-                "type": "address"
-            },
-            {
-                "internalType": "uint8",
-                "name": "planId",
-                "type": "uint8"
-            },
-            {
-                "internalType": "uint8",
-                "name": "duration",
-                "type": "uint8"
-            }
-        ],
-        "name": "startSubscription",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
         "inputs": [],
         "name": "subscriptionManager",
         "outputs": [
             {
-                "internalType": "contract ISubscriptionManagerV2",
+                "internalType": "contract ISubscriptionManager",
                 "name": "",
                 "type": "address"
             }
@@ -219,14 +214,19 @@ let PackagePlanPaymentAbi = [
     {
         "inputs": [
             {
-                "internalType": "uint8",
-                "name": "planId",
-                "type": "uint8"
+                "internalType": "uint256",
+                "name": "productId",
+                "type": "uint256"
             },
             {
-                "internalType": "uint256",
-                "name": "_fee",
-                "type": "uint256"
+                "internalType": "uint8[]",
+                "name": "packageId",
+                "type": "uint8[]"
+            },
+            {
+                "internalType": "uint256[]",
+                "name": "feeList",
+                "type": "uint256[]"
             }
         ],
         "name": "updateFee",
@@ -235,7 +235,26 @@ let PackagePlanPaymentAbi = [
         "type": "function"
     },
     {
-        "inputs": [],
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_fundWallet",
+                "type": "address"
+            }
+        ],
+        "name": "updateFundWallet",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            }
+        ],
         "name": "withdrawFee",
         "outputs": [],
         "stateMutability": "nonpayable",

@@ -1,8 +1,8 @@
 
 const CurrencyTokenAddress = "0x3417dd955d4408638870723B9Ad8Aae81953B478";//Truflation Token
-const SubscriptionManagerAddress = "0x22313b0B570E7Fe2C69C34a19d4bd633a06D1c0e";
-const PackagePlanPaymentAddress = "0xaC148B7e0aa948064aa893A604ee585dEfbB09D2";
-const SubscriptionPaymentAddress = "0x9176C8E0F9f535E0BEfb33fE18F7576C6254ceED";
+const SubscriptionManagerAddress = "0x9D7AD1EE400EF2AaF2857326fc2fB56F5185A590";
+const PackagePlanPaymentAddress = "0x5DED468ab5055C705F0802533aA9d223f5Fa5244";
+const SubscriptionPaymentAddress = "0x7160C7848Eb3965e65A256A8Ce597877F864a172";
 const subscribeButton = document.getElementById('subscribe-button');
 const terminateButton = document.getElementById('terminate-button');
 //const transferAddressInput = document.getElementById('transfer-address');
@@ -72,11 +72,13 @@ subscribeButton.onclick = async () => {
   const SubscriptionPaymentContract = new ethers.Contract(SubscriptionPaymentAddress, SubscriptionPaymentAbi, signer);
   const CurrencyContract = new ethers.Contract(CurrencyTokenAddress, erc20Abi, signer);
 
-  //TODO only ask approval when allowance amount is not sufficient for payment
-  console.log('Approve');
-  await CurrencyContract.approve(SubscriptionPaymentAddress, ethers.constants.MaxUint256);
+  let isApproved = await tokenAllowanceCheck(SubscriptionPaymentAddress,packagePrice.value);
+  if(!isApproved){
+    await CurrencyContract.approve(SubscriptionPaymentAddress, ethers.constants.MaxUint256);
+    console.log('Approve');
+  }
   console.log('subscription');
-  await SubscriptionPaymentContract["startSubscription(uint256 productId)"](ProductId);
+  await SubscriptionPaymentContract.startSubscription(ProductId);
   subscribeButton.disabled = true;
   terminateButton.disabled = false;
 
@@ -103,7 +105,7 @@ UpdateAddressButton.onclick = async () => {
 
   const SubscriptionManagerContract = new ethers.Contract(SubscriptionManagerAddress, SubscriptionManagerAbi, signer);
   console.log(newClientAddressInput.value);
-  await SubscriptionPaymentContract.updateClientAddressBySubscriber(ProductId, newClientAddressInput.value);
+  await SubscriptionManagerContract.updateClientAddressBySubscriber(ProductId, newClientAddressInput.value);
 
 
 };

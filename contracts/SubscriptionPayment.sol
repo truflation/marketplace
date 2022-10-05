@@ -30,6 +30,7 @@ contract SubscriptionPayment is Ownable {
     constructor(address _subscriptionManager, address _currency) {
         subscriptionManager = ISubscriptionManager(_subscriptionManager);
         currency = IERC20(_currency);
+        fundWallet = msg.sender;
     }
 
     function updateFee(uint256 productId, uint256 _fee) public onlyOwner{

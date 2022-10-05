@@ -15,8 +15,8 @@
 
 <div class = "nav-bar">
 <ul >
-  <li><a href="/payment.html">HOME</a></li>
-  <li><a href="/ukindex.html">UK INDEX</a></li>
+  <li><a href="/ukindex.html">HOME</a></li>
+  <li><a href="/payment.html">US INDEX</a></li>
   <div class="right-menu">
   <li><button id="enable-button">Enable Metamask</button></li>
   </div>
@@ -24,7 +24,7 @@
 </div>
 
 
-  <h1>Subscription Dashboard</h1>
+<h1>Subscription Dashboard</h1>
 
 <div id="metamask-announce" class="disc" style="display: none">
   <div >It seems you don't connect to Metamask. Please do so. </div>
@@ -37,7 +37,7 @@
 
 <div class="box-interface">
   <div class="row1">
-    <h3>US Index Subscription Status</h3>
+    <h3>UK Index Subscription Status</h3>
   </div>
   <div class="row2">
 
@@ -57,10 +57,10 @@
     <div class="row2">
       <label> Package Plan Payment </label>
       <div class="radio-group" id="data-pack-group">
-        <input type="radio" id="1" name="data-pack" value="50">Day: 50 TFI <br/>
-        <input type="radio" id="2" name="data-pack" value="300">Week: 300 TFI<br/>
-        <input type="radio" id="3" name="data-pack" value="1000" checked >Month: 1000 TFI<br>
-        <input type="radio" id="4" name="data-pack" value="10000">Year: 10000 TFI</label><br>
+        <input type="radio" id="1" name="data-pack" value="40">Day: 40 TFI <br/>
+        <input type="radio" id="2" name="data-pack" value="240">Week: 240 TFI<br/>
+        <input type="radio" id="3" name="data-pack" value="800" checked >Month: 800 TFI<br>
+        <input type="radio" id="4" name="data-pack" value="8000">Year: 8000 TFI</label><br>
       </div>
       Duration<input id="duration" type="number" min="1" max="10" value="1"> <br/>
       Price: <span id="package-price" value="0">0</span> <br/>
@@ -70,9 +70,9 @@
     <div class="row3">
       <label> Monthly Auto Renewal Payment </label>
       <span>Period: <span id="cycle_period">30</span> Days
-      Price: <span id="fee">1000</span> TFI </span>
+      Price: <span id="fee">800</span> TFI </span>
       <button id="subscribe-button" >Start </button>
-      <button id="terminate-button" disabled = true>Terminate </button><br/>
+      <button id="terminate-button" disabled="true">Terminate </button><br/>
       <span id="bill_notice" style="display: none">The next bill will be charged on expiry date automatically.</span>
     </div>
 
@@ -106,7 +106,7 @@
 <script type="text/javascript" src="./js/SubscriptionManagerAbi.js"></script>
 <script type="text/javascript" src="./js/PackagePlanPaymentAbi.js"></script>
 <script type="text/javascript" src="./js/SubscriptionPaymentAbi.js"></script>
-<script type="text/javascript" src="./js/productA.js"></script>
+<script type="text/javascript" src="./js/productB.js"></script>
 <script type="text/javascript" src="./js/payment.js"></script>
 
 </html>

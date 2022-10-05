@@ -1,3 +1,7 @@
+Get the current api from
+
+http://marketplace.truflation.com/api/chaininfo.json
+
 Goerli
 
 Deploy account - 0x968E88df55AcAeC002e3d7c2393F9742e40d94b9

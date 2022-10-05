@@ -2,10 +2,10 @@ import TfiApi from 'tfi-api'
 import Web3 from 'web3'
 import assert from 'assert'
 import HDWalletProvider from '@truffle/hdwallet-provider'
+import * as dotenv from 'dotenv'
+dotenv.config()
 
-require('dotenv').config()
-
-function getWeb3 (config) {
+function getWeb3 (config): Web3 {
   const provider = new HDWalletProvider({
     privateKeys: [process.env.PRIVATE_KEY],
     providerOrUrl: config.provider
@@ -15,7 +15,13 @@ function getWeb3 (config) {
 
 const account = process.env.WALLET_ADDRESS
 
-export function testChain (config) {
+interface ChainInfo {
+  apiAddress: string
+  chainName: string
+  fee: string
+}
+
+export function testChain (config: ChainInfo): void {
   describe('My function', function () {
     let app, web3, address
     before(() => {
@@ -45,7 +51,7 @@ export function testChain (config) {
   })
 }
 
-export function testInflation (config) {
+export function testInflation (config: ChainInfo): void {
   describe('My function', function () {
     let app, web3, address
     before(() => {
@@ -56,7 +62,7 @@ export function testInflation (config) {
     it(`echo ${config.chainName}`, async () => {
       const r = await app.doApiRequest(web3, {
         service: 'truflation/current',
-	keypath: 'yearOverYearInflation',
+        keypath: 'yearOverYearInflation',
         address
       })
       const inflation = parseFloat(r)
@@ -67,13 +73,13 @@ export function testInflation (config) {
   })
 }
 
-export function testTransferAndRequest (config) {
+export function testTransferAndRequest (config: ChainInfo): void {
   describe('Echo transfer call', function () {
     let app, web3, address, fee
     before(() => {
       app = new TfiApi.TfiApi(account)
       web3 = getWeb3(config)
-      address = config.apiAddress,
+      address = config.apiAddress
       fee = config.fee
     })
 
@@ -90,7 +96,7 @@ export function testTransferAndRequest (config) {
     it(`inflation ${config.chainName}`, async () => {
       const r = await app.doApiTransferAndRequest(web3, {
         service: 'truflation/current',
-	keypath: 'yearOverYearInflation',
+        keypath: 'yearOverYearInflation',
         address,
         fee
       })

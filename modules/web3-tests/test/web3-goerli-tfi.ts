@@ -1,6 +1,6 @@
 import { testChain, testInflation } from './web3-tests'
 
-const INFURA_API = process.env.INFURA_API
+const INFURA_API = process.env.INFURA_API ?? ''
 const config = {
   apiAddress: '0xF4A440F09B52dCFCe0303BD81f457761cB008Bb4',
   chainName: 'Goerli',
@@ -11,4 +11,3 @@ const config = {
 
 testInflation(config)
 testChain(config)
-

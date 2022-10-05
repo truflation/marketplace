@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./test.sh",
-    "lint": "eslint test/**/*.ts *.ts",
-    "start": "ts-node index.ts",
+    "lint": "eslint test/**/*.ts",
     "build": "docker build -t truflation/integration-test . --no-cache"
   },
   "repository": {

@@ -2,6 +2,7 @@
 
 import logging
 import os
+import re
 import requests
 import eth_utils
 import cbor2
@@ -78,6 +79,8 @@ def process_request_api1(content, handler):
             ])
     else:
         content = handler(obj)
+        if re.match(content, '^0x[A-Fa-f0-9]+$'):
+            content = from_hex(content)
         encode_large = eth_abi.encode(
             ['bytes32', 'bytes'],
             [from_hex(request_id),

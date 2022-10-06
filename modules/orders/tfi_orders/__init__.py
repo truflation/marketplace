@@ -102,7 +102,7 @@ def process_request_api1(content, handler):
                 payment - fee
             ])
     refund_addr = refund_address(obj, oracle_request['callbackAddr'])
-    
+
     process_refund = encode_function(
         'processRefund(bytes32,address)',
         [

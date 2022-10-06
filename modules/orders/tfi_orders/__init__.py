@@ -78,7 +78,9 @@ def process_request_api1(content, handler):
                 payment
             ])
     else:
-        content = handler(obj).decode('utf-8')
+        content = handler(obj)
+        if hasattr(content, decode):
+            content = content.decode('utf-8')
         if re.match(content, '^0x[A-Fa-f0-9]+$'):
             content = from_hex(content)
         encode_large = eth_abi.encode(

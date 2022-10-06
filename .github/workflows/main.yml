@@ -4,11 +4,11 @@ on:
   push:
     branches: ['main']
     paths:
-	- modules/orders/**
+	- 'modules/orders/**'
   pull_request:
     branches: ['main']
     paths:
-	- modules/orders/**
+	- 'modules/orders/**'
 
 env:
   REGISTRY: ghcr.io

@@ -3,8 +3,12 @@ name: Pipeline
 on:
   push:
     branches: ['main']
+    paths:
+	- modules/orders/**
   pull_request:
     branches: ['main']
+    paths:
+	- modules/orders/**
 
 env:
   REGISTRY: ghcr.io

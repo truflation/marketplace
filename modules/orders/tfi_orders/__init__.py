@@ -79,10 +79,8 @@ def process_request_api1(content, handler):
             ])
     else:
         content = handler(obj)
-        if hasattr(content, 'decode'):
-            content = content.decode('utf-8')
-        if re.match(content, '^0x[A-Fa-f0-9]+$'):
-            content = from_hex(content)
+        if re.match(content.decode('utf-8'), '^0x[A-Fa-f0-9]+$'):
+            content = from_hex(content.decode('utf-8'))
         encode_large = eth_abi.encode(
             ['bytes32', 'bytes'],
             [from_hex(request_id),

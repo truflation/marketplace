@@ -14,12 +14,11 @@ app = Flask(__name__)
 api_adapter = os.getenv('TRUFLATION_API_HOST', 'http://api-adapter:8081')
 
 def decode_response(content):
-    if hasattr(content, 'decode'):
-        content = content.decode('utf-8')
-    if re.match('^0x[A-Fa-f0-9]+$', content):
-        return from_hex(content)
-    if hasattr(content, 'encode'):
-        return content.encode('utf-8')
+    content_str =  content.decode('utf-8') if hasattr(content, 'decode') \
+        else content
+    if re.match('^0x[A-Fa-f0-9]+$', content_str):
+        return from_hex(content_str)
+    return content
 
 def encode_function(signature, parameters):
     params_list = signature.split("(")[1]

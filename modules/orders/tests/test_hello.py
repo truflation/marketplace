@@ -1,6 +1,7 @@
-import pytest
 import json
-from tfi_orders import create_app, refund_address
+import pytest
+
+from tfi_orders import create_app, refund_address, decode_response
 from tfi_orders.fees import get_fee
 
 mimetype = 'application/json'
@@ -12,12 +13,12 @@ headers = {
 
 @pytest.fixture()
 def app():
-    app = create_app()
-    app.config.update({
+    tfi_app = create_app()
+    tfi_app.config.update({
         "TESTING": True,
     })
     # other setup can go here
-    yield app
+    yield tfi_app
 
 
 @pytest.fixture()
@@ -58,3 +59,12 @@ def test_refund_address():
     a = refund_address({'refundTo': '0xdeadbeef'},
                        '0x0edba69e2ae5c668a46360964f8a0b402359f2e0')
     assert a == '0x0edba69e2ae5c668a46360964f8a0b402359f2e0'
+
+def test_decode_response():
+    a = decode_response(b'0x1000')
+    assert a == b'\x10\x00'
+    a = decode_response('0x1000')
+    assert a == b'\x10\x00'
+    a = decode_response('foo')
+    assert a == 'foo'
+

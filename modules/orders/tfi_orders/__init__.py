@@ -13,6 +13,12 @@ from tfi_orders.fees import get_fee
 app = Flask(__name__)
 api_adapter = os.getenv('TRUFLATION_API_HOST', 'http://api-adapter:8081')
 
+def decode_response(content):
+    if hasattr(content, 'decode'):
+        content = content.decode('utf-8')
+    if re.match('^0x[A-Fa-f0-9]+$', content):
+        return from_hex(content)
+    return content
 
 def encode_function(signature, parameters):
     params_list = signature.split("(")[1]
@@ -79,12 +85,10 @@ def process_request_api1(content, handler):
             ])
     else:
         content = handler(obj)
-        if re.match(content.decode('utf-8'), '^0x[A-Fa-f0-9]+$'):
-            content = from_hex(content.decode('utf-8'))
         encode_large = eth_abi.encode(
             ['bytes32', 'bytes'],
             [from_hex(request_id),
-             content]
+             decode_response(content)]
         )
         encode_tx = encode_function(
             'fulfillOracleRequest2AndRefund(bytes32,uint256,address,bytes4,uint256,bytes,uint256)', [
@@ -159,7 +163,6 @@ def process_api_adapter():
     content = request.json
     r = requests.post(api_adapter, json=content)
     return r.content
-
 
 if os.getenv('TFI_ORDERS_LOCAL_LOGLEVEL') is None:
     gunicorn_logger = logging.getLogger('gunicorn.error')

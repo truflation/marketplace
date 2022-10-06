@@ -18,7 +18,8 @@ def decode_response(content):
         content = content.decode('utf-8')
     if re.match('^0x[A-Fa-f0-9]+$', content):
         return from_hex(content)
-    return content
+    if hasattr(content, 'encode'):
+        return content.encode('utf-8')
 
 def encode_function(signature, parameters):
     params_list = signature.split("(")[1]

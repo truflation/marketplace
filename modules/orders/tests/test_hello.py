@@ -66,5 +66,5 @@ def test_decode_response():
     a = decode_response('0x1000')
     assert a == b'\x10\x00'
     a = decode_response('foo')
-    assert a == 'foo'
+    assert a == b'foo'
 

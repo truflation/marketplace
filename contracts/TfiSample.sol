@@ -66,6 +66,7 @@ contract TfiSample is ChainlinkClient, ConfirmedOwner {
         results[_requestId] = bytesData;
     }
 
+
     function changeOracle(address _oracle) public onlyOwner {
         oracleId = _oracle;
     }
@@ -90,4 +91,18 @@ contract TfiSample is ChainlinkClient, ConfirmedOwner {
         LinkTokenInterface link = LinkTokenInterface(chainlinkTokenAddress());
             require(link.transfer(msg.sender, link.balanceOf(address(this))), "Unable to transfer");
   }
+    /** Use a function like this if you want to process the item
+        as int256 */
+
+    function getInt256(bytes32 _requestId) public view returns (int256) {
+       return toInt256(results[_requestId]);
+    }
+
+    function toInt256(bytes memory _bytes) internal pure
+      returns (int256 value) {
+          assembly {
+            value := mload(add(_bytes, 0x20))
+      }
+   }
+
 }

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="./style.css">
+  <title>Subscription Dashboard</title>
+</head>
+<body>
+
+<!--<style>-->
+<!--  * {-->
+<!--    border: 1px solid red;-->
+<!--  }-->
+<!--</style>-->
+
+
+<div class = "nav-bar">
+<ul >
+  <li><a href="./payment.html">HOME</a></li>
+  <li><a href="./ukindex.html">UK INDEX</a></li>
+  <div class="right-menu">
+  <li><button id="enable-button">Enable Metamask</button></li>
+  </div>
+</ul>
+</div>
+
+
+  <h1>Subscription Dashboard</h1>
+
+<div id="metamask-announce" class="disc" style="display: none">
+  <div >It seems you don't connect to Metamask. Please do so. </div>
+</div>
+
+<div id="buy-announce" class="disc" style="display: none">
+  <div >It seems you don't have enough token to subsribe our service. <br/>
+    token address:  <span id="token_address"></span></div>
+</div>
+
+<div class="box-interface">
+  <div class="row1">
+    <h3>US Index Subscription Status</h3>
+  </div>
+  <div class="row2">
+    Subscription Ticket List
+    <table id="ticket-table" >
+      <tr>
+        <th>Token ID</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Auto Renew</th>
+      </tr>
+    </table>
+    <br />
+
+  </div>
+
+</div>
+
+  <div class="box-interface">
+    <div class="row1">
+      <h3>Payment Section</h3>
+    </div>
+    <div class="row2">
+      <label> Package Plan Payment </label>
+      <div class="radio-group" id="data-pack-group">
+        <input type="radio" id="1" name="data-pack" value="50">Day: <span id="daily_fee"></span> TFI <br/>
+        <input type="radio" id="2" name="data-pack" value="300">Week: <span id="weekly_fee"></span> TFI<br/>
+        <input type="radio" id="3" name="data-pack" value="1000" checked >Month: <span id="monthly_fee"></span> TFI<br>
+        <input type="radio" id="4" name="data-pack" value="10000">Year: <span id="yearly_fee"></span> TFI<br>
+      </div>
+      Duration<input id="duration" type="number" min="1" max="10" value="1"> <br/>
+      Price: <span id="package-price" value="0">0</span> <br/>
+      <button id="buy-package-button" >Buy Data Package</button>
+
+    </div>
+
+  </div>
+
+<div id="client-address-section" class="box-interface">
+  <div class="row1">
+    <h3>Ticket</h3>
+  </div>
+  <div class="row2">
+
+    <label>Token ID</label>
+      <select id = "ticket-options" name="ticket-options" >
+        <option value="">Choose Token ID</option>
+      </select>
+
+    <label>Client Address</label>
+      <span id="client-address" style="inline-size: 200px; word-break: break-all; font-size: small">N/A</span>
+      <input id="new-client-address" type="text" style="width:250px;" >
+      <button id="update-address-button" disabled = true>Update Client Address</button>
+    <label> Monthly Auto Renewal Payment </label>
+      <span>Period: <span id="cycle_period">30</span> Days
+        Price: <span id="fee">1000</span> TFI </span>
+      <button id="renew-button" disabled = true>Start </button>
+      <button id="terminate-button" disabled = true>Terminate </button><br/>
+    <span id="bill_notice" style="display: none">The next bill will be charged on expiry date automatically.</span>
+
+  </div>
+
+
+</div>
+
+
+
+</body>
+
+
+
+<script type="text/javascript" src="./js/etherjs.min.js"></script>
+<script type="text/javascript" src="./js/erc20Abi.js"></script>
+<script type="text/javascript" src="./js/SubscriptionManagerV4Abi.js"></script>
+<script type="text/javascript" src="./js/PackagePlanPaymentV2Abi.js"></script>
+<script type="text/javascript" src="./js/SubscriptionTicketManagerAbi.js"></script>
+<script type="text/javascript" src="./js/productA.js"></script>
+<script type="text/javascript" src="./js/usnft.js"></script>
+
+</html>

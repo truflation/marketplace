@@ -64,7 +64,7 @@ label {
 }
 
 .box-interface [type=text] {
-  width: 53px;
+  width: 60px;
   padding: 6px;
   text-align: center;
   font-size: 14px;
@@ -134,6 +134,11 @@ label {
   list-style: none;
   text-align: left;
   align-items: baseline;
+
+}
+
+.box-interface table, th, tr, td {
+  border: 1px solid;
 
 }
 

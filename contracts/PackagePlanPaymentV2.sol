@@ -6,11 +6,10 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "hardhat/console.sol";
 
-//TODO implement Reentrant guard for security
-//TODO emit event
-contract PackagePlanPaymentV2 is Ownable {
+contract PackagePlanPaymentV2 is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
     //using Address for address;
@@ -33,6 +32,13 @@ contract PackagePlanPaymentV2 is Ownable {
     IERC20 public currency;
 
     address fundWallet;
+
+    event PurchasePackage(
+        uint256 productId,
+        uint256 startTime,
+        uint256 endTime,
+        uint256 indexed tokenId
+    );
 
 
     constructor(address _subscriptionTicketManager, address _currency) {
@@ -62,15 +68,14 @@ contract PackagePlanPaymentV2 is Ownable {
     }
 
 
-
-    //TODO auto renew will be configured per ticket token base.
-    function purchasePackage(uint256 productId, uint8 packageId, uint8 duration) public {
+    function purchasePackage(uint256 productId, uint8 packageId, uint8 duration) nonReentrant public returns (uint256 tokenId){
 
         uint256 price = productFees[productId][packageId].mul(duration);
         currency.safeTransferFrom(msg.sender, address(this), price);
         currency.safeTransfer(fundWallet, price);
-        subscriptionTicketManager.safeMint(msg.sender, productId, block.timestamp, block.timestamp.add(packagePeriod[packageId].mul(duration)));
-
+        uint256 endTime = block.timestamp.add(packagePeriod[packageId].mul(duration));
+        tokenId = subscriptionTicketManager.safeMint(msg.sender, productId, block.timestamp, endTime);
+        emit PurchasePackage(productId, block.timestamp, endTime, tokenId);
     }
 
     //To rescue the fund in case token has been wrongly deposited into this contract

@@ -9,12 +9,18 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "hardhat/console.sol";
 
-//TODO add more events
-//TODO implement subscription terminate-force method with ownerOnly
+
 contract SubscriptionManagerV4 is Initializable, OwnableUpgradeable, UUPSUpgradeable, ISubscriptionManagerV4 {
 
     ISubscriptionTicketManager public subscriptionTicketManager;
     mapping(uint256=>bool) public _blacklist;
+
+    event ValidateSubscriptionStatus(
+        uint256 indexed tokenId,
+        address client,
+        uint256 productId,
+        uint256 result
+    );
 
 
     function initialize(address _subscriptionTicketManager) initializer public {
@@ -35,7 +41,9 @@ contract SubscriptionManagerV4 is Initializable, OwnableUpgradeable, UUPSUpgrade
 
         //Assume dataInt = productId, sender=clientAddress, dataString1 = tokenId
         uint256 tokenId;//TODO have to set tokenId
-        return validateSubscriptionStatus(sender, tokenId, dataInt);
+
+        errorCode = validateSubscriptionStatus(sender, tokenId, dataInt);
+        //emit ValidateSubscriptionStatus(tokenId, client, productId, errorCode);
     }
 
     function validateSubscriptionStatus(address client, uint256 tokenId, uint256 productId) public view returns (uint256 errorCode){

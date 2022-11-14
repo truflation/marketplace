@@ -1,9 +1,9 @@
 
 const CurrencyTokenAddress = "0x3417dd955d4408638870723B9Ad8Aae81953B478";//Truflation Token
-const SubscriptionTicketManagerAddress = "0xfB3FbBadF5E0d2F404CD32d665dAcBFd88498ED7";
-const SubscriptionManagerAddress = "0xE4d8cbFbaA00f0D34a4a9c5a8dd5dE361b912ef6";
-const PackagePlanPaymentAddress = "0xCc18942eA7B780040E1Bd0e3160842aFA82FAE1D";
-//const AutoRenewPaymentAddress = "0x7160C7848Eb3965e65A256A8Ce597877F864a172";
+const SubscriptionTicketManagerAddress = "0x01D57513AdD04A74561aB6Ba0a28e24de5fC30E2";
+const SubscriptionManagerAddress = "0xf02A5F9ED287125476EaBfb4B1C207c745Fd32De";
+const PackagePlanPaymentAddress = "0xeD54460AFf30E7364dA460bAe07F961916ABe5ee";
+const AutoRenewPaymentAddress = "0x4be13633Df2Fb159f518d18548A699dadb0b753F";
 
 const descBox = document.getElementById('buy-announce');
 const enableEthereumButton = document.getElementById('enable-button');
@@ -22,18 +22,18 @@ const terminateButton = document.getElementById('terminate-button');
 
 const durationInput = document.getElementById('duration');
 const packagePrice = document.getElementById('package-price');
-let accounts;
+let dailyFee, weeklyFee, monthlyFee, yearlyFee;
 let provider;
+let signer;
 let tokenList = [];
 let tokenInfoMap = new Map();
-
+let SubscriptionManager, PackagePlanPayment, SubscriptionTicketManager;
 //let CurrencyContract;
 
 enableEthereumButton.onclick = async () => {
-  provider = new ethers.providers.Web3Provider(window.ethereum);
+  //provider = new ethers.providers.Web3Provider(window.ethereum);
   const accounts = await provider.send("eth_requestAccounts", []);
-  console.log(accounts);
-  console.log(accounts[0]);
+  console.log('connect to metamask', accounts);
 
 };
 
@@ -50,8 +50,8 @@ durationInput.addEventListener('change', async() =>   {
 });
 
 BuyPackageButton.onclick = async () => {
-  const signer = await provider.getSigner();
-  let signerAddress = await signer.getAddress();
+
+  console.log('signer: ', await signer.getAddress());
   const PackagePlanPaymentContract = new ethers.Contract(PackagePlanPaymentAddress, PackagePlanPaymentV2Abi, signer);
   const CurrencyContract = new ethers.Contract(CurrencyTokenAddress, erc20Abi, signer);
 
@@ -62,11 +62,10 @@ BuyPackageButton.onclick = async () => {
     await CurrencyContract.approve(PackagePlanPaymentAddress, ethers.constants.MaxUint256);
     console.log('Approve');
   }
-  console.log(signerAddress);
-  console.log(document.querySelector('input[type=radio][name="data-pack"]:checked')?.id);
+
+  console.log('Selected periodId', document.querySelector('input[type=radio][name="data-pack"]:checked')?.id);
   let periodId = document.querySelector('input[type=radio][name="data-pack"]:checked')?.id;
   await PackagePlanPaymentContract.purchasePackage(ProductId, periodId, durationInput.value);
-  //await PackagePlanPaymentContract.startSubscription(signerAddress, parseInt(periodId), parseInt(durationInput.value));
   BuyPackageButton.disabled = true;
 };
 
@@ -74,9 +73,16 @@ TicketListOptions.addEventListener('change', async() =>   {
 
   if(TicketListOptions.value != ""){
     let tokenItem = tokenInfoMap.get(TicketListOptions.value);
+    console.log(tokenItem);
     ClientAddress.innerHTML = tokenItem.clientAddr;
     UpdateAddressButton.disabled = false;
-    //TODO fetch auto renew status
+    if(tokenItem.isAutoRenew){
+      renewButton.disabled = true;
+      terminateButton.disabled = false;
+    } else {
+      renewButton.disabled = false;
+      terminateButton.disabled = true;
+    }
   }
 
 
@@ -84,44 +90,34 @@ TicketListOptions.addEventListener('change', async() =>   {
 
 
 
-// subscribeButton.onclick = async () => {
-//   const signer = await provider.getSigner();
-//   let signerAddress = await signer.getAddress();
-//   console.log('signer: ' + signerAddress);
-//
-//   const SubscriptionPaymentContract = new ethers.Contract(SubscriptionPaymentAddress, SubscriptionPaymentAbi, signer);
-//   const CurrencyContract = new ethers.Contract(CurrencyTokenAddress, erc20Abi, signer);
-//
-//   let isApproved = await tokenAllowanceCheck(SubscriptionPaymentAddress,packagePrice.value);
-//   if(!isApproved){
-//     await CurrencyContract.approve(SubscriptionPaymentAddress, ethers.constants.MaxUint256);
-//     console.log('Approve');
-//   }
-//   console.log('subscription');
-//   await SubscriptionPaymentContract.startSubscription(ProductId);
-//   subscribeButton.disabled = true;
-//   terminateButton.disabled = false;
-//
-// };
+renewButton.onclick = async () => {
+
+  const AutoRenewPaymentContract = new ethers.Contract(AutoRenewPaymentAddress, AutoRenewPaymentAbi, signer);
+
+  console.log('Token ID', TicketListOptions.value);
+  await AutoRenewPaymentContract.startAutoRenew(TicketListOptions.value);
+  renewButton.disabled = true;
+  terminateButton.disabled = false;
+
+};
+
+terminateButton.onclick = async () => {
+
+  const AutoRenewPaymentContract = new ethers.Contract(AutoRenewPaymentAddress, AutoRenewPaymentAbi, signer);
+
+  console.log('Token ID', TicketListOptions.value);
+  await AutoRenewPaymentContract.terminateAutoRenew(TicketListOptions.value);
+  renewButton.disabled = false;
+  terminateButton.disabled = true;
+
+};
 
 
-// terminateButton.onclick = async () => {
-//   const signer = await provider.getSigner();
-//   let signerAddress = await signer.getAddress();
-//   console.log('signer: ' + signerAddress);
-//
-//   const SubscriptionPaymentContract = new ethers.Contract(SubscriptionPaymentAddress, SubscriptionPaymentAbi, signer);
-//   await SubscriptionPaymentContract.terminateSubscription(ProductId);
-//
-//   renewButton.disabled = false;
-//   terminateButton.disabled = true;
-//
-// };
+
 
 UpdateAddressButton.onclick = async () => {
-  const signer = await provider.getSigner();
-  let signerAddress = await signer.getAddress();
-  console.log('signer: ' + signerAddress);
+
+  console.log('signer: ' + await signer.getAddress());
 
   const SubscriptionTicketManagerContract = new ethers.Contract(SubscriptionTicketManagerAddress, SubscriptionTicketManagerAbi, signer);
   console.log(newClientAddressInput.value);
@@ -137,20 +133,23 @@ async function setupSubscriberStatus() {
   const SubscriptionManagerContract = new ethers.Contract(SubscriptionManagerAddress, SubscriptionManagerV4Abi, provider);
   const PackagePlanPaymentContract = new ethers.Contract(PackagePlanPaymentAddress, PackagePlanPaymentV2Abi, provider);
   const SubscriptionTicketManagerContract = new ethers.Contract(SubscriptionTicketManagerAddress, SubscriptionTicketManagerAbi, provider);
-  const signerAddress = await provider.getSigner().getAddress();
-  console.log(signerAddress);
+  const AutoRenewPaymentContract = new ethers.Contract(AutoRenewPaymentAddress, AutoRenewPaymentAbi, provider);
+  let signerAddress = await provider.getSigner().getAddress();
+  console.log('Signer Address: ', signerAddress);
   let balance = await SubscriptionTicketManagerContract.balanceOf(signerAddress);
   console.log(balance.toString());
   for (let i=0; i<balance; i++) {
     let tokenId = await SubscriptionTicketManagerContract.tokenOfOwnerByIndex(signerAddress, i);
     let subscriptionInfo = await SubscriptionTicketManagerContract.getSubscriptionInfo(tokenId);
     let clientAddr = await SubscriptionTicketManagerContract.getClientAddress(tokenId);
+    let isAutoRenew = await AutoRenewPaymentContract.isAutoRenew(tokenId);
     let tokenItem = {
       tokenId: tokenId,
       productId: subscriptionInfo.productId,
       startDate: subscriptionInfo.startTime,
       endDate: subscriptionInfo.endTime,
-      clientAddr: clientAddr
+      clientAddr: clientAddr,
+      isAutoRenew: isAutoRenew
     }
     console.log(tokenItem);
     if (tokenItem.productId == ProductId && tokenItem.endDate <= Date.now()) {
@@ -172,7 +171,7 @@ async function setupSubscriberStatus() {
     createTd(tokenList[i].tokenId);
     createTd( (new Date(tokenList[i].startDate*1000)).toLocaleDateString());
     createTd( (new Date(tokenList[i].endDate*1000)).toLocaleDateString());
-    createTd("false");
+    createTd(tokenList[i].isAutoRenew);
     TicketListTable.appendChild(tr);
   }
 
@@ -186,10 +185,10 @@ async function setupSubscriberStatus() {
   }
 
 
-  let dailyFee = parseInt(ethers.utils.formatEther(await PackagePlanPaymentContract.getProductFee(ProductId, 1)));
-  let weeklyFee = parseInt(ethers.utils.formatEther(await PackagePlanPaymentContract.getProductFee(ProductId, 2)));
-  let monthlyFee = parseInt(ethers.utils.formatEther(await PackagePlanPaymentContract.getProductFee(ProductId, 3)));
-  let yearlyFee = parseInt(ethers.utils.formatEther(await PackagePlanPaymentContract.getProductFee(ProductId, 4)));
+  dailyFee = parseInt(ethers.utils.formatEther(await PackagePlanPaymentContract.getProductFee(ProductId, 1)));
+  weeklyFee = parseInt(ethers.utils.formatEther(await PackagePlanPaymentContract.getProductFee(ProductId, 2)));
+  monthlyFee = parseInt(ethers.utils.formatEther(await PackagePlanPaymentContract.getProductFee(ProductId, 3)));
+  yearlyFee = parseInt(ethers.utils.formatEther(await PackagePlanPaymentContract.getProductFee(ProductId, 4)));
   document.getElementById('1').value = dailyFee;
   document.getElementById('2').value = weeklyFee;
   document.getElementById('3').value = monthlyFee;
@@ -206,7 +205,7 @@ async function setupSubscriberStatus() {
 
 
 async function isMetaMaskConnected()  {
-  accounts = await provider.listAccounts();
+  let accounts = await provider.listAccounts();
   console.log('account[0]: ' + accounts[0]);
   console.log('account length: ' + accounts.length);
   return accounts.length > 0;
@@ -239,7 +238,28 @@ async function tokenAllowanceCheck(spender, amount)  {
   return allowance >= amount;
 }
 
+async function loadPage() {
+  provider = new ethers.providers.Web3Provider(window.ethereum);
+  signer = provider.getSigner();
+  enableEthereumButton.disabled = true;
+  enableEthereumButton.innerHTML = window.ethereum.selectedAddress;
+  let isTokenHolder = await tokenHoldCheck();
+  if(!isTokenHolder){
+    descBox.style.display = "block";
+    console.log('user do not hold token');
+    document.getElementById('token_address').innerHTML = CurrencyTokenAddress;
+  }
+  console.log('Loading is done');
 
+}
+
+window.ethereum.on('accountsChanged', async (accounts) => {
+  // Handle the new accounts, or lack thereof.
+  // "accounts" will always be an array, but it can be empty.
+  console.log('account has changed');
+  await loadPage();
+  await setupSubscriberStatus();
+});
 
 window.addEventListener('load', async (event) => {
 
@@ -249,21 +269,8 @@ window.addEventListener('load', async (event) => {
   if (connected){
     // metamask is connected
     console.log('metamask is connected to ' + window.ethereum.selectedAddress);
-    enableEthereumButton.disabled = true;
-    enableEthereumButton.innerHTML = window.ethereum.selectedAddress;
-
+    await loadPage();
     await setupSubscriberStatus();
-    let isTokenHolder = await tokenHoldCheck();
-    if(!isTokenHolder){
-      descBox.style.display = "block";
-      console.log('user do not hold token');
-      document.getElementById('token_address').innerHTML = CurrencyTokenAddress;
-    }
-
-    //TODO check token is approved for transfer
-
-
-    console.log('Loading');
 
   } else{
     // metamask is not connected
@@ -272,8 +279,6 @@ window.addEventListener('load', async (event) => {
   }
 
   console.log('Completed');
-
-
 
 
 });

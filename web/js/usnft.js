@@ -1,9 +1,9 @@
 
 const CurrencyTokenAddress = "0x3417dd955d4408638870723B9Ad8Aae81953B478";//Truflation Token
-const SubscriptionTicketManagerAddress = "0x01D57513AdD04A74561aB6Ba0a28e24de5fC30E2";
-const SubscriptionManagerAddress = "0xf02A5F9ED287125476EaBfb4B1C207c745Fd32De";
-const PackagePlanPaymentAddress = "0xeD54460AFf30E7364dA460bAe07F961916ABe5ee";
-const AutoRenewPaymentAddress = "0x4be13633Df2Fb159f518d18548A699dadb0b753F";
+const SubscriptionTicketManagerAddress = "0xB2020809C3306932C25b219e04D6C728976574Bb";
+const SubscriptionManagerAddress = "0xa40f62BA334fbB7E3A71cfba6EeFB8a190261089";
+const PackagePlanPaymentAddress = "0xc2eF97Eb26FC6a94bc5627C387baC41528873302";
+const AutoRenewPaymentAddress = "0xFf3B85677E73544ab22Ec1Ac8ea2e1757Ca6bC12";
 
 const descBox = document.getElementById('buy-announce');
 const enableEthereumButton = document.getElementById('enable-button');
@@ -52,7 +52,7 @@ durationInput.addEventListener('change', async() =>   {
 BuyPackageButton.onclick = async () => {
 
   console.log('signer: ', await signer.getAddress());
-  const PackagePlanPaymentContract = new ethers.Contract(PackagePlanPaymentAddress, PackagePlanPaymentV2Abi, signer);
+  const PackagePlanPaymentContract = new ethers.Contract(PackagePlanPaymentAddress, PackagePlanPaymentAbi, signer);
   const CurrencyContract = new ethers.Contract(CurrencyTokenAddress, erc20Abi, signer);
 
   //TODO only ask approval when allowance amount is not sufficient for payment
@@ -130,8 +130,8 @@ UpdateAddressButton.onclick = async () => {
 
 async function setupSubscriberStatus() {
   //const SubscriptionPaymentContract = new ethers.Contract(SubscriptionPaymentAddress, SubscriptionPaymentAbi, provider);
-  const SubscriptionManagerContract = new ethers.Contract(SubscriptionManagerAddress, SubscriptionManagerV4Abi, provider);
-  const PackagePlanPaymentContract = new ethers.Contract(PackagePlanPaymentAddress, PackagePlanPaymentV2Abi, provider);
+  const SubscriptionManagerContract = new ethers.Contract(SubscriptionManagerAddress, SubscriptionManagerAbi, provider);
+  const PackagePlanPaymentContract = new ethers.Contract(PackagePlanPaymentAddress, PackagePlanPaymentAbi, provider);
   const SubscriptionTicketManagerContract = new ethers.Contract(SubscriptionTicketManagerAddress, SubscriptionTicketManagerAbi, provider);
   const AutoRenewPaymentContract = new ethers.Contract(AutoRenewPaymentAddress, AutoRenewPaymentAbi, provider);
   let signerAddress = await provider.getSigner().getAddress();

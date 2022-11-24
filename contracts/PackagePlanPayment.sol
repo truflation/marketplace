@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "./interfaces/ISubscriptionManager.sol";
+import "./interfaces/ISubscriptionTicketManager.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "hardhat/console.sol";
 
-contract PackagePlanPayment is Ownable {
+contract PackagePlanPayment is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
+    //using Address for address;
 
     uint8 public DAILY = 1;
     uint8 public WEEKLY = 2;
@@ -26,14 +28,21 @@ contract PackagePlanPayment is Ownable {
     mapping(uint256=>mapping(uint8=>uint256)) productFees;//productId=>period=>fee
     mapping(uint8=>uint256) public packagePeriod;
 
-    ISubscriptionManager public subscriptionManager;
+    ISubscriptionTicketManager public subscriptionTicketManager;
     IERC20 public currency;
 
     address fundWallet;
 
+    event PurchasePackage(
+        uint256 productId,
+        uint256 startTime,
+        uint256 endTime,
+        uint256 indexed tokenId
+    );
 
-    constructor(address _subscriptionManager, address _currency) {
-        subscriptionManager = ISubscriptionManager(_subscriptionManager);
+
+    constructor(address _subscriptionTicketManager, address _currency) {
+        subscriptionTicketManager = ISubscriptionTicketManager(_subscriptionTicketManager);
         currency = IERC20(_currency);
         packagePeriod[DAILY] = SECONDS_IN_A_DAY;
         packagePeriod[WEEKLY] = SECONDS_IN_A_WEEK;
@@ -59,19 +68,28 @@ contract PackagePlanPayment is Ownable {
     }
 
 
+    function purchasePackage(uint256 productId, uint8 packageId, uint8 duration) nonReentrant public returns (uint256 tokenId){
 
-    function purchasePackage(uint256 productId, uint8 packageId, uint8 duration) public {
-        //TODO if auto-renew function is on, stop execution.
-        subscriptionManager.getSubscriptionExpiryDate(productId, msg.sender);
         uint256 price = productFees[productId][packageId].mul(duration);
         currency.safeTransferFrom(msg.sender, address(this), price);
-        subscriptionManager.addSubscriptionPeriod(productId, msg.sender, packagePeriod[packageId]);
         currency.safeTransfer(fundWallet, price);
+        uint256 endTime = block.timestamp.add(packagePeriod[packageId].mul(duration));
+        tokenId = subscriptionTicketManager.safeMint(msg.sender, productId, block.timestamp, endTime);
+        emit PurchasePackage(productId, block.timestamp, endTime, tokenId);
     }
 
     //To rescue the fund in case token has been wrongly deposited into this contract
-    function withdrawFee(address token) public onlyOwner {
+    function withdrawTokens(address token) public onlyOwner {
         IERC20(token).safeTransfer(msg.sender, IERC20(token).balanceOf(address(this)));
+    }
+
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes memory
+    ) public virtual returns (bytes4) {
+        return this.onERC721Received.selector;
     }
 
 

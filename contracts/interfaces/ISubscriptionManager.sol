@@ -20,12 +20,8 @@ interface ISubscriptionManager {
       bytes calldata dataBytes) external view returns
    (uint256 errorCode);
 
-   function isSubscriber(uint256 productId, address user) external view returns (bool accessible);
-   function getSubscriptionExpiryDate(uint256 productId, address subscriber) external view returns (uint256 timestamp);
-   function addSubscriptionPeriod(uint256 productId, address payer, uint256 extendPeriod) external;
-   function getClientAddressOfSubscriber(uint256 productId, address subscriber) external view returns (address clientAddress);
-   function updateClientAddressBySubscriber(uint256 productId, address clientAddr) external;
-   function terminateSubscriptionInForce(uint256 productId, address subscriber) external;
+   function validateSubscriptionStatus(address client, uint256 tokenId, uint256 productId) external view returns (uint256 errorCode);
+
    function getVersion() external pure returns (uint256);
 }
 

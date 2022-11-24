@@ -8,7 +8,7 @@ const {moveTime} = require("./utils/move-time");
 const {moveBlocks} = require("./utils/move-blocks");
 const {upgrades, ethers} = require("hardhat");
 
-let subscriptionManager, usdToken, subscriptionPayment, packagePlanPayment, deployer, subscriber1, subscriber2, fee;
+let subscriptionTicketManager, subscriptionManager, packagePlanPayment, autoRenewPayment, deployer, subscriber1, subscriber2;
 
 const SECONDS_IN_A_HOUR = 3600
 const SECONDS_IN_A_DAY = 86400
@@ -29,40 +29,43 @@ async function main() {
 }
 
 async function initialSetup(){
-    [deployer, subscriber1, subscriber2] = await hre.ethers.getSigners();
-    fee = hre.ethers.utils.parseEther("1000");
+    [deployer, subscriber1, subscriber2] = await ethers.getSigners();
+
+    const subscriptionTicketManagerContract = await ethers.getContractFactory("SubscriptionTicketManager");
+
+    //subscriptionTicketManager = await subscriptionTicketManagerContract.deploy();
+    subscriptionTicketManager = await upgrades.deployProxy(subscriptionTicketManagerContract, [], { initializer: 'initialize', kind: 'uups' });
+
+    await subscriptionTicketManager.deployed();
+    console.log("SubscriptionTicketManager deployed to:", subscriptionTicketManager.address);
 
 
-    //TODO change deployment way
-    const subscriptionManagerContract = await hre.ethers.getContractFactory("SubscriptionManager");
-    subscriptionManager = await upgrades.deployProxy(subscriptionManagerContract, [], { initializer: 'initialize', kind: 'uups' });
+    const subscriptionManagerContract = await ethers.getContractFactory("SubscriptionManager");
+
+    subscriptionManager = await upgrades.deployProxy(subscriptionManagerContract, [subscriptionTicketManager.address], { initializer: 'initialize', kind: 'uups' });
     await subscriptionManager.deployed();
     console.log("SubscriptionManager deployed to:", subscriptionManager.address);
 
+    //await subscriptionManager.setSubscriptionTicketManager(subscriptionTicketManager.address);
 
-    const packagePlanPaymentContract = await hre.ethers.getContractFactory("PackagePlanPayment");
-    packagePlanPayment = await packagePlanPaymentContract.deploy(subscriptionManager.address, tokenAddress);
+    const packagePlanPaymentContract = await ethers.getContractFactory("PackagePlanPayment");
+    packagePlanPayment = await packagePlanPaymentContract.deploy(subscriptionTicketManager.address, tokenAddress);
     await packagePlanPayment.deployed();
     console.log("PackagePlanPayment deployed to:", packagePlanPayment.address);
-
     let packageIds = [1, 2, 3, 4];
     let packageFeesPlanA = [ethers.utils.parseEther("50"), ethers.utils.parseEther("300"), ethers.utils.parseEther("1000"), ethers.utils.parseEther("10000")];
     let packageFeesPlanB = [ethers.utils.parseEther("40"), ethers.utils.parseEther("240"), ethers.utils.parseEther("800"), ethers.utils.parseEther("8000")];
     await packagePlanPayment.updateFee(productA, packageIds, packageFeesPlanA);
     await packagePlanPayment.updateFee(productB, packageIds, packageFeesPlanB);
 
-    await subscriptionManager.addPaymentChannel(packagePlanPayment.address);
+    await subscriptionTicketManager.addMinter(packagePlanPayment.address);
 
-    const subscriptionPaymentContract = await hre.ethers.getContractFactory("SubscriptionPayment");
-    subscriptionPayment = await subscriptionPaymentContract.deploy(subscriptionManager.address, tokenAddress);
-    await subscriptionPayment.deployed();
-    console.log("SubscriptionPayment deployed to:", subscriptionPayment.address);
+    const autoRenewPaymentContract = await ethers.getContractFactory("AutoRenewPayment");
+    autoRenewPayment = await autoRenewPaymentContract.deploy(subscriptionTicketManager.address, tokenAddress, packagePlanPayment.address);
+    await autoRenewPayment.deployed();
+    console.log("AutoRenewPayment deployed to:", autoRenewPayment.address);
 
-    await subscriptionPayment.updateFee(productA, ethers.utils.parseEther("1000"));
-    await subscriptionPayment.updateFee(productB, ethers.utils.parseEther("800"));
-
-    await subscriptionManager.addPaymentChannel(subscriptionPayment.address);
-
+    await subscriptionTicketManager.addMinter(autoRenewPayment.address);
 
 
 }

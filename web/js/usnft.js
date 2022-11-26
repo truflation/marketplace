@@ -1,9 +1,10 @@
 
 const CurrencyTokenAddress = "0x3417dd955d4408638870723B9Ad8Aae81953B478";//Truflation Token
-const SubscriptionTicketManagerAddress = "0xB2020809C3306932C25b219e04D6C728976574Bb";
-const SubscriptionManagerAddress = "0xa40f62BA334fbB7E3A71cfba6EeFB8a190261089";
-const PackagePlanPaymentAddress = "0xc2eF97Eb26FC6a94bc5627C387baC41528873302";
-const AutoRenewPaymentAddress = "0xFf3B85677E73544ab22Ec1Ac8ea2e1757Ca6bC12";
+const SubscriptionTicketManagerAddress = "0x3a36Faad3b408034637eBC52e080049535A43335";
+const TicketURIDescriptorAddress = "0x1644Bd0aA1c352F7FeD778b86692dEf75204E245";
+const SubscriptionManagerAddress = "0xdB87C3424638E9Fd4ADc8c9171520C390eFCb13d";
+const PackagePlanPaymentAddress = "0x3d74674Db0d23DF3E8F3704b4dE9c935bc0c4D78";
+const AutoRenewPaymentAddress = "0x82DD728630DD78fBE24c06f66812453D497Eaa7a";
 
 const descBox = document.getElementById('buy-announce');
 const enableEthereumButton = document.getElementById('enable-button');

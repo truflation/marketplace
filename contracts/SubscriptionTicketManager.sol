@@ -7,6 +7,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "./interfaces/ITicketURIDescriptor.sol";
 
 //TODO upgrade openzeppelin version from 4.7.3 to 4.8.0. Some code modification is needed for that.
 contract SubscriptionTicketManager is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
@@ -26,6 +27,7 @@ contract SubscriptionTicketManager is Initializable, ERC721Upgradeable, ERC721En
     mapping(uint256 => Subscription) public subscriptions;
     mapping(uint256 => address) public clientAddresses;
     mapping(address => bool) private _minter;
+    ITicketURIDescriptor URIdescriptor;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -41,7 +43,7 @@ contract SubscriptionTicketManager is Initializable, ERC721Upgradeable, ERC721En
 
 
     function safeMint(address to, uint256 productId, uint256 start, uint256 end) external onlyMinter returns (uint256 tokenId) {
-        safeMint2(to, productId, start, end, to);
+        tokenId = safeMint2(to, productId, start, end, to);
     }
 
     //Just one more parameter. change function name for sake of easy access from client script.
@@ -78,6 +80,23 @@ contract SubscriptionTicketManager is Initializable, ERC721Upgradeable, ERC721En
         _minter[minter] = false;
     }
 
+    function setURIDescriptor(address _URIdescriptor) public onlyOwner {
+        URIdescriptor = ITicketURIDescriptor(_URIdescriptor);
+    }
+
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        //require(ownerOf(tokenId) != address(0), "tokenId does not exist");
+        _requireMinted(tokenId);
+        if(address(URIdescriptor) == address(0)){
+            return "";
+        }
+
+        return URIdescriptor.generateTokenURI(tokenId, subscriptions[tokenId].productId, subscriptions[tokenId].startTime, subscriptions[tokenId].endTime);
+
+//        string memory baseURI = _baseURI();
+//        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+    }
+
     function _authorizeUpgrade(address newImplementation)
     internal
     onlyOwner
@@ -103,7 +122,7 @@ contract SubscriptionTicketManager is Initializable, ERC721Upgradeable, ERC721En
     }
 
     function getVersion() external virtual pure returns (uint256) {
-        return 2;
+        return 1;
     }
 
     /* ========== MODIFIERS ========== */

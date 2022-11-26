@@ -8,7 +8,7 @@ const {moveTime} = require("./utils/move-time");
 const {moveBlocks} = require("./utils/move-blocks");
 const {upgrades, ethers} = require("hardhat");
 
-let subscriptionTicketManager, subscriptionManager, packagePlanPayment, autoRenewPayment, deployer, subscriber1, subscriber2;
+let subscriptionTicketManager, ticketURIDescriptor, subscriptionManager, packagePlanPayment, autoRenewPayment, deployer, subscriber1, subscriber2;
 
 const SECONDS_IN_A_HOUR = 3600
 const SECONDS_IN_A_DAY = 86400
@@ -38,6 +38,12 @@ async function initialSetup(){
 
     await subscriptionTicketManager.deployed();
     console.log("SubscriptionTicketManager deployed to:", subscriptionTicketManager.address);
+
+    const ticketURIDescriptorContract = await ethers.getContractFactory("TicketURIDescriptor");
+    ticketURIDescriptor = await ticketURIDescriptorContract.deploy();
+    await ticketURIDescriptor.deployed();
+    console.log("TicketURIDescriptor deployed to:", ticketURIDescriptor.address);
+    await subscriptionTicketManager.setURIDescriptor(ticketURIDescriptor.address);
 
 
     const subscriptionManagerContract = await ethers.getContractFactory("SubscriptionManager");
@@ -82,8 +88,8 @@ async function printBalance(signer){
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main()
-    .then(() => process.exit(0))
-    .catch((error) => {
-        console.error(error);
-        process.exit(1);
-    });
+  .then(() => process.exit(0))
+  .catch((error) => {
+      console.error(error);
+      process.exit(1);
+  });

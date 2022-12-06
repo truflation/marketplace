@@ -4,10 +4,10 @@ import { StandardToken as linkStandardToken } from "./vendor/StandardToken.sol";
 
 contract TfiToken is linkStandardToken, ERC677Token {
 
-  uint public constant totalSupply = 10**27;
-  string public constant name = "Tfi Token (test)";
+  uint public constant totalSupply = 10**27; // One billion tokens
+  string public constant name = "TFI Token";
   uint8 public constant decimals = 18;
-  string public constant symbol = "TFITST";
+  string public constant symbol = "TFI";
 
   function TfiToken()
     public

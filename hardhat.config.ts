@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from 'hardhat/config'
 import '@nomicfoundation/hardhat-toolbox'
 import '@openzeppelin/hardhat-upgrades'
+import "hardhat-gas-reporter"
 
 import * as dotenv from 'dotenv'
 dotenv.config()
@@ -13,26 +14,33 @@ const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY ?? ''
 const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY ?? ''
 const SNOWTRACE_API_KEY = process.env.SNOWTRACE_API_KEY ?? ''
 const FTMSCAN_API_KEY = process.env.FTMSCAN_API_KEY ?? ''
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY ?? ''
 
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
         version: '0.7.0',
+	settings: {
+	  optimizer: {
+            enabled: true,
+            runs: 200,
+	  },
+	},
       },
       {
         version: '0.8.15',
       },
       {
         version: '0.4.24',
+	settings: {
+	  optimizer: {
+            enabled: true,
+            runs: 200,
+	  },
+	},
       },
     ],
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200,
-      },
-    },
   },
   networks: {
     mainnet: {
@@ -100,6 +108,11 @@ const config: HardhatUserConfig = {
       ftmTestnet: FTMSCAN_API_KEY,
     },
   },
+  gasReporter: {
+    enabled: true,
+    gasPriceApi: ETHERSCAN_API_KEY,
+    coinmarketcap: COINMARKETCAP_API_KEY
+  }
 }
 
 export default config

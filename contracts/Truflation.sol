@@ -2,14 +2,14 @@ pragma solidity ^0.4.11;
 import "./vendor/ERC677Token.sol";
 import { StandardToken as linkStandardToken } from "./vendor/StandardToken.sol";
 
-contract TfiToken is linkStandardToken, ERC677Token {
+contract TruflationToken is linkStandardToken, ERC677Token {
 
   uint public constant totalSupply = 10**27; // One billion tokens (should be 100 million)
-  string public constant name = "TFI Token";
+  string public constant name = "Truflation";
   uint8 public constant decimals = 18;
   string public constant symbol = "TFI";
 
-  function TfiToken()
+  function TruflationToken()
     public
   {
     balances[msg.sender] = totalSupply;

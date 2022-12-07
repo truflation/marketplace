@@ -20,7 +20,9 @@ To deploy
 ---------
 
 edit scripts/config.js
-npx hardhat run (deploy script) --network network
+npx hardhat run (deploy script) --network <network>
+npx hardhat verify --network <network> <contract address> <constructor parameters>
+
 
 change password in chainnode
 

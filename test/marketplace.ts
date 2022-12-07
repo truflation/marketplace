@@ -3,14 +3,14 @@ const { expect } = require("chai");
 describe("Token contract", function () {
   it("Deploy", async function () {
     const [owner] = await ethers.getSigners();
-    const TfiToken = await ethers.getContractFactory("TfiToken");
-    const tfiToken = await TfiToken.deploy();
-    await tfiToken.deployed()
+    const Token = await ethers.getContractFactory("TruflationToken");
+    const token = await Token.deploy();
+    await token.deployed()
 
     const TfiOperator = await ethers.getContractFactory("TfiOperator");
     const tfiOperator =
       await upgrades.deployProxy(TfiOperator, [
-	tfiToken.address,
+	token.address,
 	owner.address
       ], { unsafeAllow: ['delegatecall'] });
 

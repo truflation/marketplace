@@ -1,10 +1,12 @@
 import { ethers } from 'hardhat'
 
 async function main (): void {
-  const TfiToken = await ethers.getContractFactory('TfiToken')
-  const tfiToken = await TfiToken.deploy()
+  const Token =
+    await ethers.getContractFactory('TruflationToken')
+  const token =
+    await Token.deploy()
 
-  await tfiToken.deployed()
+  await token.deployed()
 }
 
 // We recommend this pattern to be able to use async/await everywhere

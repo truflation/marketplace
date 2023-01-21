@@ -1,0 +1,16 @@
+type = "directrequest"
+schemaVersion = 1
+name = "truflation-orders-api1"
+externalJobID = "d220e5e6-8788-4462-909a-03021385b7ae"
+maxTaskDuration = "0s"
+contractAddress = "0x6888BdA6a975eCbACc3ba69CA2c80d7d7da5A344"
+minContractPaymentLinkJuels = "0"
+observationSource = """
+fetch [type="bridge" name="orders-api1" requestData="$(jobRun)"]
+tx0 [type="jsonparse" data="$(fetch)" path="tx0"]
+tx1 [type="jsonparse" data="$(fetch)" path="tx1"]
+submit_tx0  [type="ethtx" to="0x6888BdA6a975eCbACc3ba69CA2c80d7d7da5A344" data="$(tx0)" minConfirmations="1"]
+submit_tx1  [type="ethtx" to="0x6888BdA6a975eCbACc3ba69CA2c80d7d7da5A344" data="$(tx1)"]
+
+fetch -> tx0 -> tx1 -> submit_tx0 -> submit_tx1
+"""

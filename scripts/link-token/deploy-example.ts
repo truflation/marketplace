@@ -8,10 +8,10 @@ async function main (): void {
   const name = 'TfiExample'
   const contract = await ethers.getContractFactory(name)
   const inst = await upgrades.deployProxy(contract, [
-    address.operator_link,
-    address.jobid_link,
+    address.link.operator,
+    address.jobid,
     '1000000000000000000', // 1 LINK
-    address.token_link
+    address.link.token
   ])
 
   await inst.deployed()

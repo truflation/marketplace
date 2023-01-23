@@ -3,103 +3,145 @@ import hre from 'hardhat'
 // see token addresses for the meaning of these addresses
 
 const testnetOwner = '0x968E88df55AcAeC002e3d7c2393F9742e40d94b9'
-const mainnetOwner = '0x3035ddeA943D90c5e8F33fef59aee7c8B2D36f00'
+const mainnetOwnerCorporate = '0x3035ddeA943D90c5e8F33fef59aee7c8B2D36f00'
+const mainnetOwnerDeploy = '0xF530E894bc8930aCb9e86a0409098b7e1E5a27F4'
+const mainnetOwner = mainnetOwnerCorporate
 
-const mainnetJobidLink = 'a3fa982792ad486785be5d89ac333ab5'
-const testnetJobidLink = 'd220e5e687884462909a03021385b7ae'
+const mainnetJobid = 'a3fa982792ad486785be5d89ac333ab5'
+const testnetJobid = 'd220e5e687884462909a03021385b7ae'
 
 export const addressesByChain = {
   1: {
-    token_link: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
     owner: mainnetOwner,
-    operator_link: '0x7eDBB7EF41A6DE5F9B0E1746B345463f18642E14',
-    jobid_link: mainnetJobidLink,
-    example_link: '0xbf7e1FA05e9c183aDD217fE56521bb7Eb2489e41',
+    jobid: mainnetJobid,
+    link: {
+      token: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
+      operator: '0x7eDBB7EF41A6DE5F9B0E1746B345463f18642E14',
+      example: '0xbf7e1FA05e9c183aDD217fE56521bb7Eb2489e41'
+    }
   },
   5: {
-    token_tfi: '0x3417dd955d4408638870723B9Ad8Aae81953B478',
     owner: testnetOwner,
+    jobid: testnetJobid,
+    link: {
+      token: '0x326c977e6efc84e512bb9c30f76e30c160ed06fb',
+      operator: '0x6888BdA6a975eCbACc3ba69CA2c80d7d7da5A344',
+      example: '0x0edBa69e2aE5C668a46360964f8a0b402359F2E0'
+    },
+    tfi: {
+      token: '0x3417dd955d4408638870723B9Ad8Aae81953B478',
+      operator: '0x394fdd656749CCCcc21280BBDF6CC209745f4d0D',
+      example: '0xF4A440F09B52dCFCe0303BD81f457761cB008Bb4'
+    },
     operator_baseline: '0x7C2e0E489493e487903941F399A0255C4c170C91',
-    jobid_baseline: 'cef7d7ad405e45eb91e2da0f415c920e',
     client_baseline: '0xcb57ED564dEe9BDdF830353C8C3a09A60cBB7278',
+    jobid_baseline: 'cef7d7ad405e45eb91e2da0f415c920e',
     jobid_new_pipeline: '5db955dabd334024861406858e1fbbe2',
-    operator_tfi: '0x394fdd656749CCCcc21280BBDF6CC209745f4d0D',
-    jobid_tfi: '2868d2f92fdc4c9abd6437eb016ab772',
-    example_tfi: '0xF4A440F09B52dCFCe0303BD81f457761cB008Bb4',
-    token_link: '0x326c977e6efc84e512bb9c30f76e30c160ed06fb',
-    operator_link: '0x6888BdA6a975eCbACc3ba69CA2c80d7d7da5A344',
-    jobid_link: testnetJobidLink,
-    example_link: '0x0edBa69e2aE5C668a46360964f8a0b402359F2E0',
+    jobid_tfi: '2868d2f92fdc4c9abd6437eb016ab772'
   },
   56: {
     // BNB mainnet
-    token_link: '0x404460c6a5ede2d891e8297795264fde62adbb75',
     owner: mainnetOwner,
-    operator_link: '0xd7E42fa3E6766914A8F581f7a50Ca3c57dfDfE6d',
-    jobid_link: mainnetJobidLink,
-    example_link: '0x1AB072502FB398eb4f428D60D01f18e8Ffa01448',
+    jobid: mainnetJobid,
+    link: {
+      token: '0x404460c6a5ede2d891e8297795264fde62adbb75',
+      operator: '0xd7E42fa3E6766914A8F581f7a50Ca3c57dfDfE6d',
+      example: '0x1AB072502FB398eb4f428D60D01f18e8Ffa01448'
+    }
   },
   250: {
     // fantom opera
-    token_link: '0x6F43FF82CCA38001B6699a8AC47A2d0E66939407',
     owner: mainnetOwner,
-    operator_link: '0x63a5cDF7dFBf8FF017fC6ada2128072079FeBee8',
-    jobid_link: mainnetJobidLink,
-    example_link: '0x4864Fe699380B4F5bae4Df7Ea5B0039f7F5d05E7',
+    jobid: mainnetJobid,
+    link: {
+      token: '0x6F43FF82CCA38001B6699a8AC47A2d0E66939407',
+      operator: '0x63a5cDF7dFBf8FF017fC6ada2128072079FeBee8',
+      example: '0x4864Fe699380B4F5bae4Df7Ea5B0039f7F5d05E7'
+    }
   },
   97: {
     // BNB testnet
-    token_link: '0x84b9b910527ad5c03a9ca831909e21e236ea7b06',
     owner: testnetOwner,
-    operator_link: '0x758d864483c685Ad4484984DAcdD44c9c1F62274',
-    jobid_link: testnetJobidLink,
-    example_link: '0x859DF2E0496eAD32c706f292528db62529Dc807d',
+    jobid: testnetJobid,
+    link: {
+      token: '0x84b9b910527ad5c03a9ca831909e21e236ea7b06',
+      operator: '0x758d864483c685Ad4484984DAcdD44c9c1F62274',
+      example: '0x859DF2E0496eAD32c706f292528db62529Dc807d'
+    }
   },
   137: {
     // polygon mainnet
-    token_link: '0xb0897686c545045afc77cf20ec7a532e3120e0f1',
     owner: mainnetOwner,
-    operator_link: '0xd7E42fa3E6766914A8F581f7a50Ca3c57dfDfE6d',
-    jobid_link: mainnetJobidLink,
-    example_link: '0xDEB0cd3cB6d45Df7aB11a02b89c19603afCdd4Fe',
+    jobid: mainnetJobid,
+    link: {
+      token: '0xb0897686c545045afc77cf20ec7a532e3120e0f1',
+      operator: '0xd7E42fa3E6766914A8F581f7a50Ca3c57dfDfE6d',
+      example: '0xDEB0cd3cB6d45Df7aB11a02b89c19603afCdd4Fe'
+    }
   },
   80001: {
     // polygon (mumbai) testnet
-    token_link: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB',
     owner: testnetOwner,
-    operator_link: '0x6D141Cf6C43f7eABF94E288f5aa3f23357278499',
-    jobid_link: testnetJobidLink,
-    example_link: '0x9De602408AA53F0BB8bC54280A9fb70446289cFC',
+    jobid: testnetJobid,
+    link: {
+      token: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB',
+      operator: '0x6D141Cf6C43f7eABF94E288f5aa3f23357278499',
+      example: '0x9De602408AA53F0BB8bC54280A9fb70446289cFC'
+    }
   },
   43114: {
     // avalanche mainnet
-    token_link: '0x5947BB275c521040051D82396192181b413227A3',
     owner: mainnetOwner,
-    operator_link: '0x8EC4012535BEb30acc33950bf8a7981f9c801944',
-    jobid_link: mainnetJobidLink,
-    example_link: '0xACd2e1ef6Db249520695dC237b85d3F6f59d6979',
+    jobid: mainnetJobid,
+    link: {
+      token: '0x5947BB275c521040051D82396192181b413227A3',
+      operator: '0x8EC4012535BEb30acc33950bf8a7981f9c801944',
+      example: '0xACd2e1ef6Db249520695dC237b85d3F6f59d6979'
+    }
   },
   43113: {
     // fuji testnet
-    token_link: '0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846',
     owner: testnetOwner,
-    operator_link: '0xF0ffC609da91d1931314BA5d17F1786db985D801',
-    jobid_link: testnetJobidLink,
-    example_link: '0xa8b7fAc5E2676B8EAb049329C8B7210acE1f8b99',
+    jobid: testnetJobid,
+    link: {
+      token: '0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846',
+      operator: '0xF0ffC609da91d1931314BA5d17F1786db985D801',
+      example: '0xa8b7fAc5E2676B8EAb049329C8B7210acE1f8b99'
+    }
   },
   4002: {
     // fantom testnet
-    token_link: '0xfaFedb041c0DD4fA2Dc0d87a6B0979Ee6FA7af5F',
     owner: testnetOwner,
-    operator_link: '0xF0ffC609da91d1931314BA5d17F1786db985D801',
-    jobid_link: testnetJobidLink,
-    example_link: '0xa8b7fAc5E2676B8EAb049329C8B7210acE1f8b99',
+    jobid: testnetJobid,
+    link: {
+      token: '0xfaFedb041c0DD4fA2Dc0d87a6B0979Ee6FA7af5F',
+      operator: '0xF0ffC609da91d1931314BA5d17F1786db985D801',
+      example: '0xa8b7fAc5E2676B8EAb049329C8B7210acE1f8b99'
+    }
   },
+  42161: {
+    // arbitrum one
+    owner: mainnetOwnerDeploy,
+    jobid: mainnetJobid,
+    link: {
+      token: '0xf97f4df75117a78c1A5a0DBb814Af92458539FB4'
+    }
+  },
+  421613: {
+    // arbitrum goerli testnet
+    owner: testnetOwner,
+    jobid: testnetJobid,
+    link: {
+      token: '0xd14838A68E8AFBAdE5efb411d5871ea0011AFd28',
+      operator: '0x860c0901612d581420837406A574ae79ef552EF1',
+      example: '0x56d04066e9A76ea53505ff2FC90171160212B7A8'
+    }
+  }
 }
 
 export const address = addressesByChain[5]
 
-export function getConfig(): any {
+export function getConfig (): any {
   const networkName = hre.network.name
   const chainId = hre.network.config.chainId
   console.log('Network name=', networkName)

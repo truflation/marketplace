@@ -124,7 +124,9 @@ export const addressesByChain = {
     owner: mainnetOwnerDeploy,
     jobid: mainnetJobid,
     link: {
-      token: '0xf97f4df75117a78c1A5a0DBb814Af92458539FB4'
+      token: '0xf97f4df75117a78c1A5a0DBb814Af92458539FB4',
+      operator: '0x2118c39C092183F9140A339ADB2c3890644b00A2',
+      example: '0x5a83Cdb04170ee53FcCccd21a5FB0a4CAD0fddF4'
     }
   },
   421613: {

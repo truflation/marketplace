@@ -126,7 +126,8 @@ export const addressesByChain = {
     link: {
       token: '0xf97f4df75117a78c1A5a0DBb814Af92458539FB4',
       operator: '0x2118c39C092183F9140A339ADB2c3890644b00A2',
-      example: '0x5a83Cdb04170ee53FcCccd21a5FB0a4CAD0fddF4'
+      example: '0x5a83Cdb04170ee53FcCccd21a5FB0a4CAD0fddF4',
+      wallet: '0xC1a857Fb4ddE9B3bcFa80F6f590E5bCbA3D3b5A6'
     }
   },
   421613: {
@@ -135,8 +136,9 @@ export const addressesByChain = {
     jobid: testnetJobid,
     link: {
       token: '0xd14838A68E8AFBAdE5efb411d5871ea0011AFd28',
-      operator: '0x860c0901612d581420837406A574ae79ef552EF1',
-      example: '0x56d04066e9A76ea53505ff2FC90171160212B7A8'
+      operator: '0xF0ffC609da91d1931314BA5d17F1786db985D801',
+      example: '0x56d04066e9A76ea53505ff2FC90171160212B7A8',
+      wallet: '0xed7f757A14B202DCec61E10617A9Ee7B9b699B58'
     }
   }
 }

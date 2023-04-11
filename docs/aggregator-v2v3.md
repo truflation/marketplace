@@ -31,6 +31,8 @@ following features:
   the code.  The whitelist will allow for payments to be performed
   off-chain.
 
+* The contract will be deployed only on the Arbitrum and Arbitrum Test
+
 * it will be implemented as an upgradeableproxy to allow for upgrading
   of the contract
 

@@ -15,44 +15,72 @@ payments.
 The first stage will create a simple MVP that contain the
 following features:
 
-* it will implement an instance of AggregatorV2V3interface
+* The system will consist of two contracts and one daemon:
+  * TfiFeedRegistry - which updates the value of the stored values and the
+    contains a white list of contracts which are allowed to pull the
+    value of the updated item.  The FeedRegistry can store multiple values.
+  * TfiFeedAdapter - which implements the AggregatorV2V3 interface and
+    calls the TfiFeedRegistry.
+  * The system will also contain a daemon which will read the current
+    inflation value nightly and update the TfiFeedRegistry
 
-* it will allow for manual updates of the data to be pulled.  The code
-  that will be written for stage 1 will be adapted from the code that
-  Binance uses to publish its prices at
-  https://oracle.binance.com/docs/price-feeds/feed-adapter/ specifically
+* TfiFeedRegistry will have two access lists:
+  * an access list of contracts that are allowed to access a particular
+    data element
+  * an access list of contracts that are allowed to modify a particular
+    data element
+  * both read/write will contain a global switch that will allow read/write
+    for everyone
+  * the superuser will be allowed to change either access list
+  * the access lists will be public
+
+* The read/write parts of TfiFeedRegistry will be keyed to a string,
+  and will be stored as a string -> uint256 map.  The map from string ->
+  uint256 will be private
+
+* TfiFeedAdapter will have one superuser which will be allowed to
+  change the address of the TfiFeedRegistry and the parameter for reading
+  TfiFeedRegistry
+
+The whitelist will allow for payments to be performed off-chain.
+
+TfiFeedAdapter will just call FeedRegistry and will have no access
+control.  The reason TfiFeedAdapter is necessary is because
+TfiFeedRegistry stores multiple items, and TfiFeedAdapter will pull
+a single item to fit the AggregatorV2V3 interface
+
+* The contract will be deployed only on the Arbitrum and Arbitrum Test,
+  and will output only the nightly US CPI information.
+
+* Both FeedAdapter and FeedRegistry implemented as an upgradeableproxy
+  to allow for upgrading of the contract
+
+* FeedRegistry will issue an event whenever there is a new request for data
+
+The code that will be written for stage 1 will be adapted from the
+  code that Binance uses to publish its prices at
+  https://oracle.binance.com/docs/price-feeds/feed-adapter/
+  specifically
   https://testnet.bscscan.com/address/0x1a26d803c2e796601794f8c5609549643832702c
-  The main change is that Binance takes two parameters BASE and QUOTE, whereas
-  our contract will take only BASE.  Also the Binance contract reads data
-  from a private extrernal feed registry whereas our data will be written
-  into the contract directly
+The main change is that Binance takes two parameters BASE and QUOTE,
+  whereas our contract will take only BASE.  Also the Binance contract
+  reads data from a private extrernal feed registry whereas our data
+  will be written into the contract directly.
 
-* it will implement a white list of contracts that are allowed to use
-  the code.  The whitelist will allow for payments to be performed
-  off-chain.
+We will be able to deliver the interface to the client for initial
+testing on close of business 4/19.
 
-* The contract will be deployed only on the Arbitrum and Arbitrum Test
+Stage 2 - ChainLink integration
 
-* it will be implemented as an upgradeableproxy to allow for upgrading
-  of the contract
-
-* it will issue an event whenever there is a new request for data
-
-* it will contain parameters in the constructor that will allow for
-  future integration with ChainLink
-
-In stage 1, the value in the contract will be updated via a simple
-cron daemon
-
-Stage 2 - Integration with ChainLink
+Stage 2 will allow the client to gain access to other data from
+truflation in a scaleable manner.
 
 Once the MVP is created the system can be scaled by having using
 chainlink automation and having the chainlink server automatically
 update the oracle via CL automation or via an event driven oracle.
+This can be done via a subclass of TfiFeedRegistry.  The division between
+TfiFeedAdapter and TfiFeedRegistry will allow TfiFeedRegistry to be updated
+without changing existing interfaces with TfiFeedAdapter.
 
-In order to support the future integration, the contract will have
-added the TFI parameters which are needed to query TFI data services,
-although these parameters will be unused for Stage 1.
-
-Stage 2 will also automatically handle payments using web3
-infrastructure.
+The TfiFeedRegistry can be modified to issue an event which CL reads
+and then updates the data element.

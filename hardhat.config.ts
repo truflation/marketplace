@@ -2,6 +2,7 @@ import { HardhatUserConfig } from 'hardhat/config'
 import '@nomicfoundation/hardhat-toolbox'
 import '@openzeppelin/hardhat-upgrades'
 import 'hardhat-gas-reporter'
+import '@typechain/hardhat'
 
 import * as dotenv from 'dotenv'
 dotenv.config()
@@ -44,6 +45,10 @@ const config: HardhatUserConfig = {
         }
       }
     ]
+  },
+  typechain: {
+    outDir: "typechain",
+    target: "ethers-v5",
   },
   networks: {
     mainnet: {

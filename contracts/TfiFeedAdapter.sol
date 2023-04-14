@@ -65,11 +65,6 @@ contract TfiFeedAdapter is Initializable, AggregatorV2V3Interface {
     return registry.latestRoundData(registryKey, msg.sender);
   }
 
-  function roleId(bytes32 role)
-  public view returns (bytes32) {
-    return registry.roleId(role, registryKey);
-  }
-
   function decimals() external pure returns (uint8) {
     return 18;
   }

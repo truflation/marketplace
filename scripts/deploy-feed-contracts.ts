@@ -4,6 +4,8 @@ import { upgrades } from "hardhat";
 import { TfiFeedAdapter, TfiFeedRegistry } from "../typechain";
 
 async function main(): Promise<void> {
+  const [owner] = await ethers.getSigners();
+  console.log(`Deploying as owner ${owner.address}`)
   const TfiFeedRegistry = await ethers.getContractFactory(
     "TfiFeedRegistry"
   ) as TfiFeedRegistry__factory;
@@ -27,6 +29,22 @@ async function main(): Promise<void> {
   );
   await tfiFeedAdapter.deployed();
   console.log("TfiFeedAdapter deployed to:", tfiFeedAdapter.address);
+
+  const getKey = ethers.utils.formatBytes32String("get");
+  const setKey = ethers.utils.formatBytes32String("set");
+  const proxyKey = ethers.utils.formatBytes32String("proxy");
+  const key = ethers.utils.formatBytes32String("truflation.cpi.us");
+  await tfiFeedRegistry.setAccess(
+    proxyKey, key, tfiFeedAdapter.address, true
+  );
+  await tfiFeedRegistry.setAccess(
+    getKey, key, owner.address, true
+  );
+  await tfiFeedRegistry.setAccess(
+    setKey, key, owner.address, true
+  );
+
+  console.log("Roles granted");
 }
 
 main();

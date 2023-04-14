@@ -10,22 +10,20 @@ bytes32 constant SET = "set";
 bytes32 constant GET = "get";
 bytes32 constant PROXY = "proxy";
 
-contract TfiFeedRegistry is Initializable, OwnableUpgradeable,
-AccessControlUpgradeable {
+contract TfiFeedRegistry is Initializable, OwnableUpgradeable {
   struct RoundData {
     int256 answer;
     uint256 startedAt;
     uint256 updatedAt;
   }
   uint80 public latestRound;
-  mapping (bytes32 => bool) private global;
   mapping (bytes32 => mapping(uint80 => RoundData)) private data;
+  mapping (bytes32 => mapping( bytes32 => mapping(address => bool)))
+  private permissions;
 
   function initialize(
   ) public initializer {
     __Ownable_init();
-    __AccessControl_init();
-    _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
   function getRoundData(bytes32 key, uint80 roundId, address sender)
@@ -41,11 +39,12 @@ AccessControlUpgradeable {
   )
   {
     require(
-      global[key] || hasRole(roleId(GET, key), msg.sender) ||
-      (
-	hasRole(roleId(PROXY, key), msg.sender) &&
-      	hasRole(roleId(GET, key), sender)
-      )
+      hasAccess(GET, key, address(0x0)) ||
+        hasAccess(GET, key, msg.sender) ||
+        (
+	  hasAccess(PROXY, key, msg.sender) &&
+      	    hasAccess(GET, key, sender)
+        )
     );
     RoundData memory rd = data[key][roundId];
     return (roundId, rd.answer, rd.startedAt, rd.updatedAt, latestRound);
@@ -76,39 +75,26 @@ AccessControlUpgradeable {
   external
   virtual
   {
-    require(hasRole(roleId(SET, key), msg.sender), "no permission");
+    require(hasAccess(SET, key, msg.sender), "no permission");
     latestRound = roundId;
     data[key][roundId] = RoundData(answer, startedAt, updatedAt);
   }
 
-  function roleId(
-    bytes32 role,
-    bytes32 key
-  ) public pure returns (bytes32) {
-    return keccak256(abi.encodePacked(role, key));
-  }
-
-  function setGlobal(
+  function setAccess(
+    bytes32 role_,
     bytes32 key_,
-    bool value_
-  ) public {
-    global[key_] = value_;
+    address address_,
+    bool value
+  ) external onlyOwner {
+    permissions[role_][key_][address_] = value;
   }
 
-  function grantRoleForKey(
+  function hasAccess(
     bytes32 role_,
     bytes32 key_,
     address address_
-  ) external {
-    grantRole(roleId(role_, key_), address_);
-  }
+  ) private view returns (bool) {
+    return permissions[role_][key_][address_];
+  }    
 
-  function revokeRoleForKey(
-    bytes32 role_,
-    bytes32 key_,
-    address address_
-  ) external {
-    revokeRole(roleId(role_, key_), address_);
-  }
-    
 }

@@ -18,10 +18,11 @@ describe("TfiFeedRegistry", () => {
   it("should grant the role to the deployer", async () => { 
     // get my address
     const [owner] = await ethers.getSigners();
-    await tfiFeedRegistry.grantRoleForKey(
+    await tfiFeedRegistry.setAccess(
       ethers.utils.formatBytes32String("set"),
       registryKey,
-      owner.address);
+      owner.address, true
+    );
   });
 
   // test setRoundData
@@ -43,10 +44,12 @@ describe("TfiFeedRegistry", () => {
   //test grantRole with key "get"
   it("should grant the role to the deployer", async () => {
     const [owner] = await ethers.getSigners();
-    await tfiFeedRegistry.grantRoleForKey(
+    await tfiFeedRegistry.setAccess(
       ethers.utils.formatBytes32String("get"),
       registryKey,
-      owner.address);
+      owner.address,
+      true
+    );
   });
 
   //test latestRoundData
@@ -79,10 +82,11 @@ describe("TfiFeedAdapter", () => {
       TfiFeedAdapter,
       [tfiFeedRegistry.address, registryKey]
     );
-    tfiFeedRegistry.grantRoleForKey(
+    tfiFeedRegistry.setAccess(
       ethers.utils.formatBytes32String("proxy"),
       registryKey,
-      tfiFeedAdapter.address
+      tfiFeedAdapter.address,
+      true
     );
     await tfiFeedAdapter.deployed();
   });
@@ -93,7 +97,6 @@ describe("TfiFeedAdapter", () => {
     const startedAt = 1234567890;
     const updatedAt = 1234567890;
     const answeredInRound = 1;
-    const a1 = await tfiFeedAdapter.roleId(registryKey);
     const [r,  a, s, u, ar ] =   await tfiFeedAdapter.latestRoundData();
 
     // check return values

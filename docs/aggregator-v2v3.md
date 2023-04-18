@@ -70,6 +70,23 @@ The main change is that Binance takes two parameters BASE and QUOTE,
 We will be able to deliver the interface to the client for initial
 testing on close of business 4/19.
 
+Permissions
+
+The permissions occurs as the feed registry and there is a permission
+for get, set, proxy which is keyed per data item.  For set the
+permission will only allow updates from a administrator account.
+
+For set and proxy the contract will control access through the proxy
+contract.  To get data the chain of calls will be
+
+   user contract -> adapter -> feed registry
+
+Note that users will always be able to access the data off-chain but
+the access control will control the ability to get data on-chain.  For
+the initial release we will be using the registry to distribute the
+truflation headline numbers which are public.  However, this
+permission model may not work for proprietary data feeds.
+
 Stage 2 - ChainLink integration
 
 Stage 2 will allow the client to gain access to other data from

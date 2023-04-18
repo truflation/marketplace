@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
+""" Module for getting data from arbitrum """
+
 import os
-import json
-import datetime
 from web3 import Web3
 from dotenv import load_dotenv
 load_dotenv()
 
 feed_adapter_address = os.environ['FEED_ADAPTER_ADDRESS']
 node_url = os.environ['NODE_URL']
+caller = os.environ['CALLER']
 web3 = Web3(Web3.HTTPProvider(node_url))
 
 abi = [
@@ -100,6 +101,9 @@ abi = [
 ]
 
 contract = web3.eth.contract(
-    address=feed_adapter_address, abi=abi)
-result = contract.functions.latestRoundData().call()
+    address=feed_adapter_address, abi=abi
+)
+result = contract.functions.latestRoundData().call({
+    'from': caller
+})
 print(result)

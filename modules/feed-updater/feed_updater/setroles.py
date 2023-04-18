@@ -1,3 +1,7 @@
+"""
+Set roles in smart contract
+"""
+
 import os
 import sys
 from web3 import Web3
@@ -67,4 +71,3 @@ send_tx = web3.eth.send_raw_transaction(
 )
 tx_receipt = web3.eth.wait_for_transaction_receipt(send_tx)
 print(f'Transaction sent: {tx_receipt.transactionHash.hex()}')
-

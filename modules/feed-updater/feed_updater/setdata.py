@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 
+"""
+set data
+"""
+
 import os
 import json
 import datetime
 import requests
 from web3 import Web3
-from pathlib import Path
 from dotenv import load_dotenv
-from Crypto.Util.Padding import pad
 load_dotenv()
 
 print(f"getting {os.environ['REQUEST_URL']}")
 response = requests.get(os.environ['REQUEST_URL']).text
-print(f'got result')
+
 obj = json.loads(response)
 
 caller = os.environ['CALLER']
@@ -22,6 +24,7 @@ node_url = os.environ['NODE_URL']
 
 v = int(obj[os.environ['REQUEST_JSON']]* 10**18)
 s = obj[os.environ['REQUEST_DATE']]
+print(f'got result {v} {s}')
 #v = 0
 #s = '2023-01-01'
 dts = int(datetime.datetime.strptime(s, '%Y-%m-%d').timestamp())

@@ -1,3 +1,5 @@
 #!/bin/bash
-pip install .
+pip install --upgrade pip
+pip install --upgrade .
+chmod a+x feed_updater/setdata.py
 #pytest

@@ -13,6 +13,11 @@ node_url = os.environ['NODE_URL']
 private_key = os.environ['PRIVATE_KEY']
 registry_address = os.environ['FEED_REGISTRY_ADDRESS']
 user_address = sys.argv[1]
+if len(sys.argv) < 3:
+    value = True
+else:
+    value = bool(int(sys.argv[2]))
+
 # Set up Web3 connection to Ethereum network
 web3 = Web3(Web3.HTTPProvider(node_url))
 
@@ -53,11 +58,12 @@ contract = web3.eth.contract(address=registry_address, abi=registry_abi)
 Chain_id = web3.eth.chain_id
 nonce = web3.eth.get_transaction_count(caller)
 web3.strict_bytes_type_checking = False
+print(f'setting permission for {user_address} to {value}')
 call_function = contract.functions.setAccess(
     b'get',
     b'truflation.cpi.us',
     user_address,
-    True
+    value
 ).build_transaction({
     "chainId": Chain_id,
     "gasPrice": web3.eth.gas_price,

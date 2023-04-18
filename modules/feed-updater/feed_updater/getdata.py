@@ -7,16 +7,99 @@ from web3 import Web3
 from dotenv import load_dotenv
 load_dotenv()
 
-caller = os.environ['CALLER']
-private_key = os.environ['PRIVATE_KEY']
 feed_adapter_address = os.environ['FEED_ADAPTER_ADDRESS']
 node_url = os.environ['NODE_URL']
-print(feed_adapter_address)
 web3 = Web3(Web3.HTTPProvider(node_url))
-with open('TfiFeedAdapter.json', encoding='utf-8') as f:
-    abi = json.load(f)
-    contract = web3.eth.contract(
-        address=feed_adapter_address, abi=abi['abi'])
-    Chain_id = web3.eth.chain_id
-    result = contract.functions.latestRoundData().call()
-    print(result)
+
+abi = [
+    {
+      "inputs": [
+        {
+          "internalType": "uint80",
+          "name": "roundId",
+          "type": "uint80"
+        }
+      ],
+      "name": "getRoundData",
+      "outputs": [
+        {
+          "internalType": "uint80",
+          "name": "roundId_",
+          "type": "uint80"
+        },
+        {
+          "internalType": "int256",
+          "name": "answer",
+          "type": "int256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "updatedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint80",
+          "name": "answeredInRound",
+          "type": "uint80"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "latestRound",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "latestRoundData",
+      "outputs": [
+        {
+          "internalType": "uint80",
+          "name": "roundId",
+          "type": "uint80"
+        },
+        {
+          "internalType": "int256",
+          "name": "answer",
+          "type": "int256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "updatedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint80",
+          "name": "answeredInRound",
+          "type": "uint80"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+]
+
+contract = web3.eth.contract(
+    address=feed_adapter_address, abi=abi)
+result = contract.functions.latestRoundData().call()
+print(result)

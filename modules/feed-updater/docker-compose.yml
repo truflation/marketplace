@@ -4,4 +4,4 @@ services:
         build:
             context: .
         env_file:
-            - config.env
+            - ${ENV_FILE:-config.localhost.env}

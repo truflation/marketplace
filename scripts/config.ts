@@ -138,7 +138,9 @@ export const addressesByChain = {
       token: '0xd14838A68E8AFBAdE5efb411d5871ea0011AFd28',
       operator: '0xF0ffC609da91d1931314BA5d17F1786db985D801',
       example: '0x56d04066e9A76ea53505ff2FC90171160212B7A8',
-      wallet: '0xed7f757A14B202DCec61E10617A9Ee7B9b699B58'
+      wallet: '0xed7f757A14B202DCec61E10617A9Ee7B9b699B58',
+      fee_adapter: '0x9De602408AA53F0BB8bC54280A9fb70446289cFC',
+      fee_registry: '0x4a4588Eaa43c3C0694F7b8Ade7521ac5b42120Fe'
     }
   }
 }

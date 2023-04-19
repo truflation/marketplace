@@ -11,6 +11,12 @@ const mainnetJobid = 'a3fa982792ad486785be5d89ac333ab5'
 const testnetJobid = 'd220e5e687884462909a03021385b7ae'
 
 export const addressesByChain = {
+  0: {
+    // hardhat test node
+    owner: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+    feed_registry: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+    feed_adapter: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9'
+  },
   1: {
     owner: mainnetOwner,
     jobid: mainnetJobid,
@@ -134,13 +140,13 @@ export const addressesByChain = {
     // arbitrum goerli testnet
     owner: testnetOwner,
     jobid: testnetJobid,
+    fee_adapter: '0x9De602408AA53F0BB8bC54280A9fb70446289cFC',
+    fee_registry: '0x4a4588Eaa43c3C0694F7b8Ade7521ac5b42120Fe',
     link: {
       token: '0xd14838A68E8AFBAdE5efb411d5871ea0011AFd28',
       operator: '0xF0ffC609da91d1931314BA5d17F1786db985D801',
       example: '0x56d04066e9A76ea53505ff2FC90171160212B7A8',
-      wallet: '0xed7f757A14B202DCec61E10617A9Ee7B9b699B58',
-      fee_adapter: '0x9De602408AA53F0BB8bC54280A9fb70446289cFC',
-      fee_registry: '0x4a4588Eaa43c3C0694F7b8Ade7521ac5b42120Fe'
+      wallet: '0xed7f757A14B202DCec61E10617A9Ee7B9b699B58'
     }
   }
 }
@@ -149,7 +155,8 @@ export const address = addressesByChain[5]
 
 export function getConfig (): any {
   const networkName = hre.network.name
-  const chainId = hre.network.config.chainId
+  const chainId = hre.network.name != 'localhost' ?
+    hre.network.config.chainId : 0
   console.log('Network name=', networkName)
   console.log('Network chain id=', chainId)
 

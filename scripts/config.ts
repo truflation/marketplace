@@ -140,8 +140,8 @@ export const addressesByChain = {
     // arbitrum goerli testnet
     owner: testnetOwner,
     jobid: testnetJobid,
-    fee_adapter: '0x9De602408AA53F0BB8bC54280A9fb70446289cFC',
-    fee_registry: '0x4a4588Eaa43c3C0694F7b8Ade7521ac5b42120Fe',
+    feed_adapter: '0x9De602408AA53F0BB8bC54280A9fb70446289cFC',
+    feed_registry: '0x4a4588Eaa43c3C0694F7b8Ade7521ac5b42120Fe',
     link: {
       token: '0xd14838A68E8AFBAdE5efb411d5871ea0011AFd28',
       operator: '0xF0ffC609da91d1931314BA5d17F1786db985D801',

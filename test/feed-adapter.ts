@@ -14,8 +14,21 @@ describe("TfiFeedRegistry", () => {
     await tfiFeedRegistry.deployed();
   });
 
-// test grantRole 
-  it("should grant the role to the deployer", async () => { 
+  it("should set access permissions for a role, key, and address", async function () {
+    const role = ethers.utils.formatBytes32String("role");
+    const key = ethers.utils.formatBytes32String("key");
+    const address = await (await ethers.getSigner(1)).getAddress();
+    const value = true;
+
+    await expect(
+      tfiFeedRegistry.setAccess(role, key, address, value)
+    ).to.emit(tfiFeedRegistry, "AccessSet").withArgs(
+      role, key, address, value
+    );
+  });
+
+  // test grantRole
+  it("should grant the role to the deployer", async () => {
     // get my address
     const [owner] = await ethers.getSigners();
     await tfiFeedRegistry.setAccess(
@@ -32,14 +45,18 @@ describe("TfiFeedRegistry", () => {
     const startedAt = 1234567890;
     const updatedAt = 1234567890;
     const answeredInRound = 1;
-    await tfiFeedRegistry.setRoundData(
-      registryKey,
-      roundId,
-      answer,
-      startedAt,
-      updatedAt
-    )
-  }); 
+    await expect(
+      tfiFeedRegistry.setRoundData(
+	registryKey,
+	roundId,
+	answer,
+	startedAt,
+	updatedAt
+      )
+    ).to.emit(tfiFeedRegistry, "RoundDataSet").withArgs(
+      registryKey, roundId, answer, startedAt, updatedAt
+    );
+  });
 
   //test grantRole with key "get"
   it("should grant the role to the deployer", async () => {
@@ -50,6 +67,22 @@ describe("TfiFeedRegistry", () => {
       owner.address,
       true
     );
+  });
+
+  //test getRoundData
+  it("should get the round data", async () => {
+    const roundId = 1;
+    const answer = 12345;
+    const startedAt = 1234567890;
+    const updatedAt = 1234567890;
+    const answeredInRound = 1;
+    const [r, a, s, u, ar ] =   await tfiFeedRegistry.getRoundData(
+      registryKey, roundId,  ethers.constants.AddressZero
+    );
+    expect(a).to.equal(answer);
+    expect(s).to.equal(startedAt);
+    expect(u).to.equal(updatedAt);
+    expect(ar).to.equal(answeredInRound);
   });
 
   //test latestRoundData
@@ -106,6 +139,6 @@ describe("TfiFeedAdapter", () => {
     expect(u).to.equal(updatedAt);
     expect(ar).to.equal(answeredInRound);
     });
-    
+
 });
 

@@ -3,7 +3,7 @@ import '@nomicfoundation/hardhat-toolbox'
 import '@openzeppelin/hardhat-upgrades'
 import 'hardhat-gas-reporter'
 import '@typechain/hardhat'
-
+require("@nomiclabs/hardhat-web3");
 import * as dotenv from 'dotenv'
 dotenv.config()
 

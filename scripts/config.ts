@@ -129,6 +129,7 @@ export const addressesByChain = {
     // arbitrum one
     owner: mainnetOwnerDeploy,
     jobid: mainnetJobid,
+    feed_registry: '0x860c0901612d581420837406A574ae79ef552EF1',
     link: {
       token: '0xf97f4df75117a78c1A5a0DBb814Af92458539FB4',
       operator: '0x2118c39C092183F9140A339ADB2c3890644b00A2',

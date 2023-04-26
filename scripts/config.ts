@@ -69,6 +69,7 @@ export const addressesByChain = {
     // BNB testnet
     owner: testnetOwner,
     jobid: testnetJobid,
+    tfi_api_poll: 1000,
     link: {
       token: '0x84b9b910527ad5c03a9ca831909e21e236ea7b06',
       operator: '0x758d864483c685Ad4484984DAcdD44c9c1F62274',
@@ -143,6 +144,7 @@ export const addressesByChain = {
     jobid: testnetJobid,
     feed_adapter: '0x9De602408AA53F0BB8bC54280A9fb70446289cFC',
     feed_registry: '0x4a4588Eaa43c3C0694F7b8Ade7521ac5b42120Fe',
+
     link: {
       token: '0xd14838A68E8AFBAdE5efb411d5871ea0011AFd28',
       operator: '0xF0ffC609da91d1931314BA5d17F1786db985D801',

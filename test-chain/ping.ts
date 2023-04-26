@@ -10,7 +10,7 @@ const config = {
   chainName: hre.network.name,
   chainId: parseInt(hre.network.config.chainId),
   provider: hre.network.config.url,
-  poll: 1000,
+  poll: hre.network.tfi_api_poll ?? 0,
   fee: '1000000000000000000'
 }
 

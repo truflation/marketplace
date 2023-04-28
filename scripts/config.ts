@@ -49,6 +49,7 @@ export const addressesByChain = {
     // BNB mainnet
     owner: mainnetOwner,
     jobid: mainnetJobid,
+    tfi_api_poll: 1000,
     link: {
       token: '0x404460c6a5ede2d891e8297795264fde62adbb75',
       operator: '0xd7E42fa3E6766914A8F581f7a50Ca3c57dfDfE6d',
@@ -80,6 +81,7 @@ export const addressesByChain = {
     // polygon mainnet
     owner: mainnetOwner,
     jobid: mainnetJobid,
+    tfi_api_poll: 1000,
     link: {
       token: '0xb0897686c545045afc77cf20ec7a532e3120e0f1',
       operator: '0xd7E42fa3E6766914A8F581f7a50Ca3c57dfDfE6d',
@@ -90,6 +92,7 @@ export const addressesByChain = {
     // polygon (mumbai) testnet
     owner: testnetOwner,
     jobid: testnetJobid,
+    tfi_api_poll: 1000,
     link: {
       token: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB',
       operator: '0x6D141Cf6C43f7eABF94E288f5aa3f23357278499',

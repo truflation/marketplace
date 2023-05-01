@@ -35,7 +35,7 @@ async function main(): Promise<void> {
   const proxyKey = ethers.utils.formatBytes32String("proxy");
   const key = ethers.utils.formatBytes32String("truflation.cpi.us");
   await tfiFeedRegistry.setAccess(
-    proxyKey, key, tfiFeedAdapter.address, true
+    getKey, key, tfiFeedAdapter.address, true
   );
   await tfiFeedRegistry.setAccess(
     getKey, key, owner.address, true

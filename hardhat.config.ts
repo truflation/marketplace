@@ -139,7 +139,7 @@ const config: HardhatUserConfig = {
       arbitrumTestnet: ARBITRUM_API_KEY,
       arbitrumOne: ARBITRUM_API_KEY,
       base: BASESCAN_API_KEY,
-      baseGoerli: BASESCAN_API_KEY
+      baseGoerli: "PLACEHOLDER_STRING"
     },
     customChains: [
       {

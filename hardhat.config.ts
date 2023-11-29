@@ -20,6 +20,8 @@ const ARBITRUM_API_KEY = process.env.ARBITRUM_API_KEY ?? ''
 const ARBITRUM_ONE_URL = process.env.ARBITRUM_ONE_URL ?? ''
 const ARBITRUM_TESTNET_URL = process.env.ARBITRUM_TESTNET_URL ?? ''
 
+const BASESCAN_API_KEY = process.env.BASE_API_KEY ? ''
+
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
@@ -81,6 +83,11 @@ const config: HardhatUserConfig = {
       url: ARBITRUM_ONE_URL,
       accounts: [MAINNET_PRIVATE_KEY]
     },
+    base: {
+      chainId: 8453,
+      url: 'https://mainnet.base.org',
+      accounts: [MAINNET_PRIVATE_KEY]
+    },
     goerli: {
       chainId: 5,
       url: `https://goerli.infura.io/v3/${INFURA_API_KEY}`,
@@ -110,6 +117,11 @@ const config: HardhatUserConfig = {
       chainId: 421613,
       url: ARBITRUM_TESTNET_URL,
       accounts: [TESTNET_PRIVATE_KEY]
+    },
+    baseGoerli: {
+      chainId: 84531,
+      url: 'https://goerli.base.org',
+      accounts: [TESTNET_PRIVATE_KEY]
     }
   },
   etherscan: {
@@ -125,7 +137,9 @@ const config: HardhatUserConfig = {
       avalancheFujiTestnet: SNOWTRACE_API_KEY,
       ftmTestnet: FTMSCAN_API_KEY,
       arbitrumTestnet: ARBITRUM_API_KEY,
-      arbitrumOne: ARBITRUM_API_KEY
+      arbitrumOne: ARBITRUM_API_KEY,
+      base: BASESCAN_API_KEY,
+      baseGoerli: BASESCAN_API_KEY
     },
     customChains: [
       {
@@ -134,6 +148,22 @@ const config: HardhatUserConfig = {
 	urls: {
           apiURL: 'https://api-goerli.arbiscan.io/api',
           browserURL: 'https://goerli.arbiscan.io/'
+	}
+      },
+      {
+	network: 'base',
+	chainId: 8453,
+	urls: {
+	  apiURL: 'https://basescan.org/api',
+	  browserURL: 'https://basescan.org/'
+	}
+      },
+      {
+	network: 'baseGoerli',
+	chainId: 84531,
+	urls: {
+	  apiURL: 'https://goerli.basescan.org/api',
+	  browserURL: 'https://goerli.basescan.org/'
 	}
       }
     ]

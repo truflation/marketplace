@@ -154,6 +154,22 @@ export const addressesByChain = {
       example: '0x56d04066e9A76ea53505ff2FC90171160212B7A8',
       wallet: '0xed7f757A14B202DCec61E10617A9Ee7B9b699B58'
     }
+  },
+  8453: {
+    // base
+    owner: mainnetOwnerDeploy,
+    jobid: mainnetJobid,
+    link: {
+      token: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196'
+    }
+  },
+  84531: {
+    // base goerli
+    owner: testnetOwner,
+    jobid: testnetJobid,
+    link: {
+      token: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196'
+    }
   }
 }
 

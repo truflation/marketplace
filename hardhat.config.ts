@@ -1,9 +1,9 @@
 import { HardhatUserConfig } from 'hardhat/config'
-import '@nomicfoundation/hardhat-toolbox'
 import '@openzeppelin/hardhat-upgrades'
 import 'hardhat-gas-reporter'
 import '@typechain/hardhat'
 require("@nomiclabs/hardhat-web3");
+require("@nomicfoundation/hardhat-verify");
 import * as dotenv from 'dotenv'
 dotenv.config()
 
@@ -20,7 +20,7 @@ const ARBITRUM_API_KEY = process.env.ARBITRUM_API_KEY ?? ''
 const ARBITRUM_ONE_URL = process.env.ARBITRUM_ONE_URL ?? ''
 const ARBITRUM_TESTNET_URL = process.env.ARBITRUM_TESTNET_URL ?? ''
 
-const BASESCAN_API_KEY = process.env.BASE_API_KEY ? ''
+const BASESCAN_API_KEY = process.env.BASE_API_KEY ?? ''
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -50,7 +50,7 @@ const config: HardhatUserConfig = {
   },
   typechain: {
     outDir: "typechain",
-    target: "ethers-v5",
+    target: "ethers-v6",
   },
   networks: {
     mainnet: {
@@ -149,22 +149,6 @@ const config: HardhatUserConfig = {
           apiURL: 'https://api-goerli.arbiscan.io/api',
           browserURL: 'https://goerli.arbiscan.io/'
 	}
-      },
-      {
-	network: 'base',
-	chainId: 8453,
-	urls: {
-	  apiURL: 'https://basescan.org/api',
-	  browserURL: 'https://basescan.org/'
-	}
-      },
-      {
-	network: 'baseGoerli',
-	chainId: 84531,
-	urls: {
-	  apiURL: 'https://goerli.basescan.org/api',
-	  browserURL: 'https://goerli.basescan.org/'
-	}
       }
     ]
   },
@@ -172,6 +156,9 @@ const config: HardhatUserConfig = {
     enabled: true,
     gasPriceApi: ETHERSCAN_API_KEY,
     coinmarketcap: COINMARKETCAP_API_KEY
+  },
+  sourcify: {
+    enabled: true
   }
 }
 

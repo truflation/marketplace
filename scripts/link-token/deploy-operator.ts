@@ -13,8 +13,8 @@ async function main (): void {
             unsafeAllow: ['delegatecall']
           })
 
-  await tfiOperator.deployed()
-  console.log(`operator deployed to ${tfiOperator.address}`)
+  await tfiOperator.waitForDeployment()
+  console.log(`operator deployed to ${await tfiOperator.getAddress()}`)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

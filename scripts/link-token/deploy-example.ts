@@ -14,8 +14,8 @@ async function main (): void {
     address.link.token
   ])
 
-  await inst.deployed()
-  console.log(`${name} deployed to ${inst.address}`)
+  await inst.waitForDeployment()
+  console.log(`${name} deployed to ${await inst.getAddress()}`)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

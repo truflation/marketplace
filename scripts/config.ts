@@ -157,7 +157,7 @@ export const addressesByChain = {
   },
   8453: {
     // base
-    owner: mainnetOwnerDeploy,
+    owner: mainnetOwner,
     jobid: mainnetJobid,
     link: {
       token: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196'
@@ -168,7 +168,8 @@ export const addressesByChain = {
     owner: testnetOwner,
     jobid: testnetJobid,
     link: {
-      token: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196'
+      token: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196',
+      operator: '0x7911771BE70C8CD2298433A27737E2b62E806961'
     }
   }
 }

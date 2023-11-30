@@ -20,7 +20,7 @@ const ARBITRUM_API_KEY = process.env.ARBITRUM_API_KEY ?? ''
 const ARBITRUM_ONE_URL = process.env.ARBITRUM_ONE_URL ?? ''
 const ARBITRUM_TESTNET_URL = process.env.ARBITRUM_TESTNET_URL ?? ''
 
-const BASESCAN_API_KEY = process.env.BASE_API_KEY ?? ''
+const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY ?? ''
 
 const config: HardhatUserConfig = {
   solidity: {

@@ -160,7 +160,9 @@ export const addressesByChain = {
     owner: mainnetOwner,
     jobid: mainnetJobid,
     link: {
-      token: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196'
+      token: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196',
+      operator: '0xf087d68c23c2dB2C7D4431075D611Bba85672a10',
+      example: '0x5a83Cdb04170ee53FcCccd21a5FB0a4CAD0fddF4'
     }
   },
   84531: {
@@ -169,7 +171,8 @@ export const addressesByChain = {
     jobid: testnetJobid,
     link: {
       token: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196',
-      operator: '0x7911771BE70C8CD2298433A27737E2b62E806961'
+      operator: '0x7911771BE70C8CD2298433A27737E2b62E806961',
+      example: '0x859DF2E0496eAD32c706f292528db62529Dc807d'
     }
   }
 }

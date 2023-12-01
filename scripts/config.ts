@@ -170,9 +170,9 @@ export const addressesByChain = {
     owner: testnetOwner,
     jobid: testnetJobid,
     link: {
-      token: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196',
-      operator: '0x7911771BE70C8CD2298433A27737E2b62E806961',
-      example: '0x859DF2E0496eAD32c706f292528db62529Dc807d'
+      token: '0x6D0F8D488B669aa9BA2D0f0b7B75a88bf5051CD3',
+      operator: '0x6D141Cf6C43f7eABF94E288f5aa3f23357278499',
+      example: '0x4a4588Eaa43c3C0694F7b8Ade7521ac5b42120Fe'
     }
   }
 }

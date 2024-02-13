@@ -155,6 +155,13 @@ export const addressesByChain = {
       wallet: '0xed7f757A14B202DCec61E10617A9Ee7B9b699B58'
     }
   },
+  421614: {
+    // arbitrum sepolia testnet
+    owner: testnetOwner,
+    jobid: testnetJobid,
+    feed_adapter: '0x7911771BE70C8CD2298433A27737E2b62E806961',
+    feed_registry: '0x3417dd955d4408638870723B9Ad8Aae81953B478'
+  },
   8453: {
     // base
     owner: mainnetOwner,

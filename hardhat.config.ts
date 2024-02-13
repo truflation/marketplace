@@ -19,6 +19,7 @@ const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY ?? ''
 const ARBITRUM_API_KEY = process.env.ARBITRUM_API_KEY ?? ''
 const ARBITRUM_ONE_URL = process.env.ARBITRUM_ONE_URL ?? ''
 const ARBITRUM_TESTNET_URL = process.env.ARBITRUM_TESTNET_URL ?? ''
+const ARBITRUM_SEPOLIA_URL = process.env.ARBITRUM_SEPOLIA_URL ?? ''
 
 const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY ?? ''
 
@@ -118,6 +119,11 @@ const config: HardhatUserConfig = {
       url: ARBITRUM_TESTNET_URL,
       accounts: [TESTNET_PRIVATE_KEY]
     },
+    arbitrumSepolia: {
+      chainId: 421614,
+      url: 'https://sepolia-rollup.arbitrum.io/rpc',
+      accounts: [TESTNET_PRIVATE_KEY]
+    },
     baseGoerli: {
       chainId: 84531,
       url: 'https://goerli.base.org',
@@ -137,6 +143,7 @@ const config: HardhatUserConfig = {
       avalancheFujiTestnet: SNOWTRACE_API_KEY,
       ftmTestnet: FTMSCAN_API_KEY,
       arbitrumTestnet: ARBITRUM_API_KEY,
+      arbitrumSepolia: ARBITRUM_API_KEY,
       arbitrumOne: ARBITRUM_API_KEY,
       base: BASESCAN_API_KEY,
       baseGoerli: "PLACEHOLDER_STRING"
@@ -148,6 +155,14 @@ const config: HardhatUserConfig = {
 	urls: {
           apiURL: 'https://api-goerli.arbiscan.io/api',
           browserURL: 'https://goerli.arbiscan.io/'
+	}
+      },
+      {
+	network: 'arbitrumSepolia',
+	chainId: 421614,
+	urls: {
+          apiURL: 'https://api-sepolia.arbiscan.io/api',
+          browserURL: 'https://sepolia.arbiscan.io/'
 	}
       }
     ]

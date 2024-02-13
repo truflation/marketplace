@@ -14,28 +14,28 @@ async function main(): Promise<void> {
     [],
     { initializer: "initialize" }
   );
-  await tfiFeedRegistry.deployed();
-  console.log("TfiFeedRegistry deployed to:", tfiFeedRegistry.address);
+  await tfiFeedRegistry.waitForDeployment();
+  console.log("TfiFeedRegistry deployed to:", await tfiFeedRegistry.getAddress());
 
   const TfiFeedAdapter = await ethers.getContractFactory(
     "TfiFeedAdapter"
   ) as TfiFeedAdapter__factory;
   const tfiFeedAdapter = await upgrades.deployProxy(
     TfiFeedAdapter,
-    [tfiFeedRegistry.address,
-     ethers.utils.formatBytes32String("truflation.cpi.us")
+    [await tfiFeedRegistry.getAddress(),
+     ethers.encodeBytes32String("truflation.cpi.us")
     ],
     { initializer: "initialize" }
   );
-  await tfiFeedAdapter.deployed();
-  console.log("TfiFeedAdapter deployed to:", tfiFeedAdapter.address);
+  await tfiFeedAdapter.waitForDeployment();
+  console.log("TfiFeedAdapter deployed to:", await tfiFeedAdapter.getAddress());
 
-  const getKey = ethers.utils.formatBytes32String("get");
-  const setKey = ethers.utils.formatBytes32String("set");
-  const proxyKey = ethers.utils.formatBytes32String("proxy");
-  const key = ethers.utils.formatBytes32String("truflation.cpi.us");
+  const getKey = ethers.encodeBytes32String("get");
+  const setKey = ethers.encodeBytes32String("set");
+  const proxyKey = ethers.encodeBytes32String("proxy");
+  const key = ethers.encodeBytes32String("truflation.cpi.us");
   await tfiFeedRegistry.setAccess(
-    getKey, key, tfiFeedAdapter.address, true
+    getKey, key, await tfiFeedAdapter.getAddress(), true
   );
   await tfiFeedRegistry.setAccess(
     getKey, key, owner.address, true

@@ -10,15 +10,11 @@ contract TfiSample is ChainlinkClient, ConfirmedOwner {
     mapping(bytes32 => bytes) public results;
     address public oracleId;
     string public jobId;
-    uint256 public fee;
 
-    constructor(address oracleId_, string memory jobId_,
-                uint256 fee_,
-		address token_) ConfirmedOwner(msg.sender) {
+    constructor(address oracleId_, string memory jobId_, address token_) ConfirmedOwner(msg.sender) {
 	setChainlinkToken(token_);
         oracleId = oracleId_;
         jobId = jobId_;
-        fee = fee_;
     }
 
     function doRequest(
@@ -26,6 +22,7 @@ contract TfiSample is ChainlinkClient, ConfirmedOwner {
         string memory data_,
         string memory keypath_,
         string memory abi_,
+        uint256 fee_,
         string memory multiplier_) public returns (bytes32 requestId) {
           Chainlink.Request memory req = buildChainlinkRequest(
             bytes32(bytes(jobId)),
@@ -35,7 +32,7 @@ contract TfiSample is ChainlinkClient, ConfirmedOwner {
         req.add("keypath", keypath_);
         req.add("abi", abi_);
         req.add("multiplier", multiplier_);
-        return sendChainlinkRequestTo(oracleId, req, fee);
+        return sendChainlinkRequestTo(oracleId, req, fee_);
     }
 
     function doTransferAndRequest(
@@ -46,7 +43,7 @@ contract TfiSample is ChainlinkClient, ConfirmedOwner {
         string memory multiplier_,
         uint256 fee_) public returns (bytes32 requestId) {
         require(LinkTokenInterface(getToken()).transferFrom(
-               msg.sender, address(this), fee_), 'transfer failed');
+               msg.sender, address(this), fee_), "transfer failed");
         Chainlink.Request memory req = buildChainlinkRequest(
             bytes32(bytes(jobId)),
             address(this), this.fulfillBytes.selector);
@@ -73,10 +70,6 @@ contract TfiSample is ChainlinkClient, ConfirmedOwner {
 
     function changeJobId(string memory _jobId) public onlyOwner {
         jobId = _jobId;
-    }
-
-    function changeFee(uint256 _fee) public onlyOwner {
-        fee = _fee;
     }
 
     function changeToken(address _address) public onlyOwner {

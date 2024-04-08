@@ -17,8 +17,8 @@ response = requests.get(os.environ['REQUEST_URL']).text
 
 obj = json.loads(response)
 
-caller = os.environ['CALLER']
-private_key = os.environ['PRIVATE_KEY']
+caller =  os.environ.get('ETH_CALLER', os.environ.get('CALLER'))
+private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
 

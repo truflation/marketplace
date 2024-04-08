@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.12
 WORKDIR /usr/src/app
 COPY setup.cfg pyproject.toml install.sh start.sh ./
 #COPY tests ./tests

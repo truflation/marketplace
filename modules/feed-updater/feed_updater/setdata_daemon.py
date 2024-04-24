@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 
 """
-set data
+
+setdata_daemon.py
+
+This daemon reads in pricing data and writes the data into
+an ethereum compatible blockchain.
+
 """
 
 import os
@@ -14,8 +19,8 @@ from sanic.response import json
 load_dotenv()
 
 app = Sanic('setdata_daemon')
-caller = os.environ.get('ETH_CALLER', os.environ['CALLER'])
-private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ['PRIVATE_KEY'])
+caller = os.environ.get('ETH_CALLER', os.environ.get('CALLER'))
+private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
 
@@ -106,4 +111,4 @@ Handle send data
         return json({'error': 'Invalid JSON format'}, status=400)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=8000)

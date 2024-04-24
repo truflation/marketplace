@@ -10,9 +10,9 @@ from web3 import Web3
 from dotenv import load_dotenv
 load_dotenv()
 
-caller = os.environ.get('ETH_CALLER', os.environ['CALLER'])
+caller = os.environ.get('ETH_CALLER', os.environ.get('CALLER'))
 node_url = os.environ['NODE_URL']
-private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ['PRIVATE_KEY'])
+private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 registry_address = os.environ['FEED_REGISTRY_ADDRESS']
 mode = sys.argv[1]
 table = sys.argv[2]

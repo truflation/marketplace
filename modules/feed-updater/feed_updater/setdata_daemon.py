@@ -14,8 +14,8 @@ from sanic.response import json
 load_dotenv()
 
 app = Sanic('setdata_daemon')
-caller = os.environ['CALLER']
-private_key = os.environ['PRIVATE_KEY']
+caller = os.environ.get('ETH_CALLER', os.environ['CALLER'])
+private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ['PRIVATE_KEY'])
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
 

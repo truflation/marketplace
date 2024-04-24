@@ -84,11 +84,11 @@ Handle send data
 #        roundId = dts
 
         call_function = contract.functions.setRoundData(
-            bytes(obj.name, 'utf-8'),
-            obj.dts,
-            obj.v,
-            obj.dts,
-            obj.dts
+            bytes(obj['name'], 'utf-8'),
+            obj['dts'],
+            obj['v'],
+            obj['dts'],
+            obj['dts']
         ).build_transaction({
             "chainId": chain_id,
             "gasPrice": web3.eth.gas_price,

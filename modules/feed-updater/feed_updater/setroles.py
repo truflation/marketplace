@@ -67,16 +67,17 @@ Chain_id = web3.eth.chain_id
 nonce = web3.eth.get_transaction_count(caller)
 web3.strict_bytes_type_checking = False
 print(f'setting permission for {user_address} to {value}')
+txn = {
+    "chainId": Chain_id,
+    "from": caller, "nonce": nonce
+}
+
 call_function = contract.functions.setAccess(
     bytes(mode, 'utf-8'),
     bytes(table, 'utf-8'),
     user_address,
     value
-).build_transaction({
-    "chainId": Chain_id,
-    "gasPrice": web3.eth.gas_price,
-    "from": caller, "nonce": nonce
-})
+).build_transaction(txn)
 signed_tx = web3.eth.account.sign_transaction(
     call_function, private_key=private_key
 )

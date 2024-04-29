@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract TfiFeedRegistry is Initializable, OwnableUpgradeable {
+contract TruflationFeedRegistry is Initializable, OwnableUpgradeable {
   bytes32 constant SET = "set";
   bytes32 constant GET = "get";
   bytes32 constant PROXY = "proxy";
@@ -204,6 +204,6 @@ contract TfiFeedRegistry is Initializable, OwnableUpgradeable {
   }
 
   function version() external pure returns (uint256) {
-    return 202304210;
+    return 202404290;
   }
 }

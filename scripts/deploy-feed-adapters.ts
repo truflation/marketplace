@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 import { ethers, upgrades } from 'hardhat'
-import { TfiFeedAdapter } from '../typechain'
+import { TruflationFeedAdapter } from '../typechain'
 
 async function main(): Promise<void> {
   try {
@@ -11,30 +11,35 @@ async function main(): Promise<void> {
     if (!address || !keyString) {
       throw new Error('Address or key is missing. Exiting.')
     }
-    const TfiFeedRegistry = await ethers.getContractFactory('TfiFeedRegistry');
-    const tfiFeedRegistry = TfiFeedRegistry.attach(address)
+    const TruflationFeedRegistry = await ethers.getContractFactory('TruflationFeedRegistry');
+    const truflationFeedRegistry = TruflationFeedRegistry.attach(address)
     
     console.log('Deploying TfiAdapter')
     console.log(`   Owner ${owner.address}`)
     console.log(`   Address ${address}`)
     console.log(`   Key ${keyString}`)
     const key = ethers.encodeBytes32String(keyString)    
-    const TfiFeedAdapter = await ethers.getContractFactory(
-      'TfiFeedAdapter'
+    const TruflationFeedAdapter = await ethers.getContractFactory(
+      'TruflationFeedAdapter'
     )
-    const tfiFeedAdapter = await upgrades.deployProxy(
-      TfiFeedAdapter, [
+    const truflationFeedAdapter = await upgrades.deployProxy(
+      TruflationFeedAdapter, [
 	address,
 	key
       ], {
 	initializer: 'initialize'
       }
     )
-    await tfiFeedAdapter.waitForDeployment() 
-    console.log('TfiFeedAdapter deployed to:', await tfiFeedAdapter.getAddress())
+    await truflationFeedAdapter.waitForDeployment()
+    console.log('TruflationFeedAdapter deployed to:',
+		await truflationFeedAdapter.getAddress())
     const getKey = ethers.encodeBytes32String('get');
-    await tfiFeedRegistry.setAccess(
-      getKey, key, await tfiFeedAdapter.getAddress(), true
+    await truflationFeedRegistry.setAccess(
+      getKey, key, await truflationFeedAdapter.getAddress(), true
+    )
+    const proxyKey = ethers.encodeBytes32String('proxy');
+    await truflationFeedRegistry.setAccess(
+      proxyKey, key, await truflationFeedAdapter.getAddress(), true
     )
     console.log('Roles granted')
   } catch(error) {

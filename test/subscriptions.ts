@@ -1,3 +1,4 @@
+import { ethers } from "hardhat";
 const { expect } = require("chai");
 
 describe("Token contract", function () {
@@ -7,7 +8,7 @@ describe("Token contract", function () {
     const SubscriptionTest =
       await ethers.getContractFactory("SubscriptionTest")
     subtest = await SubscriptionTest.deploy()
-    await subtest.deployed()
+    await subtest.waitForDeployment()
   })
   it("test", async function() {
     expect(await subtest.subscriptionStatus(
@@ -16,6 +17,6 @@ describe("Token contract", function () {
       "test",
       42,
       "0x0000000000000000000000000000000000000000",
-      [0]), 42)
+      ethers.ZeroHash), 42)
   })
 });

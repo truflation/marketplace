@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./TfiFeedRegistry.sol";
+import "./TruflationFeedRegistry.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract TfiFeedAdapter is Initializable, AggregatorV2V3Interface {
-  TfiFeedRegistry public registry;
+contract TruflationFeedAdapter is Initializable, AggregatorV2V3Interface {
+  TruflationFeedRegistry public registry;
   bytes32 public registryKey;
   function initialize(
-    TfiFeedRegistry registry_,
+    TruflationFeedRegistry registry_,
     bytes32 registryKey_
   ) public initializer {
     registry = registry_;
@@ -70,11 +70,11 @@ contract TfiFeedAdapter is Initializable, AggregatorV2V3Interface {
   }
 
   function description() external pure returns (string memory) {
-    return "TfiFeedAdapter";
+    return "TruflationFeedAdapter";
   }
 
   function version() external pure returns (uint256) {
-    return 202304210;
+    return 202404290;
   }
 
   /** Intentionally not implemented

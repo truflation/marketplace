@@ -5,16 +5,16 @@ describe("Token contract", function () {
     const [owner] = await ethers.getSigners();
     const Token = await ethers.getContractFactory("TruflationToken");
     const token = await Token.deploy();
-    await token.deployed()
+    await token.waitForDeployment()
 
     const TfiOperator = await ethers.getContractFactory("TfiOperator");
     const tfiOperator =
       await upgrades.deployProxy(TfiOperator, [
-	token.address,
-	owner.address
+	await token.getAddress(),
+	await owner.getAddress()
       ], { unsafeAllow: ['delegatecall'] });
 
-    await tfiOperator.deployed();
+    await tfiOperator.waitForDeployment();
 
   });
 });

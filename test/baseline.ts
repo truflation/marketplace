@@ -8,16 +8,16 @@ describe("Token contract", function () {
       tokenAddress,
       owner.address
     )
-    await operator.deployed()
+    await operator.waitForDeployment()
 
     const ApiClient = await ethers.getContractFactory("ApiClient");
     const apiClient =
       await ApiClient.deploy(
-	operator.address,
+	await operator.getAddress(),
 	"cef7d7ad405e45eb91e2da0f415c920e",
 	'100000000000000000',
 	tokenAddress
       );
-    await apiClient.deployed();
+    await apiClient.waitForDeployment();
   });
 });

@@ -4,6 +4,8 @@ import 'hardhat-gas-reporter'
 import '@typechain/hardhat'
 require("@nomiclabs/hardhat-web3");
 require("@nomicfoundation/hardhat-verify");
+require("@nomicfoundation/hardhat-chai-matchers")
+
 import * as dotenv from 'dotenv'
 dotenv.config()
 

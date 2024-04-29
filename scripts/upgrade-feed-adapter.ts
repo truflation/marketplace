@@ -5,7 +5,7 @@ import { getConfig } from './config'
 const address = getConfig()
 
 async function main (): void {
-  const name = 'TfiFeedAdapter'
+  const name = 'TruflationFeedAdapter'
   const contract = await ethers.getContractFactory(name)
   const inst = await upgrades.upgradeProxy(
     address.feed_adapter,

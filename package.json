@@ -3,6 +3,7 @@
   "devDependencies": {
     "@ethersproject/abi": "^5.6.4",
     "@ethersproject/providers": "^5.6.8",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.6",
     "@nomiclabs/hardhat-web3": "^2.0.0",
     "@types/chai": "^4.3.3",
     "@types/node": "^18.7.6",

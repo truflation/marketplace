@@ -1,23 +1,23 @@
 import { ethers, upgrades } from "hardhat";
-import { TfiFeedAdapter, TfiFeedRegistry } from "../typechain";
+import { TruflationFeedAdapter, TruflationFeedRegistry } from "../typechain";
 const { expect } = require("chai");
 
 let tfiFeedRegistry: any;
-const registryKey = ethers.utils.formatBytes32String("testdata");
+const registryKey = ethers.encodeBytes32String("testdata");
 
-describe("TfiFeedRegistry", () => {
+describe("TruflationFeedRegistry", () => {
   before(async () => {
-    const TfiFeedRegistry = await ethers.getContractFactory(
-      "TfiFeedRegistry"
+    const TruflationFeedRegistry = await ethers.getContractFactory(
+      "TruflationFeedRegistry"
     ) ;
-    tfiFeedRegistry = await upgrades.deployProxy(TfiFeedRegistry);
-    await tfiFeedRegistry.deployed();
+    tfiFeedRegistry = await upgrades.deployProxy(TruflationFeedRegistry);
+    await tfiFeedRegistry.waitForDeployment();
   });
 
   it("should set access permissions for a role, key, and address", async function () {
-    const role = ethers.utils.formatBytes32String("role");
-    const key = ethers.utils.formatBytes32String("key");
-    const address = await (await ethers.getSigner(1)).getAddress();
+    const role = ethers.encodeBytes32String("role");
+    const key = ethers.encodeBytes32String("key");
+    const address = await (await ethers.getSigners())[1].getAddress();
     const value = true;
 
     await expect(
@@ -32,9 +32,9 @@ describe("TfiFeedRegistry", () => {
     // get my address
     const [owner] = await ethers.getSigners();
     await tfiFeedRegistry.setAccess(
-      ethers.utils.formatBytes32String("set"),
+      ethers.encodeBytes32String("set"),
       registryKey,
-      owner.address, true
+      await owner.getAddress(), true
     );
   });
 
@@ -62,22 +62,22 @@ describe("TfiFeedRegistry", () => {
   it("should grant the role to the deployer", async () => {
     const [owner] = await ethers.getSigners();
     await tfiFeedRegistry.setAccess(
-      ethers.utils.formatBytes32String("get"),
+      ethers.encodeBytes32String("get"),
       registryKey,
-      owner.address,
+      await owner.getAddress(),
       true
     );
   });
 
   //test getRoundData
   it("should get the round data", async () => {
-    const roundId = 1;
-    const answer = 12345;
-    const startedAt = 1234567890;
-    const updatedAt = 1234567890;
-    const answeredInRound = 1;
+    const roundId = 1n;
+    const answer = 12345n;
+    const startedAt = 1234567890n;
+    const updatedAt = 1234567890n;
+    const answeredInRound = 1n;
     const [r, a, s, u, ar ] =   await tfiFeedRegistry.getRoundData(
-      registryKey, roundId,  ethers.constants.AddressZero
+      registryKey, roundId,  ethers.ZeroAddress
     );
     expect(a).to.equal(answer);
     expect(s).to.equal(startedAt);
@@ -87,13 +87,13 @@ describe("TfiFeedRegistry", () => {
 
   //test latestRoundData
   it("should get the latest round data", async () => {
-    const roundId = 1;
-    const answer = 12345;
-    const startedAt = 1234567890;
-    const updatedAt = 1234567890;
-    const answeredInRound = 1;
+    const roundId = 1n;
+    const answer = 12345n;
+    const startedAt = 1234567890n;
+    const updatedAt = 1234567890n;
+    const answeredInRound = 1n;
     const [r, a, s, u, ar ] =   await tfiFeedRegistry.latestRoundData(
-      registryKey, ethers.constants.AddressZero
+      registryKey, ethers.ZeroAddress
     );
     expect(r).to.equal(roundId);
     expect(a).to.equal(answer);
@@ -103,33 +103,33 @@ describe("TfiFeedRegistry", () => {
   });
 });
 
-describe("TfiFeedAdapter", () => {
+describe("TruflationFeedAdapter", () => {
   let tfiFeedAdapter:  any;
 
   before(async () => {
-    const TfiFeedAdapter = await ethers.getContractFactory(
-      "TfiFeedAdapter"
+    const TruflationFeedAdapter = await ethers.getContractFactory(
+      "TruflationFeedAdapter"
     );
-    console.log(tfiFeedRegistry.address)
+    console.log(await tfiFeedRegistry.getAddress())
     tfiFeedAdapter = await upgrades.deployProxy(
-      TfiFeedAdapter,
-      [tfiFeedRegistry.address, registryKey]
+      TruflationFeedAdapter,
+      [await tfiFeedRegistry.getAddress(), registryKey]
     );
     tfiFeedRegistry.setAccess(
-      ethers.utils.formatBytes32String("proxy"),
+      ethers.encodeBytes32String("proxy"),
       registryKey,
-      tfiFeedAdapter.address,
+      await tfiFeedAdapter.getAddress(),
       true
     );
-    await tfiFeedAdapter.deployed();
+    await tfiFeedAdapter.waitForDeployment();
   });
   // test latestRoundData
   it("should get the latest round data", async () => {
-    const roundId = 1;
-    const answer = 12345;
-    const startedAt = 1234567890;
-    const updatedAt = 1234567890;
-    const answeredInRound = 1;
+    const roundId = 1n;
+    const answer = 12345n;
+    const startedAt = 1234567890n;
+    const updatedAt = 1234567890n;
+    const answeredInRound = 1n;
     const [r,  a, s, u, ar ] =   await tfiFeedAdapter.latestRoundData();
 
     // check return values

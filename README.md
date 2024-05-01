@@ -1,5 +1,9 @@
 # Truflation Marketplace
 
+This repository	contains code to distribute data feeds from
+[Truflation.com](https://truflation.com).  For information on
+available data feeds place contact sales@truflation.com
+
 TODO
 ----
 

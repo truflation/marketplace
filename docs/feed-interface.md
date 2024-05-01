@@ -1,7 +1,7 @@
 # Truflation Feed Interface
 
 The Truflation Feed interface to marketplace data is a push smart
-contract that will allow users to access real time Truflation data via
+contract that allows users to access real time Truflation data via
 the ChainLink AggregatorV2V3Interface.  The interface is designed to
 allow easy integration of real time Truflation data to EVM compatible
 blockchains.
@@ -11,7 +11,7 @@ The code is open source and released under the Simplified BSD License.
 The interface consists of simple MVP that contains the following
 components:
 
-* The system will consist of one daemon, two contracts, and support scripts:
+* The system consists of one daemon, two contracts, and support scripts:
   * setdata-daemon.py - The daemon is located in modules/feed-updater
     and consists of a python daemon that takes web2 post calls and
     modifies the data in the TruflationFeedRegistry

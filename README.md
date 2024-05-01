@@ -6,6 +6,15 @@ available data feeds place contact sales@truflation.com
 
 For information on our ChainLink AggregatorV2V3 web3 interface please see our [feed interface docs](docs/feed-interface.md)
 
+Our [developer discord
+ channel](https://discord.com/channels/945776468452069426/1100899379881181275)
+is available for questions.
+
+If you are interested in developer roles please make sure that you
+have a github page which contains your contact information and make
+sample contribution to this or one of the other truflation
+repositories.
+
 TODO
 ----
 

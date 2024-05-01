@@ -6,6 +6,13 @@ the ChainLink AggregatorV2V3Interface.  The interface is designed to
 allow easy integration of real time Truflation data to EVM compatible
 blockchains.
 
+For information on available data feeds please contact
+[sales@truflation.com] (mailto:sales@truflation.com)
+
+Our [developer discord
+ channel](https://discord.com/channels/945776468452069426/1100899379881181275)
+ is available for questions.
+
 The code is open source and released under the Simplified BSD License.
 
 The interface consists of simple MVP that contains the following

@@ -100,6 +100,22 @@ The main change is that Binance takes two parameters BASE and QUOTE,
   whereas our contract will take only BASE.  Also the Binance contract
   reads data from a private external feed registry whereas our data
   will be written into the contract directly.
+  
+## Contract management
+
+The contracts can be managed in several different modes
+
+* truflation manages both the adapter and registry - This would be the
+  case in which a data provider wants a complete solution.
+  
+* truflation manages registry, client manages adapter - This would be
+  the case in which the client has special needs and would like to
+  modify the adapter to for example deal with special access control
+  features.
+  
+* client manages both registry and adapter - This would be the case in
+  which you have a new blockchain which wishes to use truflation as a
+  data partner
 
 ## ChainLink integration
 

@@ -109,9 +109,8 @@ The contracts can be managed in several different modes
   case in which a data provider wants a complete solution.
   
 * truflation manages registry, client manages adapter - This would be
-  the case in which the client has special needs and would like to
-  modify the adapter to for example deal with special access control
-  features.
+  the case in which the client is subscribing to multiple data feeds
+  or wishes to create a custom adapter
   
 * client manages both registry and adapter - This would be the case in
   which you have a new blockchain which wishes to use truflation as a

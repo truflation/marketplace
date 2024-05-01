@@ -4,6 +4,8 @@ This repository	contains code to distribute data feeds from
 [Truflation.com](https://truflation.com).  For information on
 available data feeds place contact sales@truflation.com
 
+For information on our ChainLink AggregatorV2V3 web3 interface please see our [feed interface docs](docs/feed-interface.md)
+
 TODO
 ----
 

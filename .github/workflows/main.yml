@@ -50,16 +50,16 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ env.ORDERS_IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
-  deploy:
-    name: Deploy/orders
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: deploy to server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_HOST_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: ./orders/run.sh;
+#  deploy:
+#    name: Deploy/orders
+#    needs: build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: deploy to server
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ${{ secrets.SSH_HOST_USERNAME }}
+#          key: ${{ secrets.SSH_KEY }}
+#          port: ${{ secrets.SSH_PORT }}
+#          script: ./orders/run.sh;

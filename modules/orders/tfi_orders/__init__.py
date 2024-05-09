@@ -50,7 +50,7 @@ def process_request_api1(content, handler):
     request_id = oracle_request['requestId']
     payment = int(oracle_request['payment'])
     cbor_bytes = bytes.fromhex("bf" + log_data[2:] + "ff")
-    obj = cbor2.decoder.loads(cbor_bytes)
+    obj = cbor2.loads(cbor_bytes)
     app.logger.debug(obj)
     encode_tx = None
     encode_large = None
@@ -137,7 +137,7 @@ def api0():
     log_data = oracle_request['data']
     request_id = oracle_request['requestId']
     b = bytes.fromhex("bf" + log_data[2:] + "ff")
-    o = cbor2.decoder.loads(b)
+    o = cbor2.loads(b)
     app.logger.debug(o)
     r = requests.post(api_adapter, json=o)
     encode_large = encode_abi(

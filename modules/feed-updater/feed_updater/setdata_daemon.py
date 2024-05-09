@@ -7,6 +7,8 @@ setdata_daemon.py
 This daemon reads in pricing data and writes the data into
 an ethereum compatible blockchain.
 
+todo: convert to fastapi
+
 """
 
 import os

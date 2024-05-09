@@ -3,12 +3,18 @@ name: Pipeline
 on:
   push:
     branches: ['main']
+    paths:
+      - modules/orders/**
+      - .github/**
   pull_request:
     branches: ['main']
+    paths:
+      - modules/orders/**
+      - .github/**
 
 env:
   REGISTRY: ghcr.io
-  REPOSITORY: truflationdev
+  REPOSITORY: truflation
   ORDERS_IMAGE_NAME: orders
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 

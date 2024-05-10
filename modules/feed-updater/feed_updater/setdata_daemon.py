@@ -103,11 +103,9 @@ Handle send data
         send_tx = web3.eth.send_raw_transaction(
             signed_tx.rawTransaction
         )
-        tx_receipt = web3.eth.wait_for_transaction_receipt(send_tx)
-        ic(f'setting complete txid={tx_receipt.transactionHash.hex()}')
+        ic(f'sent txid={send_tx.hex()}')
         return json({
-            'txid':
-            tx_receipt.transactionHash.hex()
+            'txid': send_tx.hex()
         }, status=200)
     except ValueError:
         return json({'error': 'Invalid JSON format'}, status=400)

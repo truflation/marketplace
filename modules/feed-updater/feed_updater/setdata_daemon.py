@@ -78,13 +78,16 @@ Handle send data
         if not isinstance(obj, dict):
             return json({'error': 'Invalid JSON format'}, status=400)
         ic(f'Received data: {obj}')
-        print('setting')
-        nonce = web3.eth.get_transaction_count(caller)
-        web3.strict_bytes_type_checking = False
-#        dts = int(datetime.datetime.strptime(s, '%Y-%m-%d').timestamp())
-#        nts = int(datetime.datetime.utcnow().timestamp())
-#        roundId = dts
 
+        nonce = web3.eth.get_transaction_count(caller)
+        if nonce < handle_send_data.nonce:
+            nonce = handle_send_data.nonce
+        handle_send_data.nonce = nonce + 1
+        web3.strict_bytes_type_checking = False
+        #        dts = int(datetime.datetime.strptime(s, '%Y-%m-%d').timestamp())
+        #        nts = int(datetime.datetime.utcnow().timestamp())
+        #        roundId = dts
+        ic(f'nonce: {nonce}')
         call_function = contract.functions.setRoundData(
             bytes(obj['n'], 'utf-8'),
             obj['r'],
@@ -94,7 +97,8 @@ Handle send data
         ).build_transaction({
             "chainId": chain_id,
             "gasPrice": web3.eth.gas_price,
-            "from": caller
+            "from": caller,
+            "nonce": nonce
         })
         signed_tx = web3.eth.account.sign_transaction(
             call_function, private_key=private_key
@@ -102,12 +106,16 @@ Handle send data
         send_tx = web3.eth.send_raw_transaction(
             signed_tx.rawTransaction
         )
-        ic(f'sent txid={send_tx.hex()}')
+        ic(f'sent txid={send_tx.hex()} nonce={handle_send_data.nonce}')
         return json({
             'txid': send_tx.hex()
         }, status=200)
     except ValueError:
         return json({'error': 'Invalid JSON format'}, status=400)
+    except Exception as e:
+        ic(e)
+
+handle_send_data.nonce = 0
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)

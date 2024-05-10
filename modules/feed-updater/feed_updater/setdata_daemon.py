@@ -94,8 +94,7 @@ Handle send data
         ).build_transaction({
             "chainId": chain_id,
             "gasPrice": web3.eth.gas_price,
-            "from": caller,
-            "nonce": nonce
+            "from": caller
         })
         signed_tx = web3.eth.account.sign_transaction(
             call_function, private_key=private_key

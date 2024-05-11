@@ -149,7 +149,9 @@ Handle send data
             status_code=400,
             detail='Invalid JSON Format'
         ) from exc
-
+    except Exception as exc:
+        ic(exc)
+        raise
 
 @app.post('/send-data')
 async def handle_send_data(request: Request):
@@ -200,6 +202,9 @@ Handle send data
             status_code=400,
             detail='Invalid JSON Format'
         ) from exc
+    except Exception as exc:
+        ic(exc)
+        raise
 
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8000)

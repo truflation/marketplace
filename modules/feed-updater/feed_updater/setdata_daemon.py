@@ -107,6 +107,7 @@ Handle send data
         web3.strict_bytes_type_checking = False
         output = {}
         send_tx = {}
+        call_function = {}
         for name, values in obj.items():
             call_function[name] = contract.functions.setRoundData(
                 bytes(name, 'utf-8'),

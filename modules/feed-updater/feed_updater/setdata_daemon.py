@@ -26,7 +26,7 @@ private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
 
-web3 = Web3(Web3.HTTPProvider(node_url))
+
 abi = [
         {
       "inputs": [
@@ -63,10 +63,6 @@ abi = [
     }
 ]
 
-contract = web3.eth.contract(
-    address=address, abi=abi
-)
-chain_id = web3.eth.chain_id
 
 @app.route('/send-data', methods=['POST'])
 async def handle_send_data(request):
@@ -78,7 +74,11 @@ Handle send data
         if not isinstance(obj, dict):
             return json({'error': 'Invalid JSON format'}, status=400)
         ic(f'Received data: {obj}')
-
+        web3 = Web3(Web3.HTTPProvider(node_url))
+        contract = web3.eth.contract(
+            address=address, abi=abi
+        )
+        chain_id = web3.eth.chain_id
         nonce = web3.eth.get_transaction_count(caller)
         if nonce < handle_send_data.nonce:
             nonce = handle_send_data.nonce

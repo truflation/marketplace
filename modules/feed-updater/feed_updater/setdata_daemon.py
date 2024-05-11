@@ -130,7 +130,7 @@ Handle send data
             signed_tx[name] = web3.eth.account.sign_transaction(
                 call_function[name], private_key=private_key
             )
-            ic(signed_tx)
+            ic('tx signed')
         for name in obj:
             send_tx[name] = web3.eth.send_raw_transaction(
                 signed_tx[name].rawTransaction

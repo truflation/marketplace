@@ -13,7 +13,7 @@ todo: convert to fastapi
 
 import os
 import json
-from web3 import Web3
+from web3 import AsyncWeb3
 from dotenv import load_dotenv
 from icecream import ic
 from sanic import Sanic
@@ -26,7 +26,7 @@ private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
 
-web3 = Web3(Web3.HTTPProvider(node_url))
+web3 = AsyncWeb3(AsyncWeb3.HTTPProvider(node_url))
 abi = [
         {
       "inputs": [

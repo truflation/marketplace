@@ -107,6 +107,7 @@ Handle send data
         web3.strict_bytes_type_checking = False
         output = {}
         send_tx = {}
+        signed_tx = {}
         call_function = {}
         nonce = web3.eth.get_transaction_count(caller)
         for name, values in obj.items():
@@ -126,12 +127,13 @@ Handle send data
             ic(nonce)
 
         for name in obj:
-            signed_tx = web3.eth.account.sign_transaction(
+            signed_tx[name] = web3.eth.account.sign_transaction(
                 call_function[name], private_key=private_key
             )
             ic(signed_tx)
+        for name in obj:
             send_tx[name] = web3.eth.send_raw_transaction(
-                signed_tx.rawTransaction
+                signed_tx[name].rawTransaction
             )
             ic(send_tx)
             rounds_data.increment(name)

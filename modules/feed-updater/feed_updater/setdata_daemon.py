@@ -16,11 +16,12 @@ import ujson
 from web3 import Web3
 from dotenv import load_dotenv
 from icecream import ic
-from sanic import Sanic
-from sanic.response import json
+from fastapi import FastAPI, Request, HTTPException
+import uvicorn
+
 load_dotenv()
 
-app = Sanic('setdata_daemon')
+app = FastAPI()
 caller = os.environ.get('ETH_CALLER', os.environ.get('CALLER'))
 private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
@@ -93,19 +94,20 @@ class RoundsData:
 
 rounds_data = RoundsData(rounds_file)
 
-@app.route('/send-data-multi', methods=['POST'])
-async def handle_send_data_multi(request):
+@app.post('/send-data-multi')
+async def handle_send_data_multi(request: Request):
     """
 Handle send data
 """
-    global nonce
     try:
-        obj = request.json
+        obj = await request.json()
         if not isinstance(obj, dict):
-            return json({'error': 'Invalid JSON format'}, status=400)
+            raise HTTPException(
+                status_code=400,
+                detail='Invalid JSON format'
+            )
         ic(f'Received data: {obj}')
         web3.strict_bytes_type_checking = False
-        output = {}
         send_tx = {}
         signed_tx = {}
         call_function = {}
@@ -141,22 +143,26 @@ Handle send data
         outputs = {name: value.hex()
                    for name, value in send_tx.items()}
         ic(outputs)
-        return json(
-            outputs
-        , status=200)
-    except ValueError:
-        return json({'error': 'Invalid JSON format'}, status=400)
+        return outputs
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail='Invalid JSON Format'
+        ) from exc
 
 
-@app.route('/send-data', methods=['POST'])
-async def handle_send_data(request):
+@app.post('/send-data')
+async def handle_send_data(request: Request):
     """
 Handle send data
 """
     try:
-        obj = request.json
+        obj = await request.json()
         if not isinstance(obj, dict):
-            return json({'error': 'Invalid JSON format'}, status=400)
+            return HTTPException(
+                status_code=400,
+                detail='Invalid JSON format'
+            )
         ic(f'Received data: {obj}')
         print('setting')
         nonce = web3.eth.get_transaction_count(caller)
@@ -185,12 +191,15 @@ Handle send data
         )
         tx_receipt = web3.eth.wait_for_transaction_receipt(send_tx)
         ic(f'setting complete txid={tx_receipt.transactionHash.hex()}')
-        return json({
+        return {
             'txid':
             tx_receipt.transactionHash.hex()
-        }, status=200)
-    except ValueError:
-        return json({'error': 'Invalid JSON format'}, status=400)
+        }
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail='Invalid JSON Format'
+        ) from exc
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

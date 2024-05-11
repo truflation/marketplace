@@ -68,6 +68,50 @@ contract = web3.eth.contract(
 )
 chain_id = web3.eth.chain_id
 
+@app.route('/send-data-multi', methods=['POST'])
+async def handle_send_data(request):
+    """
+Handle send data
+"""
+    try:
+        obj = request.json
+        if not isinstance(obj, dict):
+            return json({'error': 'Invalid JSON format'}, status=400)
+        ic(f'Received data: {obj}')
+        nonce = web3.eth.get_transaction_count(caller)
+        web3.strict_bytes_type_checking = False
+        output = {}
+
+        for name, values in obj.items:
+            call_function = contract.functions.setRoundData(
+                bytes(name, 'utf-8'),
+                values['r'],
+                values['v'],
+                values['s'],
+                values['u']
+            ).build_transaction({
+                "chainId": chain_id,
+                "gasPrice": web3.eth.gas_price,
+                "from": caller,
+                "nonce": nonce
+            })
+            signed_tx = web3.eth.account.sign_transaction(
+                call_function, private_key=private_key
+            )
+            send_tx = web3.eth.send_raw_transaction(
+                signed_tx.rawTransaction
+        )
+            tx_receipt = web3.eth.wait_for_transaction_receipt(send_tx)
+            ic(f'setting complete txid={tx_receipt.transactionHash.hex()}')
+            output[name] = tx_receipt.transactionHash.hex()
+        return json({
+            'txid':
+            output
+        }, status=200)
+    except ValueError:
+        return json({'error': 'Invalid JSON format'}, status=400)
+
+
 @app.route('/send-data', methods=['POST'])
 async def handle_send_data(request):
     """

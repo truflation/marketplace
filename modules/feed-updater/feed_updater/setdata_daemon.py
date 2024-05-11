@@ -92,7 +92,7 @@ class RoundsData:
             self.read(value) + 1
 
 rounds_data = RoundsData(rounds_file)
-nonce = web3.eth.get_transaction_count(caller)
+
 @app.route('/send-data-multi', methods=['POST'])
 async def handle_send_data_multi(request):
     """
@@ -108,6 +108,7 @@ Handle send data
         output = {}
         send_tx = {}
         call_function = {}
+        nonce = web3.eth.get_transaction_count(caller)
         for name, values in obj.items():
             call_function[name] = contract.functions.setRoundData(
                 bytes(name, 'utf-8'),

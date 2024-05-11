@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./TruflationFeedRegistry.sol";
+import "./ITruflationFeedRegistry.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV2V3Interface.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract TruflationFeedAdapter is Initializable, AggregatorV2V3Interface {
-  TruflationFeedRegistry public registry;
+  ITruflationFeedRegistry public registry;
   bytes32 public registryKey;
   function initialize(
-    TruflationFeedRegistry registry_,
+    ITruflationFeedRegistry registry_,
     bytes32 registryKey_
   ) public initializer {
     registry = registry_;

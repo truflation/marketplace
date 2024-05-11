@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./ITruflationFeedRegistry.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract TruflationFeedRegistry is Initializable, OwnableUpgradeable {
+contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflationFeedRegistry {
   bytes32 constant SET = "set";
   bytes32 constant GET = "get";
   bytes32 constant PROXY = "proxy";
@@ -15,7 +16,7 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable {
     uint256 updatedAt;
   }
 
-  uint80 public latestRound;
+  mapping (bytes32 => uint80) public latestRound;
   mapping (bytes32 => mapping(uint80 => RoundData)) private data;
   mapping (bytes32 => mapping(bytes32 => mapping(address => bool)))
   private permissions;
@@ -105,7 +106,7 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable {
  */
 
   function getRoundData(bytes32 dataType, uint80 roundId_, address sender)
-  public
+  external
   view
   virtual
   onlyAccess(GET, dataType, sender)
@@ -118,7 +119,10 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable {
   )
   {
     RoundData memory rd = data[dataType][roundId_];
-    return (roundId_, rd.answer, rd.startedAt, rd.updatedAt, latestRound);
+    uint80 latestRound_ = latestRound[dataType];
+    return (roundId_, rd.answer, rd.startedAt, rd.updatedAt,
+    latestRound_
+    );
   }
 
 /**
@@ -145,7 +149,11 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable {
     uint80 answeredInRound
   )
   {
-    return getRoundData(dataType, latestRound, sender);
+    uint80
+    latestRound_ = latestRound[dataType];
+    RoundData memory rd = data[dataType][latestRound_];
+    return (latestRound_, rd.answer, rd.startedAt, rd.updatedAt,
+    latestRound_);
   }
 
 /**
@@ -164,7 +172,7 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable {
     uint256 startedAt,
     uint256 updatedAt
   ) external virtual onlySetAccess(msg.sender, dataType) {
-    latestRound = roundId;
+    latestRound[dataType] = roundId;
     data[dataType][roundId] = RoundData(answer, startedAt, updatedAt);
     emit RoundDataSet(dataType, roundId, answer, startedAt, updatedAt);
   }
@@ -204,6 +212,6 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable {
   }
 
   function version() external pure returns (uint256) {
-    return 202404290;
+    return 202405120;
   }
 }

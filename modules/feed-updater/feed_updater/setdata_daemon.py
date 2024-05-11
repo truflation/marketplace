@@ -25,6 +25,7 @@ caller = os.environ.get('ETH_CALLER', os.environ.get('CALLER'))
 private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
+rounds_file = os.environ.get('ROUNDS_DATA', 'rounds.json')
 
 web3 = Web3(Web3.HTTPProvider(node_url))
 abi = [
@@ -90,7 +91,7 @@ class RoundsData:
         self.rounds[value] = \
             self.read(value) + 1
 
-roundsData = RoundsData('json/rounds.json')
+rounds_data = RoundsData(rounds_file)
 
 @app.route('/send-data-multi', methods=['POST'])
 async def handle_send_data_multi(request):
@@ -109,7 +110,7 @@ Handle send data
             nonce = web3.eth.get_transaction_count(caller)
             call_function = contract.functions.setRoundData(
                 bytes(name, 'utf-8'),
-                roundsData.read(name),
+                rounds_data.read(name),
                 values['v'],
                 values['s'],
                 values['u']
@@ -128,8 +129,8 @@ Handle send data
             tx_receipt = web3.eth.wait_for_transaction_receipt(send_tx)
             ic(f'setting complete txid={tx_receipt.transactionHash.hex()}')
             output[name] = tx_receipt.transactionHash.hex()
-            roundsData.increment(name)
-        roundsData.save()
+            rounds_data.increment(name)
+        rounds_data.save()
         return json({
             'txid':
             output

@@ -92,7 +92,7 @@ class RoundsData:
             self.read(value) + 1
 
 rounds_data = RoundsData(rounds_file)
-
+nonce = web3.eth.get_transaction_count(caller)
 @app.route('/send-data-multi', methods=['POST'])
 async def handle_send_data_multi(request):
     """
@@ -106,9 +106,8 @@ Handle send data
         web3.strict_bytes_type_checking = False
         output = {}
         send_tx = {}
-        nonce = web3.eth.get_transaction_count(caller)
         for name, values in obj.items():
-            call_function = contract.functions.setRoundData(
+            call_function[name] = contract.functions.setRoundData(
                 bytes(name, 'utf-8'),
                 rounds_data.read(name),
                 values['v'],
@@ -120,13 +119,18 @@ Handle send data
                 "from": caller,
                 "nonce": nonce
             })
+            nonce = nonce + 1
+            ic(nonce)
+
+        for name in obj:
             signed_tx = web3.eth.account.sign_transaction(
-                call_function, private_key=private_key
+                call_function[name], private_key=private_key
             )
+            ic(signed_tx)
             send_tx[name] = web3.eth.send_raw_transaction(
                 signed_tx.rawTransaction
             )
-            nonce = nonce + 1
+            ic(send_tx)
             rounds_data.increment(name)
         rounds_data.save()
         outputs = {name: value.hex()

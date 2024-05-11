@@ -13,6 +13,7 @@ todo: convert to fastapi
 
 import os
 import json
+import asyncio
 from web3 import Web3
 from dotenv import load_dotenv
 from icecream import ic

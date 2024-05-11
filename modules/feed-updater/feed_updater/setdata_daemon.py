@@ -98,6 +98,7 @@ async def handle_send_data_multi(request):
     """
 Handle send data
 """
+    global nonce
     try:
         obj = request.json
         if not isinstance(obj, dict):

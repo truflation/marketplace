@@ -17,6 +17,8 @@ from web3 import Web3
 from dotenv import load_dotenv
 from icecream import ic
 from fastapi import FastAPI, Request, HTTPException
+import uvicorn
+
 load_dotenv()
 
 app = FastAPI()
@@ -97,7 +99,6 @@ async def handle_send_data_multi(request: Request):
     """
 Handle send data
 """
-    global nonce
     try:
         obj = await request.json()
         if not isinstance(obj, dict):
@@ -107,7 +108,6 @@ Handle send data
             )
         ic(f'Received data: {obj}')
         web3.strict_bytes_type_checking = False
-        output = {}
         send_tx = {}
         signed_tx = {}
         call_function = {}
@@ -144,11 +144,11 @@ Handle send data
                    for name, value in send_tx.items()}
         ic(outputs)
         return outputs
-    except ValueError:
+    except ValueError as exc:
         raise HTTPException(
-            status=400,
+            status_code=400,
             detail='Invalid JSON Format'
-        )
+        ) from exc
 
 
 @app.post('/send-data')
@@ -195,11 +195,11 @@ Handle send data
             'txid':
             tx_receipt.transactionHash.hex()
         }
-    except ValueError:
+    except ValueError as exc:
         raise HTTPException(
-            status=400,
+            status_code=400,
             detail='Invalid JSON Format'
-        )
+        ) from exc
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

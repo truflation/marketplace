@@ -12,7 +12,7 @@ todo: convert to fastapi
 """
 
 import os
-import json
+import ujson
 from web3 import Web3
 from dotenv import load_dotenv
 from icecream import ic
@@ -68,6 +68,27 @@ contract = web3.eth.contract(
 )
 chain_id = web3.eth.chain_id
 
+class RoundsData:
+    def __init__(self, file_path):
+        self.rounds = {}
+        self.file_path = file_path
+        self.load()
+    def load(self):
+        with open(self.file_path, 'r',
+                  encoding='utf-8') as file:
+            self.rounds = ujson.load(file)
+    def save(self):
+        with open(self.file_path, 'w',
+                  encoding='utf-8') as file:
+            ujson.dump(self.rounds, file)
+    def read(self, value):
+        return self.rounds.get(value, 0)
+    def increment(self, value):
+        self.rounds[value] = \
+            self.read(value) + 1
+
+roundsData = RoundsData('json/rounds.json')
+
 @app.route('/send-data-multi', methods=['POST'])
 async def handle_send_data_multi(request):
     """
@@ -78,14 +99,14 @@ Handle send data
         if not isinstance(obj, dict):
             return json({'error': 'Invalid JSON format'}, status=400)
         ic(f'Received data: {obj}')
-        nonce = web3.eth.get_transaction_count(caller)
         web3.strict_bytes_type_checking = False
         output = {}
 
-        for name, values in obj.items:
+        for name, values in obj.items():
+            nonce = web3.eth.get_transaction_count(caller)
             call_function = contract.functions.setRoundData(
                 bytes(name, 'utf-8'),
-                values['r'],
+                roundsData.read(name),
                 values['v'],
                 values['s'],
                 values['u']
@@ -104,6 +125,8 @@ Handle send data
             tx_receipt = web3.eth.wait_for_transaction_receipt(send_tx)
             ic(f'setting complete txid={tx_receipt.transactionHash.hex()}')
             output[name] = tx_receipt.transactionHash.hex()
+            roundsData.increment(name)
+        roundsData.save()
         return json({
             'txid':
             output

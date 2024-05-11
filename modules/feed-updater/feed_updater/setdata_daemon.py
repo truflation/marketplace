@@ -105,9 +105,9 @@ Handle send data
         ic(f'Received data: {obj}')
         web3.strict_bytes_type_checking = False
         output = {}
-
+        send_tx = {}
+        nonce = web3.eth.get_transaction_count(caller)
         for name, values in obj.items():
-            nonce = web3.eth.get_transaction_count(caller)
             call_function = contract.functions.setRoundData(
                 bytes(name, 'utf-8'),
                 rounds_data.read(name),
@@ -123,18 +123,18 @@ Handle send data
             signed_tx = web3.eth.account.sign_transaction(
                 call_function, private_key=private_key
             )
-            send_tx = web3.eth.send_raw_transaction(
+            send_tx[name] = web3.eth.send_raw_transaction(
                 signed_tx.rawTransaction
-        )
-            tx_receipt = web3.eth.wait_for_transaction_receipt(send_tx)
-            ic(f'setting complete txid={tx_receipt.transactionHash.hex()}')
-            output[name] = tx_receipt.transactionHash.hex()
+            )
+            nonce = nonce + 1
             rounds_data.increment(name)
         rounds_data.save()
-        return json({
-            'txid':
-            output
-        }, status=200)
+        outputs = {name: value.hex()
+                   for name, value in send_tx.items()}
+        ic(outputs)
+        return json(
+            outputs
+        , status=200)
     except ValueError:
         return json({'error': 'Invalid JSON format'}, status=400)
 

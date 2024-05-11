@@ -69,7 +69,7 @@ contract = web3.eth.contract(
 chain_id = web3.eth.chain_id
 
 @app.route('/send-data-multi', methods=['POST'])
-async def handle_send_data(request):
+async def handle_send_data_multi(request):
     """
 Handle send data
 """

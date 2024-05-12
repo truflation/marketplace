@@ -14,11 +14,11 @@ async function main(): Promise<void> {
     const TruflationFeedRegistry = await ethers.getContractFactory('TruflationFeedRegistry');
     const truflationFeedRegistry = TruflationFeedRegistry.attach(address)
     
-    console.log('Deploying TfiAdapter')
+    console.log('Deploying TruflationAdapter')
     console.log(`   Owner ${owner.address}`)
     console.log(`   Address ${address}`)
     console.log(`   Key ${keyString}`)
-    const key = ethers.encodeBytes32String(keyString)    
+
     const TruflationFeedAdapter = await ethers.getContractFactory(
       'TruflationFeedAdapter'
     )
@@ -33,14 +33,26 @@ async function main(): Promise<void> {
     await truflationFeedAdapter.waitForDeployment()
     console.log('TruflationFeedAdapter deployed to:',
 		await truflationFeedAdapter.getAddress())
-    const getKey = ethers.encodeBytes32String('get');
+    const key = ethers.encodeBytes32String(keyString)
+    const getKey = ethers.encodeBytes32String('get')
+    const setKey = ethers.encodeBytes32String('set')
+    const proxyKey = ethers.encodeBytes32String('proxy')
+
     await truflationFeedRegistry.setAccess(
-      getKey, key, await truflationFeedAdapter.getAddress(), true
+      getKey, key, await truflationFeedAdapter.getAddress(),
+      true
     )
-    const proxyKey = ethers.encodeBytes32String('proxy');
     await truflationFeedRegistry.setAccess(
-      proxyKey, key, await truflationFeedAdapter.getAddress(), true
+      proxyKey, key, await truflationFeedAdapter.getAddress(),
+      true
     )
+    await truflationFeedRegistry.setAccess(
+      getKey, key, owner.address, true
+    )
+    await truflationFeedRegistry.setAccess(
+      setKey, key, owner.address, true
+    )
+
     console.log('Roles granted')
   } catch(error) {
     console.error(error)

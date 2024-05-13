@@ -21,7 +21,7 @@ cleanup_and_exit() {
 
 echo "node started waiting...."
 sleep 3
-(npx hardhat --network localhost run ./scripts/deploy-feed-contracts.ts)
+(npx hardhat --network localhost run ./scripts/deploy-feed-registry.ts)
 
 # Trap interrupts and call our cleanup function
 trap "cleanup_and_exit" INT  # Ctrl+C

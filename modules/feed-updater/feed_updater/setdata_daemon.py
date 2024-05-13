@@ -17,6 +17,7 @@ import os
 import ujson
 from docopt import docopt
 from web3 import AsyncWeb3
+from collections import deque
 from dotenv import load_dotenv
 from icecream import ic
 from fastapi import FastAPI, Request, HTTPException
@@ -98,6 +99,8 @@ contract = web3.eth.contract(
     address=address, abi=abi
 )
 
+queue = deque()
+
 @app.post('/send-data-multi')
 async def handle_send_data_multi(request: Request):
     """
@@ -113,41 +116,49 @@ Handle send data
                 detail='Invalid JSON format'
             )
         ic(f'Received data: {obj}')
-        web3.strict_bytes_type_checking = False
-        send_tx = {}
-        signed_tx = {}
-        call_function = {}
-        nonce = await web3.eth.get_transaction_count(caller)
         for name, values in obj.items():
-            call_function[name] = contract.functions.setRoundData(
-                bytes(name, 'utf-8'),
-                rounds_data.read(name),
-                values['v'],
-                values['s'],
-                values['u']
+            queue.append({
+                'n': name,
+                'r': rounds_data.read(name),
+                'v': values['v'],
+                's': values['s'],
+                'u': values['u']
+            })
+        web3.strict_bytes_type_checking = False
+        nonce = await web3.eth.get_transaction_count(caller)
+        retval = {}
+        gas_price = await web3.eth.gas_price
+        for obj in queue.copy():
+            call_function = contract.functions.setRoundData(
+                bytes(obj['n'], 'utf-8'),
+                obj['r'],
+                obj['v'],
+                obj['s'],
+                obj['u']
             ).build_transaction({
                 "chainId": chain_id,
-                "gasPrice": await web3.eth.gas_price,
+                "gasPrice": gas_price,
                 "from": caller,
                 "nonce": nonce
             })
-            nonce = nonce + 1
+
             ic(nonce)
 
-        for name in obj:
-            signed_tx[name] = web3.eth.account.sign_transaction(
-                await call_function[name], private_key=private_key
+            signed_tx = web3.eth.account.sign_transaction(
+                await call_function, private_key=private_key
             )
             ic('tx signed')
-        for name in obj:
-            send_tx[name] = await web3.eth.send_raw_transaction(
-                signed_tx[name].rawTransaction
+            send_tx = await web3.eth.send_raw_transaction(
+                signed_tx.rawTransaction
             )
             ic(send_tx)
-            rounds_data.increment(name)
+            retval[nonce] = send_tx.hex()
+            nonce = nonce + 1
+            rounds_data.increment(obj['n'])
+
+            queue.popleft()
         rounds_data.save()
-        outputs = {name: value.hex()
-                   for name, value in send_tx.items()}
+        outputs = retval
         ic(outputs)
         return outputs
     except ValueError as exc:

@@ -14,10 +14,11 @@ Usage:
 """
 
 import os
+from collections import deque
+
 import ujson
 from docopt import docopt
 from web3 import AsyncWeb3
-from collections import deque
 from dotenv import load_dotenv
 from icecream import ic
 from fastapi import FastAPI, Request, HTTPException
@@ -124,6 +125,8 @@ Handle send data
                 's': values['s'],
                 'u': values['u']
             })
+            rounds_data.increment(name)
+
         web3.strict_bytes_type_checking = False
         nonce = await web3.eth.get_transaction_count(caller)
         retval = {}
@@ -141,9 +144,7 @@ Handle send data
                 "from": caller,
                 "nonce": nonce
             })
-
             ic(nonce)
-
             signed_tx = web3.eth.account.sign_transaction(
                 await call_function, private_key=private_key
             )
@@ -154,8 +155,6 @@ Handle send data
             ic(send_tx)
             retval[nonce] = send_tx.hex()
             nonce = nonce + 1
-            rounds_data.increment(obj['n'])
-
             queue.popleft()
         rounds_data.save()
         outputs = retval

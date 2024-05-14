@@ -25,13 +25,5 @@ interface ITruflationFeedRegistry {
       uint256 updatedAt,
       uint80 answeredInRound
   );
-
-  function setRoundData(
-    bytes32 dataType,
-    uint80 roundId,
-    int256 answer,
-    uint256 startedAt,
-    uint256 updatedAt
-  ) external;
 }
 

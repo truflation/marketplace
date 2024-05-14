@@ -171,10 +171,39 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
     int256 answer,
     uint256 startedAt,
     uint256 updatedAt
-  ) external virtual onlySetAccess(msg.sender, dataType) {
+  ) public virtual onlySetAccess(msg.sender, dataType) {
     latestRound[dataType] = roundId;
     data[dataType][roundId] = RoundData(answer, startedAt, updatedAt);
     emit RoundDataSet(dataType, roundId, answer, startedAt, updatedAt);
+  }
+
+
+/**
+ * @dev Sets the data for a specific round of a price feed.
+ * @param dataType The dataType for the price feed.
+ * @param roundId The ID of the round to set data for.
+ * @param answer The answer for the round.
+ * @param startedAt The timestamp for when the round started.
+ * @param updatedAt The timestamp for when the round was last updated.
+ */
+
+  function setRoundDataFromArray(
+    bytes32[] calldata dataType,
+    uint80[] calldata roundId,
+    int256[] calldata answer,
+    uint256[] calldata startedAt,
+    uint256[] calldata updatedAt
+  ) public virtual {
+    uint256 length = dataType.length;
+    for (uint i=0; i < length; i++) {
+      setRoundData(
+        dataType[i],
+        roundId[i],
+        answer[i],
+        startedAt[i],
+        updatedAt[i]
+      );
+    }
   }
 
 /**

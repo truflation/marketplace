@@ -40,6 +40,26 @@ describe("TruflationFeedRegistry", () => {
 
   // test setRoundData
   it("should set the round data", async () => {
+    const roundId = [1, 1, 1];
+    const answer = [12345, 1, 1];
+    const startedAt = [1234567890, 1, 1];
+    const updatedAt = [1234567890, 1, 1];
+    const answeredInRound = [1, 1, 1];
+    await expect(
+      tfiFeedRegistry.setRoundDataFromArray(
+	[registryKey, registryKey, registryKey],
+	roundId,
+	answer,
+	startedAt,
+	updatedAt
+      )
+    ).to.emit(tfiFeedRegistry, "RoundDataSet").withArgs(
+      registryKey, roundId[0], answer[0], startedAt[0], updatedAt[0]
+    );
+  });
+
+  // test setRoundData
+  it("should set the round data", async () => {
     const roundId = 1;
     const answer = 12345;
     const startedAt = 1234567890;

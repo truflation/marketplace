@@ -2,16 +2,16 @@
 
 import { ethers, upgrades } from 'hardhat'
 import { getConfig } from './config'
-const address = getConfig()
+const address = process.env.ADDRESS ?? getConfig().feed_adapter
 
 async function main (): void {
   const name = 'TruflationFeedAdapter'
   const contract = await ethers.getContractFactory(name)
   const inst = await upgrades.upgradeProxy(
-    address.feed_adapter,
+    address,
     contract
   )
-  await inst.deployed()
+  await inst.waitForDeployment()
   console.log(`${name} deployed to ${inst.address}`)
 }
 

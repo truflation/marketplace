@@ -14,11 +14,10 @@ Usage:
 """
 
 import os
-from collections import deque
-
 import ujson
 from docopt import docopt
 from web3 import AsyncWeb3
+from collections import deque
 from dotenv import load_dotenv
 from icecream import ic
 from fastapi import FastAPI, Request, HTTPException
@@ -68,6 +67,39 @@ abi = [
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "dataType",
+          "type": "bytes32[]"
+        },
+        {
+          "internalType": "uint80[]",
+          "name": "roundId",
+          "type": "uint80[]"
+        },
+        {
+          "internalType": "int256[]",
+          "name": "answer",
+          "type": "int256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "startedAt",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "updatedAt",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "setRoundDataFromArray",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
     }
 ]
 
@@ -100,13 +132,14 @@ contract = web3.eth.contract(
     address=address, abi=abi
 )
 
-queue = deque()
+queue = []
 
 @app.post('/send-data-multi')
 async def handle_send_data_multi(request: Request):
     """
 Handle send data
 """
+    global queue
     chain_id = await web3.eth.chain_id
 
     try:
@@ -131,13 +164,26 @@ Handle send data
         nonce = await web3.eth.get_transaction_count(caller)
         retval = {}
         gas_price = await web3.eth.gas_price
-        for obj in queue.copy():
-            call_function = contract.functions.setRoundData(
-                bytes(obj['n'], 'utf-8'),
-                obj['r'],
-                obj['v'],
-                obj['s'],
-                obj['u']
+        while len(queue) > 0:
+            n_list = []
+            r_list = []
+            v_list = []
+            s_list = []
+            u_list = []
+            new_queue = queue.copy()
+            for obj in queue[:8]:
+                n_list.append(bytes(obj['n'], 'utf-8'))
+                r_list.append(obj['r'])
+                v_list.append(obj['v'])
+                s_list.append(obj['s'])
+                u_list.append(obj['u'])
+                new_queue.pop()
+            call_function = contract.functions.setRoundDataFromArray(
+                n_list,
+                r_list,
+                v_list,
+                s_list,
+                u_list
             ).build_transaction({
                 "chainId": chain_id,
                 "gasPrice": gas_price,
@@ -155,7 +201,7 @@ Handle send data
             ic(send_tx)
             retval[nonce] = send_tx.hex()
             nonce = nonce + 1
-            queue.popleft()
+            queue = new_queue
         rounds_data.save()
         outputs = retval
         ic(outputs)

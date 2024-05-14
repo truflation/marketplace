@@ -134,6 +134,8 @@ contract = web3.eth.contract(
 
 queue = []
 
+MAX_SIZE = 16
+
 @app.post('/send-data-multi')
 async def handle_send_data_multi(request: Request):
     """
@@ -171,7 +173,7 @@ Handle send data
             s_list = []
             u_list = []
             new_queue = queue.copy()
-            for obj in queue[:8]:
+            for obj in queue[:16]:
                 n_list.append(bytes(obj['n'], 'utf-8'))
                 r_list.append(obj['r'])
                 v_list.append(obj['v'])

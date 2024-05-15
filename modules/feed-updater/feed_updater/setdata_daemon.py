@@ -31,7 +31,7 @@ private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
 rounds_file = os.environ.get('ROUNDS_DATA', 'rounds.json')
-update_epoch_length = os.environ.get('UPDATE_EPOCH_LENGTH')
+throttle_period = os.environ.get('THROTTLE_PERIOD')
 
 web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(node_url))
 abi = [
@@ -143,10 +143,10 @@ epoch
 """
     my_update_epoch = update_epoch.get(name)
     if my_update_epoch is not None and \
-       values['u'] % update_epoch_length <= my_update_epoch:
+       values['u'] % throttle_period <= my_update_epoch:
         ic('packet throttled')
         return True
-    update_epoch[name] = values['u'] % update_epoch_length
+    update_epoch[name] = values['u'] % throttle_period
     return False
 
 queue = []

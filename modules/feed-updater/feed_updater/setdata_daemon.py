@@ -141,6 +141,8 @@ def throttle_packet(name: str, values: dict) -> bool:
 Throttle packets by ignoring packets within the same
 epoch
 """
+    if throttle_period is None:
+        return False
     my_update_epoch = update_epoch.get(name)
     if my_update_epoch is not None and \
        values['u'] % throttle_period <= my_update_epoch:

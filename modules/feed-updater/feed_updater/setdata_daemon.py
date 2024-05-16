@@ -32,6 +32,8 @@ address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
 rounds_file = os.environ.get('ROUNDS_DATA', 'rounds.json')
 throttle_period = os.environ.get('THROTTLE_PERIOD')
+if throttle_period is not None:
+    throttle_period = int(throttle_period)
 
 ic(f'Caller: {caller}')
 ic(f'Feed registry address: {address}')

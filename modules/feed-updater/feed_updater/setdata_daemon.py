@@ -32,6 +32,7 @@ private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
 rounds_file = os.environ.get('ROUNDS_DATA', 'rounds.json')
+update_epoch_length = os.environ.get('UPDATE_EPOCH_LENGTH')
 
 web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(node_url))
 abi = [
@@ -134,6 +135,21 @@ contract = web3.eth.contract(
 
 queue = []
 MAX_QUEUE_SIZE = 16
+update_epoch = {}
+
+def throttle_packet(name: str, values: dict) -> bool:
+    """
+Throttle packets by ignoring packets within the same
+epoch
+"""
+    global update_epoch
+    my_update_epoch = update_epoch.get(name)
+    if my_update_epoch is not None and \
+       values['u'] % update_epoch_length <= my_update_epoch:
+        ic('packet throttled')
+        return True
+    update_epoch[name] = values['u'] % update_period
+    return False
 
 @app.post('/send-data-multi')
 async def handle_send_data_multi(request: Request):
@@ -141,6 +157,7 @@ async def handle_send_data_multi(request: Request):
 Handle send data
 """
     global queue
+    global update_epoch
     chain_id = await web3.eth.chain_id
 
     try:
@@ -152,6 +169,8 @@ Handle send data
             )
         ic(f'Received data: {obj}')
         for name, values in obj.items():
+            if throttle_packet(name, values):
+                continue
             queue.append({
                 'n': name,
                 'r': rounds_data.read(name),

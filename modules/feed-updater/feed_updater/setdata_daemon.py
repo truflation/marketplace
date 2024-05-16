@@ -14,6 +14,7 @@ Usage:
 """
 
 import os
+import asyncio
 import ujson
 from docopt import docopt
 from web3 import AsyncWeb3
@@ -143,20 +144,23 @@ contract = web3.eth.contract(
 queue = []
 MAX_QUEUE_SIZE = 16
 update_epoch = {}
+lock = asyncio.Lock()
 
 def throttle_packet(name: str, values: dict) -> bool:
     """
 Throttle packets by ignoring packets within the same
 epoch
 """
+    global update_epoch
     if throttle_period is None:
         return False
     my_update_epoch = update_epoch.get(name)
+    epoch = values['u'] // throttle_period
     if my_update_epoch is not None and \
-       values['u'] % throttle_period <= my_update_epoch:
-        ic('packet throttled')
+       epoch <= my_update_epoch:
+        ic(f'packet throttled {my_update_epoch} {epoch}')
         return True
-    update_epoch[name] = values['u'] % throttle_period
+    update_epoch[name] = epoch
     return False
 
 queue = []
@@ -177,17 +181,18 @@ Handle send data
                 detail='Invalid JSON format'
             )
         ic(f'Received data: {obj}')
-        for name, values in obj.items():
-            if throttle_packet(name, values):
-                continue
-            queue.append({
-                'n': name,
-                'r': rounds_data.read(name),
-                'v': values['v'],
-                's': values['s'],
-                'u': values['u']
-            })
-            rounds_data.increment(name)
+        async with lock:
+            for name, values in obj.items():
+                if throttle_packet(name, values):
+                    continue
+                queue.append({
+                    'n': name,
+                    'r': rounds_data.read(name),
+                    'v': values['v'],
+                    's': values['s'],
+                    'u': values['u']
+                })
+                rounds_data.increment(name)
 
         web3.strict_bytes_type_checking = False
         nonce = await web3.eth.get_transaction_count(caller)

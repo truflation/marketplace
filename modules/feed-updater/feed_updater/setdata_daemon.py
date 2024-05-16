@@ -155,8 +155,7 @@ epoch
     if throttle_period is None:
         return False
     my_update_epoch = update_epoch.get(name)
-    epoch = values['u'] % throttle_period
-    ic(f'epoch {my_update_epoch} {epoch}')
+    epoch = values['u'] // throttle_period
     if my_update_epoch is not None and \
        epoch <= my_update_epoch:
         ic(f'packet throttled {my_update_epoch} {epoch}')

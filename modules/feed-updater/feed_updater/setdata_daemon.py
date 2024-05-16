@@ -33,6 +33,12 @@ node_url = os.environ['NODE_URL']
 rounds_file = os.environ.get('ROUNDS_DATA', 'rounds.json')
 throttle_period = os.environ.get('THROTTLE_PERIOD')
 
+ic(f'Caller: {caller}')
+ic(f'Feed registry address: {address}')
+ic(f'Node url: {node_url}')
+ic(f'Rounds file: {rounds_file}')
+ic(f'Throttle period: {throttle_period}')
+
 web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(node_url))
 abi = [
         {

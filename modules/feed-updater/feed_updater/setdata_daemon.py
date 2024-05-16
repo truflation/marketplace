@@ -17,7 +17,6 @@ import os
 import ujson
 from docopt import docopt
 from web3 import AsyncWeb3
-from collections import deque
 from dotenv import load_dotenv
 from icecream import ic
 from fastapi import FastAPI, Request, HTTPException
@@ -32,6 +31,15 @@ private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
 rounds_file = os.environ.get('ROUNDS_DATA', 'rounds.json')
+throttle_period = os.environ.get('THROTTLE_PERIOD')
+if throttle_period is not None:
+    throttle_period = int(throttle_period)
+
+ic(f'Caller: {caller}')
+ic(f'Feed registry address: {address}')
+ic(f'Node url: {node_url}')
+ic(f'Rounds file: {rounds_file}')
+ic(f'Throttle period: {throttle_period}')
 
 web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(node_url))
 abi = [
@@ -133,8 +141,25 @@ contract = web3.eth.contract(
 )
 
 queue = []
+MAX_QUEUE_SIZE = 16
+update_epoch = {}
 
-MAX_SIZE = 16
+def throttle_packet(name: str, values: dict) -> bool:
+    """
+Throttle packets by ignoring packets within the same
+epoch
+"""
+    if throttle_period is None:
+        return False
+    my_update_epoch = update_epoch.get(name)
+    if my_update_epoch is not None and \
+       values['u'] % throttle_period <= my_update_epoch:
+        ic('packet throttled')
+        return True
+    update_epoch[name] = values['u'] % throttle_period
+    return False
+
+queue = []
 
 @app.post('/send-data-multi')
 async def handle_send_data_multi(request: Request):
@@ -153,6 +178,8 @@ Handle send data
             )
         ic(f'Received data: {obj}')
         for name, values in obj.items():
+            if throttle_packet(name, values):
+                continue
             queue.append({
                 'n': name,
                 'r': rounds_data.read(name),
@@ -173,7 +200,7 @@ Handle send data
             s_list = []
             u_list = []
             new_queue = queue.copy()
-            for obj in queue[:16]:
+            for obj in queue[:MAX_QUEUE_SIZE]:
                 n_list.append(bytes(obj['n'], 'utf-8'))
                 r_list.append(obj['r'])
                 v_list.append(obj['v'])
@@ -216,6 +243,8 @@ Handle send data
     except Exception as exc:
         ic(exc)
         raise
+
+
 
 if __name__ == '__main__':
     port_string = args.get('--port')

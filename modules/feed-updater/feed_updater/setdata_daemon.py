@@ -17,7 +17,6 @@ import os
 import ujson
 from docopt import docopt
 from web3 import AsyncWeb3
-from collections import deque
 from dotenv import load_dotenv
 from icecream import ic
 from fastapi import FastAPI, Request, HTTPException
@@ -142,14 +141,15 @@ def throttle_packet(name: str, values: dict) -> bool:
 Throttle packets by ignoring packets within the same
 epoch
 """
-    global update_epoch
     my_update_epoch = update_epoch.get(name)
     if my_update_epoch is not None and \
        values['u'] % update_epoch_length <= my_update_epoch:
         ic('packet throttled')
         return True
-    update_epoch[name] = values['u'] % update_period
+    update_epoch[name] = values['u'] % update_epoch_length
     return False
+
+queue = []
 
 @app.post('/send-data-multi')
 async def handle_send_data_multi(request: Request):
@@ -157,7 +157,6 @@ async def handle_send_data_multi(request: Request):
 Handle send data
 """
     global queue
-    global update_epoch
     chain_id = await web3.eth.chain_id
 
     try:
@@ -234,6 +233,8 @@ Handle send data
     except Exception as exc:
         ic(exc)
         raise
+
+
 
 if __name__ == '__main__':
     port_string = args.get('--port')

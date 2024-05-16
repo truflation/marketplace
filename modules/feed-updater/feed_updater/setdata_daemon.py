@@ -151,6 +151,7 @@ def throttle_packet(name: str, values: dict) -> bool:
 Throttle packets by ignoring packets within the same
 epoch
 """
+    global update_epoch
     if throttle_period is None:
         return False
     my_update_epoch = update_epoch.get(name)

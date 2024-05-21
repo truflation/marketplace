@@ -14,7 +14,7 @@
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "hardhat": "^2.10.2",
-    "hardhat-gas-reporter": "^1.0.9",
+    "hardhat-gas-reporter": "^2.1.1",
     "solhint": "^3.3.7",
     "tfi-api": "git+https://github.com/truflationdev/tfi-api#34ba11b",
     "ts-node": "^10.9.1",
@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@chainlink/contracts": "^0.4.2",
+    "@nomicfoundation/hardhat-verify": "^1.1.1",
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
     "@openzeppelin/hardhat-upgrades": "^2.4.3",

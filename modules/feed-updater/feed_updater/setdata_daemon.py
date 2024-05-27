@@ -65,11 +65,6 @@ abi = [
           "internalType": "uint256",
           "name": "startedAt",
           "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "updatedAt",
-          "type": "uint256"
         }
       ],
       "name": "setRoundData",
@@ -97,11 +92,6 @@ abi = [
         {
           "internalType": "uint256[]",
           "name": "startedAt",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "updatedAt",
           "type": "uint256[]"
         }
       ],
@@ -155,7 +145,7 @@ epoch
     if throttle_period is None:
         return False
     my_update_epoch = update_epoch.get(name)
-    epoch = values['u'] // throttle_period
+    epoch = values['s'] // throttle_period
     if my_update_epoch is not None and \
        epoch <= my_update_epoch:
         ic(f'packet throttled {my_update_epoch} {epoch}')
@@ -189,8 +179,7 @@ Handle send data
                     'n': name,
                     'r': rounds_data.read(name),
                     'v': values['v'],
-                    's': values['s'],
-                    'u': values['u']
+                    's': values['s']
                 })
                 rounds_data.increment(name)
 
@@ -210,14 +199,12 @@ Handle send data
                 r_list.append(obj['r'])
                 v_list.append(obj['v'])
                 s_list.append(obj['s'])
-                u_list.append(obj['u'])
                 new_queue.pop()
             call_function = contract.functions.setRoundDataFromArray(
                 n_list,
                 r_list,
                 v_list,
-                s_list,
-                u_list
+                s_list
             ).build_transaction({
                 "chainId": chain_id,
                 "gasPrice": gas_price,

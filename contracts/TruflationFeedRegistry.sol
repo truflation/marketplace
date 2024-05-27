@@ -195,8 +195,7 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
         dataType[i],
         roundId[i],
         answer[i],
-        startedAt[i],
-        block.timestamp
+        startedAt[i]
       );
     }
   }

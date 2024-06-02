@@ -159,17 +159,19 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
 /**
  * @dev Sets the data for a specific round of a price feed.
  * @param dataType The dataType for the price feed.
- * @param roundId The ID of the round to set data for.
  * @param answer The answer for the round.
  * @param startedAt The timestamp for when the round started.
  */
 
   function setRoundData(
     bytes32 dataType,
-    uint80 roundId,
     int256 answer,
     uint256 startedAt
-  ) public virtual onlySetAccess(msg.sender, dataType) {
+  ) public virtual
+  onlySetAccess(msg.sender, dataType)
+   {
+    require(startedAt >= data[dataType][latestRound[dataType]].startedAt);
+    uint80 roundId = latestRound[dataType] + 1;
     latestRound[dataType] = roundId;
     data[dataType][roundId] = RoundData(answer, startedAt, block.timestamp);
     emit RoundDataSet(dataType, roundId, answer, startedAt, block.timestamp);
@@ -178,14 +180,12 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
 /**
  * @dev Sets the data for a specific round of a price feed.
  * @param dataType The dataType for the price feed.
- * @param roundId The ID of the round to set data for.
  * @param answer The answer for the round.
  * @param startedAt The timestamp for when the round started.
  */
 
   function setRoundDataFromArray(
     bytes32[] calldata dataType,
-    uint80[] calldata roundId,
     int256[] calldata answer,
     uint256[] calldata startedAt
   ) public virtual {
@@ -193,7 +193,6 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
     for (uint i=0; i < length; i++) {
       setRoundData(
         dataType[i],
-        roundId[i],
         answer[i],
         startedAt[i]
       );

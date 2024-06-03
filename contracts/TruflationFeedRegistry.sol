@@ -168,7 +168,8 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
     int256 answer,
     uint256 startedAt
   ) public virtual onlySetAccess(msg.sender, dataType) {
-    require(startedAt >= data[dataType][latestRound[dataType]].startedAt);
+    require(startedAt >= data[dataType][latestRound[dataType]].startedAt,
+    'start not valid');
     uint80 roundId = latestRound[dataType] + 1;
     latestRound[dataType] = roundId;
     data[dataType][roundId] = RoundData(answer, startedAt, block.timestamp);

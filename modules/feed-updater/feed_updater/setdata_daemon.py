@@ -32,8 +32,7 @@ private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
 throttle_period_string = os.environ.get('THROTTLE_PERIOD')
-if throttle_period_string is not None:
-    throttle_period = int(throttle_period_string)
+throttle_period = int(throttle_period_string) if throttle_period_string is not None else None
 
 ic(f'Caller: {caller}')
 ic(f'Feed registry address: {address}')

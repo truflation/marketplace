@@ -167,9 +167,7 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
     bytes32 dataType,
     int256 answer,
     uint256 startedAt
-  ) public virtual
-  onlySetAccess(msg.sender, dataType)
-   {
+  ) public virtual onlySetAccess(msg.sender, dataType) {
     require(startedAt >= data[dataType][latestRound[dataType]].startedAt);
     uint80 roundId = latestRound[dataType] + 1;
     latestRound[dataType] = roundId;

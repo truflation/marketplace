@@ -17,7 +17,7 @@ import os
 import asyncio
 import ujson
 from docopt import docopt
-from web3 import AsyncWeb3
+from web3 import AsyncWeb3, Web3
 from dotenv import load_dotenv
 from icecream import ic
 from fastapi import FastAPI, Request, HTTPException
@@ -31,15 +31,12 @@ caller = os.environ.get('ETH_CALLER', os.environ.get('CALLER'))
 private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
-rounds_file = os.environ.get('ROUNDS_DATA', 'rounds.json')
-throttle_period = os.environ.get('THROTTLE_PERIOD')
-if throttle_period is not None:
-    throttle_period = int(throttle_period)
+throttle_period_string = os.environ.get('THROTTLE_PERIOD')
+throttle_period = int(throttle_period_string) if throttle_period_string is not None else None
 
 ic(f'Caller: {caller}')
 ic(f'Feed registry address: {address}')
 ic(f'Node url: {node_url}')
-ic(f'Rounds file: {rounds_file}')
 ic(f'Throttle period: {throttle_period}')
 
 web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(node_url))
@@ -50,11 +47,6 @@ abi = [
           "internalType": "bytes32",
           "name": "key",
           "type": "bytes32"
-        },
-        {
-          "internalType": "uint80",
-          "name": "roundId",
-          "type": "uint80"
         },
         {
           "internalType": "int256",
@@ -80,11 +72,6 @@ abi = [
           "type": "bytes32[]"
         },
         {
-          "internalType": "uint80[]",
-          "name": "roundId",
-          "type": "uint80[]"
-        },
-        {
           "internalType": "int256[]",
           "name": "answer",
           "type": "int256[]"
@@ -102,38 +89,13 @@ abi = [
     }
 ]
 
-
-class RoundsData:
-    def __init__(self, file_path):
-        self.rounds = {}
-        self.file_path = file_path
-        try:
-            self.load()
-        except FileNotFoundError:
-            pass
-    def load(self):
-        with open(self.file_path, 'r',
-                  encoding='utf-8') as file:
-            self.rounds = ujson.load(file)
-    def save(self):
-        with open(self.file_path, 'w',
-                  encoding='utf-8') as file:
-            ujson.dump(self.rounds, file)
-    def read(self, value):
-        return self.rounds.get(value, 0)
-    def increment(self, value):
-        self.rounds[value] = \
-            self.read(value) + 1
-
-rounds_data = RoundsData(rounds_file)
-
 contract = web3.eth.contract(
     address=address, abi=abi
 )
 
-queue = []
+queue : list[dict[str, str | int]] = []
 MAX_QUEUE_SIZE = 16
-update_epoch = {}
+update_epoch : dict[str, int] = {}
 lock = asyncio.Lock()
 
 def throttle_packet(name: str, values: dict) -> bool:
@@ -152,8 +114,6 @@ epoch
         return True
     update_epoch[name] = epoch
     return False
-
-queue = []
 
 @app.post('/send-data-multi')
 async def handle_send_data_multi(request: Request):
@@ -177,32 +137,28 @@ Handle send data
                     continue
                 queue.append({
                     'n': name,
-                    'r': rounds_data.read(name),
                     'v': values['v'],
                     's': values['s']
                 })
-                rounds_data.increment(name)
 
         web3.strict_bytes_type_checking = False
-        nonce = await web3.eth.get_transaction_count(caller)
+        nonce  = await web3.eth.get_transaction_count(
+            caller
+        )
         retval = {}
         gas_price = await web3.eth.gas_price
         while len(queue) > 0:
             n_list = []
-            r_list = []
             v_list = []
             s_list = []
-            u_list = []
             new_queue = queue.copy()
             for obj in queue[:MAX_QUEUE_SIZE]:
-                n_list.append(bytes(obj['n'], 'utf-8'))
-                r_list.append(obj['r'])
+                n_list.append(bytes(str(obj['n']), 'utf-8'))
                 v_list.append(obj['v'])
                 s_list.append(obj['s'])
                 new_queue.pop()
             call_function = contract.functions.setRoundDataFromArray(
                 n_list,
-                r_list,
                 v_list,
                 s_list
             ).build_transaction({
@@ -223,7 +179,6 @@ Handle send data
             retval[nonce] = send_tx.hex()
             nonce = nonce + 1
             queue = new_queue
-        rounds_data.save()
         outputs = retval
         ic(outputs)
         return outputs

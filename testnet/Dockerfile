@@ -5,7 +5,6 @@ RUN apt-get update && \
   apt-get install -y git nodejs npm && \
   apt-get clean
 RUN npm install --ignore-scripts . && \
-   npm install --ignore-scripts @nomicfoundation/hardhat-verify && \
    cp hardhat.local.env ./.env && \
    npx hardhat test && \
    pip install modules/feed-updater

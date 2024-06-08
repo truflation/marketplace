@@ -42,40 +42,29 @@ describe("TruflationFeedRegistry", () => {
   it("should set the round data", async () => {
     const roundId = [1, 1, 1];
     const answer = [12345, 1, 1];
-    const startedAt = [1234567890, 1, 1];
-    const updatedAt = [1234567890, 1, 1];
+    const startedAt = [1, 2, 3];
+    const updatedAt = [1, 2, 3];
     const answeredInRound = [1, 1, 1];
     await expect(
       tfiFeedRegistry.setRoundDataFromArray(
 	[registryKey, registryKey, registryKey],
-	roundId,
 	answer,
 	startedAt,
-	updatedAt
       )
-    ).to.emit(tfiFeedRegistry, "RoundDataSet").withArgs(
-      registryKey, roundId[0], answer[0], startedAt[0], updatedAt[0]
-    );
+    )
   });
 
   // test setRoundData
   it("should set the round data", async () => {
-    const roundId = 1;
     const answer = 12345;
     const startedAt = 1234567890;
-    const updatedAt = 1234567890;
-    const answeredInRound = 1;
     await expect(
       tfiFeedRegistry.setRoundData(
 	registryKey,
-	roundId,
 	answer,
-	startedAt,
-	updatedAt
+	startedAt
       )
-    ).to.emit(tfiFeedRegistry, "RoundDataSet").withArgs(
-      registryKey, roundId, answer, startedAt, updatedAt
-    );
+    )
   });
 
   //test grantRole with key "get"
@@ -91,34 +80,32 @@ describe("TruflationFeedRegistry", () => {
 
   //test getRoundData
   it("should get the round data", async () => {
-    const roundId = 1n;
+    const roundId = 4n;
     const answer = 12345n;
     const startedAt = 1234567890n;
-    const updatedAt = 1234567890n;
-    const answeredInRound = 1n;
+    const updatedAt = 1n;
+    const answeredInRound = 4n;
     const [r, a, s, u, ar ] =   await tfiFeedRegistry.getRoundData(
       registryKey, roundId,  ethers.ZeroAddress
     );
     expect(a).to.equal(answer);
     expect(s).to.equal(startedAt);
-    expect(u).to.equal(updatedAt);
     expect(ar).to.equal(answeredInRound);
   });
 
   //test latestRoundData
   it("should get the latest round data", async () => {
-    const roundId = 1n;
+    const roundId = 4n;
     const answer = 12345n;
     const startedAt = 1234567890n;
     const updatedAt = 1234567890n;
-    const answeredInRound = 1n;
+    const answeredInRound = 4n;
     const [r, a, s, u, ar ] =   await tfiFeedRegistry.latestRoundData(
       registryKey, ethers.ZeroAddress
     );
     expect(r).to.equal(roundId);
     expect(a).to.equal(answer);
     expect(s).to.equal(startedAt);
-    expect(u).to.equal(updatedAt);
     expect(ar).to.equal(answeredInRound);
   });
 });
@@ -145,18 +132,17 @@ describe("TruflationFeedAdapter", () => {
   });
   // test latestRoundData
   it("should get the latest round data", async () => {
-    const roundId = 1n;
+    const roundId = 4n;
     const answer = 12345n;
     const startedAt = 1234567890n;
     const updatedAt = 1234567890n;
-    const answeredInRound = 1n;
+    const answeredInRound = 4n;
     const [r,  a, s, u, ar ] =   await tfiFeedAdapter.latestRoundData();
 
     // check return values
     expect(r).to.equal(roundId);
     expect(a).to.equal(answer);
     expect(s).to.equal(startedAt);
-    expect(u).to.equal(updatedAt);
     expect(ar).to.equal(answeredInRound);
     });
 

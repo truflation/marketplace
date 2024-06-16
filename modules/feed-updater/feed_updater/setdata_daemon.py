@@ -14,10 +14,11 @@ Usage:
 """
 
 import os
+import sys
 import asyncio
-import ujson
 from docopt import docopt
-from web3 import AsyncWeb3, Web3
+from web3 import AsyncWeb3
+from web3.exceptions import ContractLogicError
 from dotenv import load_dotenv
 from icecream import ic
 from fastapi import FastAPI, Request, HTTPException
@@ -187,6 +188,10 @@ Handle send data
             status_code=400,
             detail='Invalid JSON Format'
         ) from exc
+    # mitigate issue #24
+    except ContractLogicError as exc:
+        sys.exit(1)
+
     except Exception as exc:
         ic(exc)
         raise

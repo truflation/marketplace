@@ -8,6 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 error AccessDenied();
 error OutOfBounds();
 error NoData();
+error StartNotValid();
 
 contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflationFeedRegistry {
   bytes32 constant public SET = "set";
@@ -87,7 +88,7 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
  */
 
   modifier onlySetAccess(address sender, bytes32 dataType) {
-    require(hasAccess(SET, dataType, sender), "Access denied");
+    if (!hasAccess(SET, dataType, sender)) { revert AccessDenied(); }
     _;
   }
 
@@ -177,8 +178,9 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
     int256 answer,
     uint256 startedAt
   ) public virtual onlySetAccess(msg.sender, dataType) {
-    require(startedAt >= data[dataType][latestRound[dataType]].startedAt,
-    "start not valid");
+    if (startedAt < data[dataType][latestRound[dataType]].startedAt) {
+      revert StartNotValid();
+    }
     uint80 roundId = latestRound[dataType] + 1;
     latestRound[dataType] = roundId;
     data[dataType][roundId] = RoundData(answer, startedAt, block.timestamp);

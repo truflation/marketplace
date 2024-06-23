@@ -37,9 +37,39 @@ describe("TruflationFeedRegistry", () => {
       await owner.getAddress(), true
     );
   });
+  // test
+  it('should throw exeception access denied', async () => {
+     const [owner] = await ethers.getSigners();
+     await expect(tfiFeedRegistry.latestRoundData(
+	registryKey, await owner.getAddress()
+      )).to.be.revertedWith(
+      'Access denied'
+      )
+  })
+
+  // test grantRole
+  it("grant role get", async () => {
+    // get my address
+    const [owner] = await ethers.getSigners();
+    await tfiFeedRegistry.setAccess(
+      ethers.encodeBytes32String("get"),
+      registryKey,
+      await owner.getAddress(), true
+    );
+  });
+
+  // test no data
+  it('test no data', async () => {
+     const [owner] = await ethers.getSigners();
+     await expect(tfiFeedRegistry.latestRoundData(
+	registryKey, await owner.getAddress()
+      )).to.be.revertedWith(
+      'no data'
+      )
+  })
 
   // test setRoundData
-  it("should set the round data", async () => {
+  it("should set the round data array", async () => {
     const roundId = [1, 1, 1];
     const answer = [12345, 1, 1];
     const startedAt = [1, 2, 3];
@@ -91,6 +121,24 @@ describe("TruflationFeedRegistry", () => {
     expect(a).to.equal(answer);
     expect(s).to.equal(startedAt);
     expect(ar).to.equal(answeredInRound);
+  });
+
+  //test getRoundData
+  it("out of bounds low", async () => {
+    const roundId = 0n;
+    await expect(tfiFeedRegistry.getRoundData(
+      registryKey, roundId,  ethers.ZeroAddress
+    )).to.be.revertedWith(
+    'out of bounds')
+  });
+
+  //test getRoundData
+  it("out of bounds high", async () => {
+    const roundId = 6n;
+    await expect(tfiFeedRegistry.getRoundData(
+      registryKey, roundId,  ethers.ZeroAddress
+    )).to.be.revertedWith(
+    'out of bounds')
   });
 
   //test latestRoundData

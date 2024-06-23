@@ -233,6 +233,6 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
   }
 
   function version() external pure returns (uint256) {
-    return 202405120;
+    return 202406230;
   }
 }

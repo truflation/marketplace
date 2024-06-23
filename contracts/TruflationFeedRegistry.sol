@@ -6,9 +6,9 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflationFeedRegistry {
-  bytes32 constant SET = "set";
-  bytes32 constant GET = "get";
-  bytes32 constant PROXY = "proxy";
+  bytes32 constant public SET = "set";
+  bytes32 constant public GET = "get";
+  bytes32 constant public PROXY = "proxy";
 
   struct RoundData {
     int256 answer;
@@ -169,7 +169,7 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
     uint256 startedAt
   ) public virtual onlySetAccess(msg.sender, dataType) {
     require(startedAt >= data[dataType][latestRound[dataType]].startedAt,
-    'start not valid');
+    "start not valid");
     uint80 roundId = latestRound[dataType] + 1;
     latestRound[dataType] = roundId;
     data[dataType][roundId] = RoundData(answer, startedAt, block.timestamp);

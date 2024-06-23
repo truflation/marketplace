@@ -5,6 +5,10 @@ import "./ITruflationFeedRegistry.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
+error AccessDenied();
+error OutOfBounds();
+error NoData();
+
 contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflationFeedRegistry {
   bytes32 constant public SET = "set";
   bytes32 constant public GET = "get";
@@ -63,15 +67,14 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
  */
 
   modifier onlyAccess(bytes32 role, bytes32 dataType, address sender) {
-    require(
+    if (!(
       hasAccess(role, dataType, address(0x0)) ||
       hasAccess(role, dataType, msg.sender) ||
       (
         hasAccess(PROXY, dataType, msg.sender) &&
         hasAccess(role, dataType, sender)
-      ),
-      "Access denied"
-    );
+      )
+    )) revert AccessDenied();
     _;
   }
 
@@ -118,8 +121,11 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
     uint80 answeredInRound
   )
   {
-    RoundData memory rd = data[dataType][roundId_];
     uint80 latestRound_ = latestRound[dataType];
+    if (roundId_ < 1 || roundId_ > latestRound_) {
+       revert OutOfBounds();
+    }
+    RoundData memory rd = data[dataType][roundId_];
     return (roundId_, rd.answer, rd.startedAt, rd.updatedAt,
     latestRound_
     );
@@ -151,6 +157,9 @@ contract TruflationFeedRegistry is Initializable, OwnableUpgradeable, ITruflatio
   {
     uint80
     latestRound_ = latestRound[dataType];
+    if (latestRound_ < 1) {
+       revert NoData();
+    }
     RoundData memory rd = data[dataType][latestRound_];
     return (latestRound_, rd.answer, rd.startedAt, rd.updatedAt,
     latestRound_);

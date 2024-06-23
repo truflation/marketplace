@@ -42,8 +42,9 @@ describe("TruflationFeedRegistry", () => {
      const [owner] = await ethers.getSigners();
      await expect(tfiFeedRegistry.latestRoundData(
 	registryKey, await owner.getAddress()
-      )).to.be.revertedWith(
-      'Access denied'
+      )).to.be.revertedWithCustomError(
+      tfiFeedRegistry,
+      'AccessDenied'
       )
   })
 
@@ -63,8 +64,9 @@ describe("TruflationFeedRegistry", () => {
      const [owner] = await ethers.getSigners();
      await expect(tfiFeedRegistry.latestRoundData(
 	registryKey, await owner.getAddress()
-      )).to.be.revertedWith(
-      'no data'
+      )).to.be.revertedWithCustomError(
+      tfiFeedRegistry,
+      'NoData'
       )
   })
 
@@ -128,8 +130,9 @@ describe("TruflationFeedRegistry", () => {
     const roundId = 0n;
     await expect(tfiFeedRegistry.getRoundData(
       registryKey, roundId,  ethers.ZeroAddress
-    )).to.be.revertedWith(
-    'out of bounds')
+    )).to.be.revertedWithCustomError(
+    tfiFeedRegistry,
+    'OutOfBounds')
   });
 
   //test getRoundData
@@ -137,8 +140,9 @@ describe("TruflationFeedRegistry", () => {
     const roundId = 6n;
     await expect(tfiFeedRegistry.getRoundData(
       registryKey, roundId,  ethers.ZeroAddress
-    )).to.be.revertedWith(
-    'out of bounds')
+    )).to.be.revertedWithCustomError(
+    tfiFeedRegistry,
+    'OutOfBounds')
   });
 
   //test latestRoundData

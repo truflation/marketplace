@@ -33,9 +33,10 @@ create .env files with
 
 To run
 ------
-yarn install
-yarn build
-yarn test
+* yarn install
+* cp hardhat.local.env .env
+* yarn build
+* yarn test
 
 
 To deploy

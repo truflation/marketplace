@@ -22,6 +22,7 @@ async function main(): Promise<void> {
     const TruflationFeedAdapter = await ethers.getContractFactory(
       'TruflationFeedAdapter'
     )
+    const key = ethers.encodeBytes32String(keyString)
     const truflationFeedAdapter = await upgrades.deployProxy(
       TruflationFeedAdapter, [
 	address,
@@ -33,7 +34,6 @@ async function main(): Promise<void> {
     await truflationFeedAdapter.waitForDeployment()
     console.log('TruflationFeedAdapter deployed to:',
 		await truflationFeedAdapter.getAddress())
-    const key = ethers.encodeBytes32String(keyString)
     const getKey = ethers.encodeBytes32String('get')
     const setKey = ethers.encodeBytes32String('set')
     const proxyKey = ethers.encodeBytes32String('proxy')

@@ -163,7 +163,7 @@ const config: HardhatUserConfig = {
       arbitrumOne: ARBITRUM_API_KEY,
       base: BASESCAN_API_KEY,
       xdcapothem: XDCAPOTHEM_API_KEY,
-      xdc: MAINNET_PRIVATE_KEY,
+      xdc: XDC_API_KEY,
       baseGoerli: "PLACEHOLDER_STRING"
     },
     customChains: [
@@ -188,7 +188,7 @@ const config: HardhatUserConfig = {
         chainId: 51,
         urls: {
                 apiURL: 'https://abapi.blocksscan.io/api',
-                browserURL: 'https://apothem.blocksscan.io/'
+                browserURL: 'https://apothem.xdcscan.io/'
   }
      },
      {
@@ -196,7 +196,7 @@ const config: HardhatUserConfig = {
       chainId: 50,
       urls: {
               apiURL: 'https://bapi.blocksscan.io/',
-              browserURL: 'https://apothem.blocksscan.io/'
+              browserURL: 'https://xdcscan.io/'
 }
    }
     ]

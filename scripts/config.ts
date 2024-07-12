@@ -181,7 +181,27 @@ export const addressesByChain = {
       operator: '0x6D141Cf6C43f7eABF94E288f5aa3f23357278499',
       example: '0x4a4588Eaa43c3C0694F7b8Ade7521ac5b42120Fe'
     }
-  }
+  },
+  51: {
+    // XDC apothem
+    owner: testnetOwner,
+    jobid: testnetJobid,
+    link: {
+      token: '0x2526155d3495bd6658928d5817c3714be0fc1dcc',
+      operator: '0x84790a387B4c93000AAff8F1A8e07104C0Ed526c',
+      example: '0x84790a387B4c93000AAff8F1A8e07104C0Ed526c'
+    }
+  },
+  50: {
+    // XDC 
+    owner: testnetOwner,
+    jobid: testnetJobid,
+    link: {
+      token: '0x2526155d3495bd6658928d5817c3714be0fc1dcc',
+      operator: '0x84790a387B4c93000AAff8F1A8e07104C0Ed526c',
+      example: '0x84790a387B4c93000AAff8F1A8e07104C0Ed526c'
+    }
+  } 
 }
 
 export const address = addressesByChain[5]

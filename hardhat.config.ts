@@ -25,6 +25,10 @@ const ARBITRUM_SEPOLIA_URL = process.env.ARBITRUM_SEPOLIA_URL ?? ''
 
 const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY ?? ''
 
+const XDCAPOTHEM_API_KEY = process.env.XDCAPOTHEM_API_KEY ?? ''
+
+const XDC_API_KEY = process.env.XDC_API_KEY ?? ''
+
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
@@ -130,6 +134,16 @@ const config: HardhatUserConfig = {
       chainId: 84531,
       url: 'https://goerli.base.org',
       accounts: [TESTNET_PRIVATE_KEY]
+    },
+    xdcapothem: {
+      chainId: 51,
+      url: 'https://erpc.apothem.network	',
+      accounts: [TESTNET_PRIVATE_KEY]
+    },
+    xdc: {
+      chainId: 50,
+      url: 'https://erpc.xinfin.network	',
+      accounts: [MAINNET_PRIVATE_KEY]
     }
   },
   etherscan: {
@@ -148,6 +162,8 @@ const config: HardhatUserConfig = {
       arbitrumSepolia: ARBITRUM_API_KEY,
       arbitrumOne: ARBITRUM_API_KEY,
       base: BASESCAN_API_KEY,
+      xdcapothem: XDCAPOTHEM_API_KEY,
+      xdc: XDC_API_KEY,
       baseGoerli: "PLACEHOLDER_STRING"
     },
     customChains: [
@@ -166,7 +182,23 @@ const config: HardhatUserConfig = {
           apiURL: 'https://api-sepolia.arbiscan.io/api',
           browserURL: 'https://sepolia.arbiscan.io/'
 	}
-      }
+      },
+     {
+        network: 'xdcapothem',
+        chainId: 51,
+        urls: {
+                apiURL: 'https://abapi.blocksscan.io/api',
+                browserURL: 'https://apothem.xdcscan.io/'
+  }
+     },
+     {
+      network: 'xdc',
+      chainId: 50,
+      urls: {
+              apiURL: 'https://bapi.blocksscan.io/',
+              browserURL: 'https://xdcscan.io/'
+}
+   }
     ]
   },
   gasReporter: {

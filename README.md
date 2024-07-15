@@ -15,6 +15,11 @@ have a github page which contains your contact information and make
 sample contribution to this or one of the other truflation
 repositories.
 
+Adding your blockchain
+----------------------
+
+To add truflation data to your blockchain please follow these instructions for [adding truflation data to your blockchain](docs/new-blockchain-howto.md)
+
 TODO
 ----
 

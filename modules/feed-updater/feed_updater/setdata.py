@@ -21,6 +21,7 @@ caller =  os.environ.get('ETH_CALLER', os.environ.get('CALLER'))
 private_key = os.environ.get('ETH_PRIVATE_KEY', os.environ.get('PRIVATE_KEY'))
 address = os.environ['FEED_REGISTRY_ADDRESS']
 node_url = os.environ['NODE_URL']
+name = bytes(os.environ['KEY_NAME'], "utf-8")
 
 v = int(obj[os.environ['REQUEST_JSON']]* 10**18)
 s = obj[os.environ['REQUEST_DATE']]
@@ -41,11 +42,6 @@ abi = [
           "type": "bytes32"
         },
         {
-          "internalType": "uint80",
-          "name": "roundId",
-          "type": "uint80"
-        },
-        {
           "internalType": "int256",
           "name": "answer",
           "type": "int256"
@@ -53,11 +49,6 @@ abi = [
         {
           "internalType": "uint256",
           "name": "startedAt",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "updatedAt",
           "type": "uint256"
         }
       ],
@@ -76,11 +67,9 @@ Chain_id = web3.eth.chain_id
 nonce = web3.eth.get_transaction_count(caller)
 web3.strict_bytes_type_checking = False
 call_function = contract.functions.setRoundData(
-    bytes("truflation.cpi.us", 'utf-8'),
-    roundId,
+    name,
     v,
-    dts,
-    nts
+    dts
 ).build_transaction({"chainId": Chain_id,
                      "gasPrice": web3.eth.gas_price,
                      "from": caller, "nonce": nonce})

@@ -6,4 +6,13 @@
   and the KEY is the name of the data that you want to retrieve using the adapter (not the private key)
 ** For nightly CPI revisions use the key "truflation.cpi.us"
 ** For realtime EV revisions use the key "com_truflation_btc_ev" and "com_truflation_btc_ev_fiat"
-* Let truflation know the caller and private key and we will start feeding data to the registry
+
+
+* cd marketplace/modules/feed-updater
+* build the docker image
+  - docker compose build
+* modify the config file
+  - the default files runs against a local testnet which you can run with
+     ./scripts/initialize-testnet.sh truflation.cpi.us
+* run the docker image with 
+  - docker compose up

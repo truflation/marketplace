@@ -5,3 +5,4 @@ services:
             context: .
         env_file:
             - ${ENV_FILE:-config.localhost.env}
+        network_mode: "host"

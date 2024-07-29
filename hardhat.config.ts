@@ -8,10 +8,12 @@ require("@nomicfoundation/hardhat-chai-matchers")
 
 import * as dotenv from 'dotenv'
 dotenv.config()
-
+const ZERO_PRIVATE_KEY ='0x0000000000000000000000000000000000000000000000000000000000000000'
 const INFURA_API_KEY = process.env.INFURA_API_KEY ?? ''
-const MAINNET_PRIVATE_KEY = process.env.MAINNET_PRIVATE_KEY ?? ''
-const TESTNET_PRIVATE_KEY = process.env.TESTNET_PRIVATE_KEY ?? ''
+const MAINNET_PRIVATE_KEY = process.env.MAINNET_PRIVATE_KEY ?? ZERO_PRIVATE_KEY
+const TESTNET_PRIVATE_KEY = process.env.TESTNET_PRIVATE_KEY ??  ZERO_PRIVATE_KEY
+const XDCAPOTHEM_PRIVATE_KEY = process.env.XDCAPOTHEM_PRIVATE_KEY ??  ZERO_PRIVATE_KEY
+const XDC_PRIVATE_KEY = process.env.XDC_PRIVATE_KEY ??  ZERO_PRIVATE_KEY
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY ?? ''
 const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY ?? ''
 const POLYGONSCAN_API_KEY = process.env.POLYGONSCAN_API_KEY ?? ''
@@ -135,15 +137,15 @@ const config: HardhatUserConfig = {
       url: 'https://goerli.base.org',
       accounts: [TESTNET_PRIVATE_KEY]
     },
-    xdcapothem: {
+    xdcApothem: {
       chainId: 51,
-      url: 'https://erpc.apothem.network	',
-      accounts: [TESTNET_PRIVATE_KEY]
+      url: 'https://erpc.apothem.network',
+      accounts: [XDCAPOTHEM_PRIVATE_KEY]
     },
     xdc: {
       chainId: 50,
       url: 'https://erpc.xinfin.network	',
-      accounts: [MAINNET_PRIVATE_KEY]
+      accounts: [XDC_PRIVATE_KEY]
     }
   },
   etherscan: {
@@ -162,9 +164,9 @@ const config: HardhatUserConfig = {
       arbitrumSepolia: ARBITRUM_API_KEY,
       arbitrumOne: ARBITRUM_API_KEY,
       base: BASESCAN_API_KEY,
-      xdcapothem: XDCAPOTHEM_API_KEY,
-      xdc: XDC_API_KEY,
-      baseGoerli: "PLACEHOLDER_STRING"
+      baseGoerli: "PLACEHOLDER_STRING",
+      xdcapothem: "abc",
+      xdc: "abc"
     },
     customChains: [
       {
